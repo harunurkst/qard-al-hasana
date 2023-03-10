@@ -70,17 +70,17 @@ const data = [
 ];
 const Chart = () => {
     return (
-        <ResponsiveContainer minHeight={245}>
+        <ResponsiveContainer minHeight={340}>
             <ComposedChart data={data} margin={{ top: 25, right: 20, left: 20, bottom: 5 }}>
                 <defs>
                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#7F56D9" stopOpacity={0.1} />
+                        <stop offset="5%" stopColor="#027A48" stopOpacity={0.1} />
                         <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
                     </linearGradient>
                 </defs>
                 <defs>
                     <linearGradient id="color2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#7F56D9" stopOpacity={0.1} />
+                        <stop offset="5%" stopColor="#12B76A" stopOpacity={0.1} />
                         <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
                     </linearGradient>
                 </defs>
@@ -93,7 +93,7 @@ const Chart = () => {
                 <CartesianGrid vertical={false} stroke="#F2F4F7" />
 
                 <Area
-                    stroke="#625AFA"
+                    stroke="#027A48"
                     type="monotone"
                     dataKey="pv"
                     strokeWidth={2}
@@ -103,7 +103,7 @@ const Chart = () => {
                 <Area
                     type="monotone"
                     dataKey="uv"
-                    stroke="#B692F6"
+                    stroke="#12B76A"
                     strokeWidth={2}
                     fillOpacity={1}
                     fill="url(#colorUv)"
