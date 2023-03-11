@@ -59,6 +59,12 @@ class Branch(models.Model):
         return self.name
 
 
+class Team(models.Model):
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='teams')
+
+
 class BranchMember(models.Model):
     name = models.CharField(max_length=150)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
