@@ -1,8 +1,8 @@
 import DashboardNavbar from '../../components/DashboardNavbar';
 
-const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
+const DashboardLayout: React.FC<React.PropsWithChildren & { className?: string }> = ({ children, className = '' }) => {
     return (
-        <main>
+        <main className={className}>
             <DashboardNavbar />
             {children}
         </main>

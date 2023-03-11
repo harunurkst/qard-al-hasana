@@ -1,20 +1,19 @@
-import { Button } from '@chakra-ui/react';
+import { Button, ButtonGroup } from '@chakra-ui/react';
 
 import Chart from './Chart';
 
 const Analytics = () => {
     return (
-        <section className="pt-12 pb-10">
-            <h1 className="mb-6 text-3xl font-semibold text-gray-900">Welcome back, Chandpur Islamic Socity</h1>
+        <section className="pb-10 pt-6">
             <div className="mb-8 flex justify-between">
-                <div className="flex overflow-hidden rounded-md border text-base font-semibold">
-                    <button className="flex h-10 items-center justify-center border-r bg-gray-100 px-3">All</button>
-                    <button className="flex h-10 items-center justify-center border-r px-3">This Month</button>
-                    <button className="flex h-10 items-center justify-center border-r px-3">12 Months</button>
-                    <button className="flex h-10 items-center justify-center border-r px-3">30 days</button>
-                    <button className="flex h-10 items-center justify-center border-r px-3">7 days</button>
-                    <button className="flex h-10 items-center justify-center  px-3">24 hours</button>
-                </div>
+                <ButtonGroup isAttached variant={'outline'}>
+                    <Button backgroundColor="gray.100">All</Button>
+                    <Button>This Month</Button>
+                    <Button>12 Months</Button>
+                    <Button>30 days</Button>
+                    <Button>7 days</Button>
+                    <Button>24 hours</Button>
+                </ButtonGroup>
                 <div className="flex gap-3">
                     <Button
                         variant={'outline'}
@@ -239,6 +238,64 @@ const Analytics = () => {
                                     </div>
                                     <div>
                                         <h2 className="mb-1 text-base font-medium text-gray-600">Total Expense</h2>
+                                        <div className="flex items-center gap-4">
+                                            <p className="text-2xl font-semibold text-gray-900">4,862</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-6/12 px-2 py-2">
+                            <div className="rounded-md  bg-[#EB455F]/10 p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-full  bg-[#EB455F]/20">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M16 18H22M22 10H2M22 13.5V8.2C22 7.0799 22 6.51984 21.782 6.09202C21.5903 5.7157 21.2843 5.40974 20.908 5.21799C20.4802 5 19.9201 5 18.8 5H5.2C4.0799 5 3.51984 5 3.09202 5.21799C2.7157 5.40973 2.40973 5.71569 2.21799 6.09202C2 6.51984 2 7.0799 2 8.2V15.8C2 16.9201 2 17.4802 2.21799 17.908C2.40973 18.2843 2.71569 18.5903 3.09202 18.782C3.51984 19 4.0799 19 5.2 19H12"
+                                                stroke="#EB455F"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h2 className="mb-1 text-base font-medium text-gray-600">Total Loans</h2>
+                                        <div className="flex items-center gap-4">
+                                            <p className="text-2xl font-semibold text-gray-900">4,862</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-6/12 px-2 py-2">
+                            <div className="rounded-md  bg-[#617143]/10 p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-full  bg-[#617143]/20">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M6 11V15M18 9V13M17 4C19.4487 4 20.7731 4.37476 21.4321 4.66544C21.5199 4.70415 21.5638 4.72351 21.6904 4.84437C21.7663 4.91682 21.9049 5.12939 21.9405 5.22809C22 5.39274 22 5.48274 22 5.66274V16.4111C22 17.3199 22 17.7743 21.8637 18.0079C21.7251 18.2454 21.5914 18.3559 21.3319 18.4472C21.0769 18.5369 20.562 18.438 19.5322 18.2401C18.8114 18.1017 17.9565 18 17 18C14 18 11 20 7 20C4.55129 20 3.22687 19.6252 2.56788 19.3346C2.48012 19.2958 2.43624 19.2765 2.3096 19.1556C2.23369 19.0832 2.09512 18.8706 2.05947 18.7719C2 18.6073 2 18.5173 2 18.3373L2 7.58885C2 6.68009 2 6.2257 2.13628 5.99214C2.2749 5.75456 2.40859 5.64412 2.66806 5.55281C2.92314 5.46305 3.43803 5.56198 4.46783 5.75985C5.18862 5.89834 6.04348 6 7 6C10 6 13 4 17 4ZM14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5C13.3807 9.5 14.5 10.6193 14.5 12Z"
+                                                stroke="#617143"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h2 className="mb-1 text-base font-medium text-gray-600">Total Income</h2>
                                         <div className="flex items-center gap-4">
                                             <p className="text-2xl font-semibold text-gray-900">4,862</p>
                                         </div>
