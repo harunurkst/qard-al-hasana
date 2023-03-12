@@ -1,0 +1,2 @@
+DEBUG=<boolean>
+SECRET_KEY=<str>
