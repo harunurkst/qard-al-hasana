@@ -1,4 +1,7 @@
 import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
     Button,
     Input,
     InputGroup,
@@ -106,11 +109,20 @@ const BranchPage = () => {
     const [isOpenEditModal, setOpenEditModal] = useState(false);
 
     return (
-        <section className="container mx-auto py-8">
+        <section className="container mx-auto pt-4 pb-8">
+            <Breadcrumb>
+                <BreadcrumbItem>
+                    <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbItem isCurrentPage>
+                    <BreadcrumbLink href="/branch">Branch</BreadcrumbLink>
+                </BreadcrumbItem>
+            </Breadcrumb>
             <CreateBranchModal isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
             <EditBranchModal isOpen={isOpenEditModal} onClose={() => setOpenEditModal(false)} />
             <div
-                className="rounded-xl border border-gray-200 bg-white"
+                className="mt-5 rounded-xl border border-gray-200 bg-white"
                 style={{ boxShadow: '0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)' }}
             >
                 <div className="flex items-center justify-between border-b border-gray-200 py-5 px-5">
