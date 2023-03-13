@@ -11,6 +11,7 @@ import {
 import { ReactNode, useState } from 'react';
 import DashboardLayout from '../../src/Layouts/DashboardLayout';
 import EditBranchModal from '../../src/modules/branch/components/EditBranchModal';
+import MembersTable from '../../src/modules/branch/components/MembersTable';
 import TeamsTable from '../../src/modules/branch/components/TeamsTable';
 
 const BranchDetailsPage = () => {
@@ -202,7 +203,7 @@ const BranchDetailsPage = () => {
                         </Button>
                     </div>
                 </div>
-                {tab === 'TEAM' ? <TeamsTable /> : null}
+                {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
             </div>
         </section>
     );

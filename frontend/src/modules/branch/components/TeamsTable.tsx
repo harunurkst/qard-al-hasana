@@ -2,33 +2,27 @@ import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra
 import Router from 'next/router';
 import ReactPaginate from 'react-paginate';
 
-const branches = [
+const taams = [
     {
         id: '1',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa d asdf asdf as dfas df asdf asd f asdf ',
+        name: 'Beli',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
     },
     {
         id: '2',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa d asdf asdf as dfas df asdf asd f asdf ',
+        name: 'Rajani Gandha',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
     },
     {
         id: '3',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades',
+        name: 'Taam 1',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
@@ -36,9 +30,7 @@ const branches = [
     {
         id: '4',
         name: 'Chandra Branch',
-        address: 'Chandra,Chandpur',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
@@ -46,9 +38,7 @@ const branches = [
     {
         id: '5',
         name: 'Chandra Branch',
-        address: 'Chandra,Chandpur ',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
@@ -56,9 +46,7 @@ const branches = [
     {
         id: '6',
         name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa df ',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
@@ -66,9 +54,7 @@ const branches = [
     {
         id: '7',
         name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa df ',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
@@ -76,9 +62,7 @@ const branches = [
     {
         id: '8',
         name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa df ',
         totalMember: 300,
-        totalTeams: 20,
         cashInhand: 4000,
         totalIncome: 2434,
         totalLoan: 8999,
@@ -94,8 +78,6 @@ const TeamsTable = () => {
                         <Tr>
                             <Th>ID</Th>
                             <Th>Name</Th>
-                            <Th>Address</Th>
-                            <Th isNumeric>Team</Th>
                             <Th isNumeric>Member</Th>
                             <Th isNumeric>Loan</Th>
                             <Th isNumeric>Cash</Th>
@@ -104,7 +86,7 @@ const TeamsTable = () => {
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
-                        {branches.map((data) => {
+                        {taams.map((data) => {
                             return (
                                 <Tr
                                     onClick={() => Router.push(`/branch/${data.id}`)}
@@ -113,10 +95,6 @@ const TeamsTable = () => {
                                 >
                                     <Td>{data.id}</Td>
                                     <Td>{data.name}</Td>
-                                    <Td className="overflow-hidden truncate" maxWidth={200}>
-                                        {data.address}
-                                    </Td>
-                                    <Td isNumeric>{data.totalTeams}</Td>
                                     <Td isNumeric> {data.totalMember}</Td>
                                     <Td isNumeric> {data.totalLoan}</Td>
                                     <Td isNumeric> {data.cashInhand}</Td>
