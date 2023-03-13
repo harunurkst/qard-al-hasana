@@ -1,9 +1,14 @@
+from django.contrib.admin.sites import AlreadyRegistered
 from django.contrib import admin
-from .models import Organization, OrgMember, Branch, District, Division, Thana
+from django.apps import apps
 
-admin.site.register(Organization)
-admin.site.register(OrgMember)
-admin.site.register(Branch)
-admin.site.register(District)
-admin.site.register(Thana)
-admin.site.register(Division)
+
+# write custom admin views
+
+# register all the models from this app
+app_models = apps.get_app_config("organization").get_models()
+for model in app_models:
+    try:
+        admin.site.register(model)
+    except AlreadyRegistered:
+        pass
