@@ -1,3 +1,5 @@
+import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
+import randomNumber from '@/utils/randomNumber';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import Router from 'next/router';
 import { useMemo } from 'react';
@@ -9,10 +11,6 @@ function randomDateInMonth() {
     const year = date.getFullYear();
 
     return new Date(year, month, Math.floor(Math.random() * 31) + 1);
-}
-
-function getRandomNumber() {
-    return Math.floor(Math.random() * (1000 - 50 + 1)) + 50;
 }
 
 function getWeeklyWiseData(arg: { date: Date; amount: number }[]) {
@@ -39,15 +37,6 @@ function getWeeklyWiseData(arg: { date: Date; amount: number }[]) {
     return data;
 }
 
-function weekNumberOfMonth(date = new Date()) {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDayOfMonth = new Date(year, month, 1);
-    const daysOffset = firstDayOfMonth.getDay();
-    const weekNumber = Math.floor((date.getDate() + daysOffset) / 7);
-    return weekNumber;
-}
-
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
 
@@ -72,19 +61,19 @@ const members = [
         transactionsInCurrentMonth: getWeeklyWiseData([
             {
                 date: randomDateInMonth(),
-                amount: getRandomNumber(),
+                amount: randomNumber(50, 1000),
             },
             {
                 date: randomDateInMonth(),
-                amount: getRandomNumber(),
+                amount: randomNumber(50, 1000),
             },
             {
                 date: randomDateInMonth(),
-                amount: getRandomNumber(),
+                amount: randomNumber(50, 1000),
             },
             {
                 date: randomDateInMonth(),
-                amount: getRandomNumber(),
+                amount: randomNumber(50, 1000),
             },
         ]),
     },
@@ -93,16 +82,15 @@ const members = [
         name: 'Nure Alam',
         type: 'deposit',
         balance: 2323,
-
         loan: 0,
         transactionsInCurrentMonth: getWeeklyWiseData([
             {
                 date: randomDateInMonth(),
-                amount: getRandomNumber(),
+                amount: randomNumber(50, 1000),
             },
             {
                 date: randomDateInMonth(),
-                amount: getRandomNumber(),
+                amount: randomNumber(50, 100),
             },
         ]),
     },
@@ -115,7 +103,7 @@ const members = [
         transactionsInCurrentMonth: getWeeklyWiseData([
             {
                 date: randomDateInMonth(),
-                amount: getRandomNumber(),
+                amount: randomNumber(50, 100),
             },
         ]),
     },
@@ -132,7 +120,10 @@ const Members = () => {
                             <Th>Name</Th>
                             <Th>Account type</Th>
 
-                            <Th>Transection by weekly</Th>
+                            <Th>Week 1</Th>
+                            <Th>Week 2</Th>
+                            <Th>Week 3</Th>
+                            <Th>Week 4</Th>
                             <Th isNumeric>Deposit / Credit</Th>
                             <Th isNumeric></Th>
                         </Tr>
@@ -147,28 +138,12 @@ const Members = () => {
                                 >
                                     <Td>{data.id}</Td>
                                     <Td>{data.name}</Td>
-                                    <Td> {data.type}</Td>
-                                    <Td>
-                                        <div className="inline-flex divide-x divide-gray-300 rounded-md  border border-gray-200">
-                                            <WeeklyStatusTip
-                                                amount={data.transactionsInCurrentMonth.week_1}
-                                                weekNo={1}
-                                            />
-                                            <WeeklyStatusTip
-                                                amount={data.transactionsInCurrentMonth.week_2}
-                                                weekNo={2}
-                                            />
-                                            <WeeklyStatusTip
-                                                amount={data.transactionsInCurrentMonth.week_3}
-                                                weekNo={3}
-                                            />
-                                            <WeeklyStatusTip
-                                                amount={data.transactionsInCurrentMonth.week_4}
-                                                weekNo={4}
-                                            />
-                                        </div>
-                                    </Td>
-                                    <Td isNumeric> {0}</Td>
+                                    <Td className="capitalize"> {data.type}</Td>
+                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_1} weekNo={1} />
+                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_2} weekNo={2} />
+                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_3} weekNo={3} />
+                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_4} weekNo={4} />
+                                    <Td isNumeric> {data.balance}</Td>
                                     <Td isNumeric gap={2}>
                                         <span className="mr-5 font-semibold text-gray-500 hover:text-gray-600">
                                             Edit
@@ -230,30 +205,22 @@ const Members = () => {
     );
 };
 
-interface IWeeklyStatusTop {
-    weekNo: number;
-    amount: number;
-}
+const TrasectionTD = ({ amount, weekNo }: { amount: number; weekNo: number }) => {
+    const status = useMemo(() => getStatusBasedOnWeek(weekNo, getWeekNumberOfCurrentMonth(), amount), [weekNo, amount]);
 
-const WeeklyStatusTip: React.FC<IWeeklyStatusTop> = ({ amount, weekNo }) => {
-    const weekNoOfThisMonth = useMemo(() => weekNumberOfMonth(), []);
-    const status = useMemo(
-        () => getStatusBasedOnWeek(weekNo, weekNoOfThisMonth, amount),
-        [weekNo, weekNoOfThisMonth, amount]
-    );
     return (
-        <div className="relative flex">
-            <div className=" flex  items-center bg-gray-200 px-1 text-center text-xs font-medium">{weekNo}</div>
-            <p
-                className={`min-w-[70px] py-1.5 px-1.5 text-center text-xs font-semibold ${
-                    status === 'PENDING' ? ' text-warning-500' : ''
-                } ${status === 'MISS_DATE' ? ' text-red-500' : ''} 
-                ${status === 'DONE' ? 'text-brand-500' : ''}
-                `}
-            >
-                {status === 'DONE' ? amount : status === 'MISS_DATE' ? 'DUE' : 'PENDING'}
-            </p>
-        </div>
+        <Td
+            className={`${
+                status === 'MISS_DATE'
+                    ? 'font-semibold text-red-500'
+                    : status === 'DONE'
+                    ? 'text-brand-500'
+                    : 'text-warning-400'
+            }`}
+        >
+            {' '}
+            {status === 'DONE' ? amount : status === 'MISS_DATE' ? 'DUE' : 'PENDING'}{' '}
+        </Td>
     );
 };
 
