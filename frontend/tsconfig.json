@@ -21,7 +21,10 @@
         "module": "esnext",
         "resolveJsonModule": true,
         "jsx": "preserve",
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "paths": {
+            "@/*": ["./src/*"]
+        }
     },
     "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
     "exclude": ["node_modules"]
