@@ -1,6 +1,6 @@
+import Chart from '@/modules/dashboard/components/Chart';
 import { Button, ButtonGroup } from '@chakra-ui/react';
 
-import Chart from './Chart';
 
 const Analytics = () => {
     return (
