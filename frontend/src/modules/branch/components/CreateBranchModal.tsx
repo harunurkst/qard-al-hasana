@@ -1,3 +1,4 @@
+import CustomTextInput from '@/components/CustomInput';
 import {
     Button,
     Modal,
@@ -6,9 +7,8 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay,
+    ModalOverlay
 } from '@chakra-ui/react';
-import CustomTextInput from '../../../components/CustomInput';
 
 interface ICreateBranchModal {
     isOpen: boolean;

@@ -1,6 +1,6 @@
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import Analytics from '@/modules/dashboard/components/Analytics';
 import { ReactNode } from 'react';
-import DashboardLayout from '../src/Layouts/DashboardLayout';
-import Analytics from '../src/modules/dashboard/components/Analytics';
 
 const Dashboard = () => {
     return (
