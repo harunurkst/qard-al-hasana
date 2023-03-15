@@ -20,16 +20,7 @@ class Staff(models.Model):
         return self.name
 
 
-class Team(models.Model):
-    name = models.CharField(max_length=150)
-    branch = models.ForeignKey("organization.Branch", on_delete=models.CASCADE)
-    owner = models.ForeignKey(Staff, blank=True, null=True, on_delete=models.SET_NULL)
 
-    class Meta:
-        unique_together = ("name", "branch")
-
-    def __str__(self):
-        return self.name
 
 
 GENDER_CHOICES = (
