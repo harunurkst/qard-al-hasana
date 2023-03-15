@@ -1,14 +1,11 @@
 from django.contrib.auth.models import (
     AbstractBaseUser,
-    BaseUserManager,
     PermissionsMixin,
 )
 from django.db import models
 
 from organization.managers import UserManager
-
-
-# from django.contrib.auth.models import User
+from peoples.models import Staff
 
 
 class Division(models.Model):
@@ -37,6 +34,18 @@ class Thana(models.Model):
 class Organization(models.Model):
     name = models.CharField(max_length=255, db_index=True, unique=True)
     code = models.IntegerField(unique=True, db_index=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=150)
+    branch = models.ForeignKey("organization.Branch", on_delete=models.CASCADE)
+    owner = models.OneToOneField(Staff, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("name", "branch")
 
     def __str__(self):
         return self.name
