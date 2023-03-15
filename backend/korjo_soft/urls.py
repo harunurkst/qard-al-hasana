@@ -33,11 +33,11 @@ urlpatterns = [
     ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     # authentications
-    path("api/auth/login/", LoginView.as_view(), name="login"),
-    path("api/auth/registration/", RegisterView.as_view(), name="register"),
-    path("api/auth/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("api/v1/auth/login/", LoginView.as_view(), name="login"),
+    path("api/v1/auth/registration/", RegisterView.as_view(), name="register"),
+    path("api/v1/auth/refresh/", TokenRefreshView.as_view(), name="refresh"),
     # organization
-    path("api/organization/", include("organization.urls")),
+    path("api/v1/organization/", include("organization.urls")),
 ]
 
 if settings.DEBUG:
