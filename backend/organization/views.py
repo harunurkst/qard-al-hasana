@@ -1,8 +1,8 @@
 from django.contrib.auth.models import update_last_login
 
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -11,7 +11,9 @@ from organization.serializers import (
     UserSerializer,
     UserSerilizerWithToken,
     MyRefreshSerializer,
+    TeamSerializer,
 )
+from organization.models import Team
 
 
 class LoginView(TokenObtainPairView):
@@ -32,3 +34,10 @@ class RegisterView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response(UserSerilizerWithToken(user, many=False).data)
+
+
+class TeamCreateListApiView(ListCreateAPIView):
+    queryset = Team.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamSerializer
+    filterset_fields = ["owner"]

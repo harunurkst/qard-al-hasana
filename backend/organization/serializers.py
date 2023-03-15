@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from organization.models import User
+from organization.models import User, Team
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -79,3 +79,9 @@ class MyRefreshSerializer(serializers.Serializer):
                 raise serializers.ValidationError("Invalid token")
         else:
             raise serializers.ValidationError("Refresh token is required")
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = "__all__"

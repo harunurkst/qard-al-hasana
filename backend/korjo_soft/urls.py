@@ -36,6 +36,8 @@ urlpatterns = [
     path("auth/login/", LoginView.as_view(), name="login"),
     path("auth/registration/", RegisterView.as_view(), name="register"),
     path("auth/refresh/", TokenRefreshView.as_view(), name="refresh"),
+    # organization
+    path("organization/", include("organization.urls")),
 ]
 
 if settings.DEBUG:
