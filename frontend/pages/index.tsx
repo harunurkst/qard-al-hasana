@@ -1,7 +1,7 @@
+import BaseLayout from '@/Layouts/BaseLayout';
 import { Button } from '@chakra-ui/react';
 import Head from 'next/head';
 import { ReactNode } from 'react';
-import BaseLayout from '../src/Layouts/BaseLayout';
 
 export default function Home() {
     return (

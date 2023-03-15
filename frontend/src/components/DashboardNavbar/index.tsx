@@ -1,7 +1,7 @@
+import isRouterPathnameMatched from '@/utils/isRouterPathnameMatched';
 import { Avatar, Button } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import isRouterPathnameMatched from '../../utils/isRouterPathnameMatched';
 
 const navItems = [
     {

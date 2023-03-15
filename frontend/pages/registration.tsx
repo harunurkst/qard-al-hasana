@@ -1,8 +1,8 @@
+import CustomTextInput from '@/components/CustomInput';
+import BaseLayout from '@/Layouts/BaseLayout';
 import { Button } from '@chakra-ui/react';
 import Link from 'next/link';
 import { ReactNode } from 'react';
-import CustomTextInput from '../src/components/CustomInput';
-import BaseLayout from '../src/Layouts/BaseLayout';
 
 const Registration = () => {
     return (
