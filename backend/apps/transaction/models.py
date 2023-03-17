@@ -2,10 +2,12 @@ from django.db import models
 from django.db.models import Sum
 import datetime
 
+
 class SavingsManager(models.Manager):
     def member_total_savings(self, member):
         queryset = self.filter(member=member).aggregate(total=Sum('amount'))
         return queryset['total']
+
 
 class Savings(models.Model):
     amount = models.IntegerField()
@@ -22,4 +24,3 @@ class Savings(models.Model):
 
     def __str__(self):
         return str(self.amount)
-
