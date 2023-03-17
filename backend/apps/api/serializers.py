@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from peoples.models import Member
-from transaction.models import Savings
+from apps.peoples import Member
+from apps.transaction import Savings
 
 
 class MemberSerializer(serializers.ModelSerializer):

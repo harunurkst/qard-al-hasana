@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from peoples.models import Member
-from transaction.models import Savings
+from apps.peoples import Member
+from apps.transaction import Savings
 from api.serializers import MemberSerializer, SavingPostingSerializer
 
 
