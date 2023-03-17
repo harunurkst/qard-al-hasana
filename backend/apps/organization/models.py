@@ -51,18 +51,11 @@ class Branch(models.Model):
     address = models.CharField(max_length=255, blank=True, null=True)
     bank_account = models.TextField(blank=True, null=True)
 
-
     class Meta:
         unique_together = [['organization', 'code'], ['organization', 'name']]
 
     def __str__(self):
         return self.name
-
-
-class Team(models.Model):
-    name = models.CharField(max_length=255)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='teams')
 
 
 class BranchMember(models.Model):
