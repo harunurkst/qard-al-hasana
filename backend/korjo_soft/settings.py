@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,27 +23,41 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-vyxpx)p-#=#vys$fl3%=e&+8^8uysdk-_ilgwqe=fk12p_jf6g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+env = environ.Env(DEBUG=(bool, False), ALLOWED_HOSTS=list)
 
-ALLOWED_HOSTS = []
+environ.Env.read_env(BASE_DIR / ".env")
+
+SECRET_KEY = env("SECRET_KEY")
+
+DEBUG = env("DEBUG")
+
+ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'organization',
-    'peoples',
-    'accounts',
-    'transaction',
-    'api',
 ]
+
+MY_APPS = [
+    'apps.organization',
+    'apps.peoples',
+    'apps.accounts',
+    'apps.transaction',
+    'apps.api',
+]
+
+THIRD_PARTY = [
+    'rest_framework',
+]
+
+INSTALLED_APPS = DJANGO_APPS + MY_APPS + THIRD_PARTY
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
