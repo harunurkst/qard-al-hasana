@@ -1,3 +1,4 @@
+import { LoanIcon, LoanPlusIcon, PersonPlusIcon } from '@/icons';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import Analytics from '@/modules/dashboard/components/Analytics';
 import { ReactNode } from 'react';
@@ -13,16 +14,7 @@ const Dashboard = () => {
                         style={{ boxShadow: '0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)' }}
                         className="flex w-4/12 cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-5 "
                     >
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="40" height="40" rx="20" className="fill-brand-50" />
-                            <path
-                                className="stroke-brand-600"
-                                d="M20 22.9167H16.25C15.087 22.9167 14.5056 22.9167 14.0324 23.0602C12.9671 23.3834 12.1334 24.217 11.8102 25.2824C11.6667 25.7555 11.6667 26.337 11.6667 27.5M25.8333 27.5V22.5M23.3333 25H28.3333M22.0833 16.25C22.0833 18.3211 20.4044 20 18.3333 20C16.2623 20 14.5833 18.3211 14.5833 16.25C14.5833 14.1789 16.2623 12.5 18.3333 12.5C20.4044 12.5 22.0833 14.1789 22.0833 16.25Z"
-                                strokeWidth="1.66667"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        <PersonPlusIcon />
                         <div>
                             <h5 className="mb-0.5 text-base font-semibold text-gray-700">Create new member</h5>
                             <p className="text-sm font-normal text-gray-600">Add yourself or import from CSV</p>
@@ -33,7 +25,7 @@ const Dashboard = () => {
                         className="flex w-4/12 cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-5 "
                     >
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50">
-                            <svg
+                            {/* <svg
                                 width="20"
                                 height="20"
                                 viewBox="0 0 24 24"
@@ -47,7 +39,8 @@ const Dashboard = () => {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 />
-                            </svg>
+                            </svg> */}
+                            <LoanIcon height={20} width={20} className='stroke-brand-600' />
                         </div>
 
                         <div>
@@ -60,21 +53,7 @@ const Dashboard = () => {
                         className="flex w-4/12 cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-5 "
                     >
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50">
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M19 21V15M16 18H22M22 10H2M22 12V8.2C22 7.0799 22 6.51984 21.782 6.09202C21.5903 5.7157 21.2843 5.40974 20.908 5.21799C20.4802 5 19.9201 5 18.8 5H5.2C4.0799 5 3.51984 5 3.09202 5.21799C2.7157 5.40973 2.40973 5.71569 2.21799 6.09202C2 6.51984 2 7.0799 2 8.2V15.8C2 16.9201 2 17.4802 2.21799 17.908C2.40973 18.2843 2.71569 18.5903 3.09202 18.782C3.51984 19 4.0799 19 5.2 19H12"
-                                    className="stroke-brand-600"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
+                            <LoanPlusIcon />
                         </div>
 
                         <div>
