@@ -1,5 +1,4 @@
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import Router from 'next/router';
 import ReactPaginate from 'react-paginate';
 
 const taams = [
@@ -88,11 +87,7 @@ const TeamsTable = () => {
                     <Tbody className="text-gray-600">
                         {taams.map((data) => {
                             return (
-                                <Tr
-                                    onClick={() => Router.push(`/branch/${data.id}`)}
-                                    key={data.id}
-                                    className="cursor-pointer hover:bg-gray-50"
-                                >
+                                <Tr key={data.id} className=" hover:bg-gray-50">
                                     <Td>{data.id}</Td>
                                     <Td>{data.name}</Td>
                                     <Td isNumeric> {data.totalMember}</Td>

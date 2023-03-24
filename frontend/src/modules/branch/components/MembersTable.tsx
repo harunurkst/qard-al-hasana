@@ -1,7 +1,20 @@
+import { VerticalDotIcon } from '@/icons';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import randomNumber from '@/utils/randomNumber';
-import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import Router from 'next/router';
+import {
+    Button,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Th,
+    Thead,
+    Tr,
+} from '@chakra-ui/react';
 import { useMemo } from 'react';
 import ReactPaginate from 'react-paginate';
 
@@ -131,24 +144,45 @@ const Members = () => {
                     <Tbody className="text-gray-600">
                         {members.map((data) => {
                             return (
-                                <Tr
-                                    onClick={() => Router.push(`/branch/${data.id}`)}
-                                    key={data.id}
-                                    className="cursor-pointer hover:bg-gray-50"
-                                >
+                                <Tr key={data.id} className="hover:bg-gray-50">
                                     <Td>{data.id}</Td>
                                     <Td>{data.name}</Td>
-                                    <Td className="capitalize"> {data.type}</Td>
+                                    <Td className="capitalize">
+                                        <div>
+                                            <span
+                                                className={`rounded-2xl  px-2.5 py-1 text-xs font-medium ${
+                                                    data.type === 'deposit'
+                                                        ? ' bg-brand-100 text-brand-600 '
+                                                        : 'bg-error-200 text-error-600'
+                                                }`}
+                                            >
+                                                {data.type}
+                                            </span>
+                                        </div>
+                                    </Td>
                                     <TrasectionTD amount={data.transactionsInCurrentMonth.week_1} weekNo={1} />
                                     <TrasectionTD amount={data.transactionsInCurrentMonth.week_2} weekNo={2} />
                                     <TrasectionTD amount={data.transactionsInCurrentMonth.week_3} weekNo={3} />
                                     <TrasectionTD amount={data.transactionsInCurrentMonth.week_4} weekNo={4} />
                                     <Td isNumeric> {data.balance}</Td>
-                                    <Td isNumeric gap={2}>
-                                        <span className="mr-5 font-semibold text-gray-500 hover:text-gray-600">
-                                            Edit
-                                        </span>
-                                        <span className="font-semibold text-red-500 hover:text-red-600">Delete</span>
+                                    <Td isNumeric>
+                                        <Menu>
+                                            <MenuButton
+                                                className=" inline-flex h-8 w-8  items-center justify-center rounded-full bg-white text-gray-900 hover:border hover:border-gray-200 hover:text-brand-600"
+                                                as={'button'}
+                                            >
+                                                <div className="flex h-full w-full items-center justify-center bg-transparent">
+                                                    <VerticalDotIcon height={16} width={16} stroke="currentColor" />
+                                                </div>
+                                            </MenuButton>
+                                            <MenuList>
+                                                <MenuItem>Edit</MenuItem>
+                                                <MenuItem>View</MenuItem>
+                                                <MenuItem>Deposit</MenuItem>
+                                                <MenuItem>Withdraw</MenuItem>
+                                                <MenuItem>Loan</MenuItem>
+                                            </MenuList>
+                                        </Menu>
                                     </Td>
                                 </Tr>
                             );
