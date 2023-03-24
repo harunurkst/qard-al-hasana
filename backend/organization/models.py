@@ -25,7 +25,7 @@ class District(models.Model):
 
 class Thana(models.Model):
     name = models.CharField(max_length=50)
-    division = models.ForeignKey(District, on_delete=models.CASCADE)
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
