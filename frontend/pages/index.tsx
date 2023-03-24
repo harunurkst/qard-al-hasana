@@ -13,7 +13,7 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="container mx-auto py-8 w-5/6">
+            <main className="container mx-auto w-5/6 py-8">
                 <section className="mb-10 bg-brand-50 py-20">
                     <div className="container mx-auto flex justify-center px-10 text-center md:flex-row">
                         <div className="md:max-w-5xl">

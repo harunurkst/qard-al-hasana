@@ -40,7 +40,7 @@ const Dashboard = () => {
                                     strokeLinejoin="round"
                                 />
                             </svg> */}
-                            <LoanIcon height={20} width={20} className='stroke-brand-600' />
+                            <LoanIcon height={20} width={20} className="stroke-brand-600" />
                         </div>
 
                         <div>
