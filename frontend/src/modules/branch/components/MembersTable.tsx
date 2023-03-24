@@ -125,7 +125,7 @@ const Members = () => {
                             <Th>Week 3</Th>
                             <Th>Week 4</Th>
                             <Th isNumeric>Deposit / Credit</Th>
-                            <Th isNumeric></Th>
+                            <Th isNumeric>Action</Th>
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">

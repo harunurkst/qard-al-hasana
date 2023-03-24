@@ -1,11 +1,17 @@
 import {
     BranchIcon,
-    CalenderIcon, CashHandIcon, DepositIcon, ExpenseIcon, FilterIcon, IncomeIcon, LoanIcon, PersonsIcon,
-    WithdrawIcon
+    CalenderIcon,
+    CashHandIcon,
+    DepositIcon,
+    ExpenseIcon,
+    FilterIcon,
+    IncomeIcon,
+    LoanIcon,
+    PersonsIcon,
+    WithdrawIcon,
 } from '@/icons';
 import Chart from '@/modules/dashboard/components/Chart';
 import { Button, ButtonGroup } from '@chakra-ui/react';
-
 
 const Analytics = () => {
     return (
@@ -20,23 +26,10 @@ const Analytics = () => {
                     <Button>24 hours</Button>
                 </ButtonGroup>
                 <div className="flex gap-3">
-                    <Button
-                        variant={'outline'}
-                        className=""
-                        size={'md'}
-                        leftIcon={
-                            <CalenderIcon />
-                        }
-                    >
+                    <Button variant={'outline'} className="" size={'md'} leftIcon={<CalenderIcon />}>
                         <small className="text-sm font-semibold text-gray-500"> Select dates</small>
                     </Button>
-                    <Button
-                        variant={'outline'}
-                        size="md"
-                        leftIcon={
-                            <FilterIcon />
-                        }
-                    >
+                    <Button variant={'outline'} size="md" leftIcon={<FilterIcon />}>
                         Filters
                     </Button>
                 </div>
@@ -142,7 +135,7 @@ const Analytics = () => {
                             <div className="rounded-md  bg-[#EB455F]/10 p-4">
                                 <div className="flex items-center gap-3">
                                     <div className="flex h-11 w-11 items-center justify-center rounded-full  bg-[#EB455F]/20">
-                                        <LoanIcon width={24} height={24} stroke='#EB455F' />
+                                        <LoanIcon width={24} height={24} stroke="#EB455F" />
                                     </div>
                                     <div>
                                         <h2 className="mb-1 text-base font-medium text-gray-600">Total Loans</h2>

@@ -1,9 +1,6 @@
-
-
-import { FC, SVGAttributes } from "react";
+import { FC, SVGAttributes } from 'react';
 
 export type Icon = SVGAttributes<HTMLOrSVGElement>;
-
 
 const PersonPlusIcon: FC<Icon> = () => {
     return (
@@ -17,7 +14,7 @@ const PersonPlusIcon: FC<Icon> = () => {
                 strokeLinejoin="round"
             />
         </svg>
-    )
-}
+    );
+};
 
-export default PersonPlusIcon
+export default PersonPlusIcon;
