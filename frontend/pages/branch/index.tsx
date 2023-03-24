@@ -108,6 +108,24 @@ const BranchPage = () => {
     const [isOpenCreateModal, setOpenCreateModal] = useState(false);
     const [isOpenEditModal, setOpenEditModal] = useState(false);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const contentsPerPage = 5;
+
+    const handlePageClick = (data: any) => {
+        setCurrentPage(data.selected + 1);
+    };
+
+    // Get current contents
+    const indexOfLastContent = currentPage * contentsPerPage;
+    const indexOfFirstContent = indexOfLastContent - contentsPerPage;
+    const currentContents = branches.slice(indexOfFirstContent, indexOfLastContent);
+
+    // Number of Pages
+    let pageNumbers = 0;
+    for (let i = 1; i <= Math.ceil(branches.length / contentsPerPage); i++) {
+        pageNumbers++;
+    }
+
     return (
         <section className="container mx-auto pt-4 pb-8">
             <Breadcrumb>
@@ -130,7 +148,7 @@ const BranchPage = () => {
                         <div className="flex content-start items-center gap-2">
                             <h3 className="text-lg font-semibold">Brances</h3>
                             <div className="self-center rounded-3xl bg-brand-100/80 py-0.5 px-2.5 text-xs font-semibold text-brand-600">
-                                20
+                                {branches.length}
                             </div>
                         </div>
                         <p className="text-sm text-gray-500">
@@ -160,7 +178,7 @@ const BranchPage = () => {
                             }
                             colorScheme={'brand'}
                         >
-                            Add New
+                            Add Branch
                         </Button>
                     </div>
                 </div>
@@ -215,100 +233,116 @@ const BranchPage = () => {
                             </Tr>
                         </Thead>
                         <Tbody className="text-gray-600">
-                            {branches.map((data) => {
-                                return (
-                                    <Tr
-                                        onClick={() => Router.push(`/branch/${data.id}`)}
-                                        key={data.id}
-                                        className="cursor-pointer hover:bg-gray-50"
-                                    >
-                                        <Td>{data.id}</Td>
-                                        <Td>{data.name}</Td>
-                                        <Td className="overflow-hidden truncate" maxWidth={200}>
-                                            {data.address}
-                                        </Td>
-                                        <Td isNumeric>{data.totalTeams}</Td>
-                                        <Td isNumeric> {data.totalMember}</Td>
-                                        <Td isNumeric> {data.totalLoan}</Td>
-                                        <Td isNumeric> {data.cashInhand}</Td>
-                                        <Td isNumeric> {data.totalIncome}</Td>
-                                        <Td isNumeric gap={2}>
-                                            <span
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    setOpenEditModal(true);
-                                                }}
-                                                className="mr-5 font-semibold text-gray-500 hover:text-gray-600"
-                                            >
-                                                Edit
-                                            </span>
-                                            <span className="font-semibold text-red-500 hover:text-red-600">
-                                                Delete
-                                            </span>
-                                        </Td>
-                                    </Tr>
-                                );
-                            })}
+                            {currentContents.length !== 0 ? (
+                                currentContents.map((data) => {
+                                    return (
+                                        <Tr
+                                            onClick={() => Router.push(`/branch/${data.id}`)}
+                                            key={data.id}
+                                            className="cursor-pointer hover:bg-gray-50"
+                                        >
+                                            <Td>{data.id}</Td>
+                                            <Td>{data.name}</Td>
+                                            <Td className="overflow-hidden truncate" maxWidth={200}>
+                                                {data.address}
+                                            </Td>
+                                            <Td isNumeric>{data.totalTeams}</Td>
+                                            <Td isNumeric> {data.totalMember}</Td>
+                                            <Td isNumeric> {data.totalLoan}</Td>
+                                            <Td isNumeric> {data.cashInhand}</Td>
+                                            <Td isNumeric> {data.totalIncome}</Td>
+                                            <Td isNumeric gap={2}>
+                                                <span
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        setOpenEditModal(true);
+                                                    }}
+                                                    className="mr-5 font-semibold text-gray-500 hover:text-gray-600"
+                                                >
+                                                    Edit
+                                                </span>
+                                                <span className="font-semibold text-red-500 hover:text-red-600">
+                                                    Delete
+                                                </span>
+                                            </Td>
+                                        </Tr>
+                                    );
+                                })
+                            ) : (
+                                <Tr className="flex w-[700%] items-center justify-center border-none">
+                                    <Td>
+                                        <p className="text-lg font-bold italic">No data</p>
+                                    </Td>
+                                </Tr>
+                            )}
                         </Tbody>
                     </Table>
                 </TableContainer>
-                <div className="flex justify-between px-5 py-4  ">
-                    <Button
-                        leftIcon={
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M15.8332 10.0001H4.1665M4.1665 10.0001L9.99984 15.8334M4.1665 10.0001L9.99984 4.16675"
-                                    stroke="#344054"
-                                    strokeWidth="1.66667"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        }
-                        variant={'outline'}
-                    >
-                        Previous
-                    </Button>
-                    <ReactPaginate
-                        previousClassName="hidden"
-                        nextClassName="hidden"
-                        pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
-                        activeClassName="bg-gray-200 rounded-lg"
-                        containerClassName="flex items-center"
-                        breakLabel="..."
-                        breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
-                        pageRangeDisplayed={5}
-                        pageCount={13}
-                    />
-                    <Button
-                        rightIcon={
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M4.1665 10.0001H15.8332M15.8332 10.0001L9.99984 4.16675M15.8332 10.0001L9.99984 15.8334"
-                                    stroke="#344054"
-                                    strokeWidth="1.66667"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        }
-                        variant={'outline'}
-                    >
-                        Next
-                    </Button>
-                </div>
+                {currentContents.length !== 0 ? (
+                    <div className="flex justify-center px-5 py-4 w-full">
+                        <ReactPaginate
+                            previousLabel={
+                                <Button
+                                    leftIcon={
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M15.8332 10.0001H4.1665M4.1665 10.0001L9.99984 15.8334M4.1665 10.0001L9.99984 4.16675"
+                                                stroke="#344054"
+                                                strokeWidth="1.66667"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    }
+                                    variant={'outline'}
+                                >
+                                    Previous
+                                </Button>
+                            }
+                            nextLabel={
+                                <Button
+                                    rightIcon={
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 20 20"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4.1665 10.0001H15.8332M15.8332 10.0001L9.99984 4.16675M15.8332 10.0001L9.99984 15.8334"
+                                                stroke="#344054"
+                                                strokeWidth="1.66667"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    }
+                                    variant={'outline'}
+                                >
+                                    Next
+                                </Button>
+                            }
+                            breakLabel="..."
+                            pageCount={pageNumbers}
+                            marginPagesDisplayed={3}
+                            pageRangeDisplayed={5}
+                            onPageChange={handlePageClick}
+                            pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
+                            activeClassName="bg-gray-200 rounded-lg"
+                            containerClassName="flex items-center"
+                            breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
+                        />
+                    </div>
+                ) : (
+                    <div></div>
+                )}
             </div>
         </section>
     );
