@@ -1,15 +1,11 @@
 import BaseLayout from '@/Layouts/BaseLayout';
+import { LoginFormData } from '@/types/loginFormTypes';
 import { Button, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/dist/client/router';
 import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
-
-type LoginFormData = {
-    email: string;
-    password: string;
-};
 
 const Login = () => {
     const router = useRouter();
