@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
+from django.core.exceptions import ValidationError
 
-# from organization.models import User
 
 STAFF_ROLES = (("cl", "Collector"), ("bw", "Branch Owner"))
 
@@ -45,7 +45,10 @@ class Member(models.Model):
     class Meta:
         unique_together = ("team", "serial_number")
 
-    # TODO: validate serial_number not greater than 25
+    def clean(self):
+        super().clean()
+        if self.serial_number > 25:
+            raise ValidationError("Serial number must not be greater than 25.")
 
     def __str__(self):
         return self.name
