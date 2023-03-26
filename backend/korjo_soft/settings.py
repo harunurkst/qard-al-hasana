@@ -1,3 +1,4 @@
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 import environ
@@ -82,6 +83,11 @@ WSGI_APPLICATION = "korjo_soft.wsgi.application"
 # Database
 
 DATABASES = {
+    # "default": dj_database_url.config(default="sqlite:////backend/db/db.sqlite3"),
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": "/data/db/db.sqlite3",
+    # }
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",

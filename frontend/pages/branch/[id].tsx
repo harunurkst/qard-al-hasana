@@ -7,105 +7,16 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
-    Table,
-    TableContainer,
-    Tbody,
-    Td,
-    Th,
-    Thead,
-    Tr,
 } from '@chakra-ui/react';
-import Router from 'next/router';
 import { ReactNode, useState } from 'react';
-import ReactPaginate from 'react-paginate';
 import DashboardLayout from '../../src/Layouts/DashboardLayout';
 import EditBranchModal from '../../src/modules/branch/components/EditBranchModal';
-
-const branches = [
-    {
-        id: '1',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa d asdf asdf as dfas df asdf asd f asdf ',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '2',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa d asdf asdf as dfas df asdf asd f asdf ',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '3',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '4',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '5',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur ',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '6',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa df ',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '7',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa df ',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '8',
-        name: 'Chandra Branch',
-        address: 'Chandra,Chandpur,Bangalades asdfa df ',
-        totalMember: 300,
-        totalTeams: 20,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-];
+import MembersTable from '../../src/modules/branch/components/MembersTable';
+import TeamsTable from '../../src/modules/branch/components/TeamsTable';
 
 const BranchDetailsPage = () => {
     const [isOpenEditModal, setOpenEditModal] = useState(false);
+    const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
     return (
         <section className="container mx-auto pt-4 pb-8">
@@ -224,8 +135,18 @@ const BranchDetailsPage = () => {
                 <div className="flex justify-between border-b border-gray-200 py-4 px-5">
                     <div>
                         <ButtonGroup isAttached variant={'outline'}>
-                            <Button backgroundColor="gray.100">Team - (100)</Button>
-                            <Button>Members - (2333) </Button>
+                            <Button
+                                onClick={() => setTab('TEAM')}
+                                backgroundColor={tab === 'TEAM' ? 'gray.100' : 'white'}
+                            >
+                                Team - (100)
+                            </Button>
+                            <Button
+                                onClick={() => setTab('MEMBER')}
+                                backgroundColor={tab === 'MEMBER' ? 'gray.100' : 'white'}
+                            >
+                                Members - (2333){' '}
+                            </Button>
                         </ButtonGroup>
                     </div>
                     <div className="flex gap-3">
@@ -282,116 +203,7 @@ const BranchDetailsPage = () => {
                         </Button>
                     </div>
                 </div>
-                <TableContainer>
-                    <Table fontSize={14} variant="simple" colorScheme={'gray'}>
-                        <Thead background={'#f2f4f5'}>
-                            <Tr>
-                                <Th>ID</Th>
-                                <Th>Name</Th>
-                                <Th>Address</Th>
-                                <Th isNumeric>Team</Th>
-                                <Th isNumeric>Member</Th>
-                                <Th isNumeric>Loan</Th>
-                                <Th isNumeric>Cash</Th>
-                                <Th isNumeric>Income</Th>
-                                <Th isNumeric></Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody className="text-gray-600">
-                            {branches.map((data) => {
-                                return (
-                                    <Tr
-                                        onClick={() => Router.push(`/branch/${data.id}`)}
-                                        key={data.id}
-                                        className="cursor-pointer hover:bg-gray-50"
-                                    >
-                                        <Td>{data.id}</Td>
-                                        <Td>{data.name}</Td>
-                                        <Td className="overflow-hidden truncate" maxWidth={200}>
-                                            {data.address}
-                                        </Td>
-                                        <Td isNumeric>{data.totalTeams}</Td>
-                                        <Td isNumeric> {data.totalMember}</Td>
-                                        <Td isNumeric> {data.totalLoan}</Td>
-                                        <Td isNumeric> {data.cashInhand}</Td>
-                                        <Td isNumeric> {data.totalIncome}</Td>
-                                        <Td isNumeric gap={2}>
-                                            <span
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    setOpenEditModal(true);
-                                                }}
-                                                className="mr-5 font-semibold text-gray-500 hover:text-gray-600"
-                                            >
-                                                Edit
-                                            </span>
-                                            <span className="font-semibold text-red-500 hover:text-red-600">
-                                                Delete
-                                            </span>
-                                        </Td>
-                                    </Tr>
-                                );
-                            })}
-                        </Tbody>
-                    </Table>
-                </TableContainer>
-                <div className="flex justify-between px-5 py-4  ">
-                    <Button
-                        leftIcon={
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M15.8332 10.0001H4.1665M4.1665 10.0001L9.99984 15.8334M4.1665 10.0001L9.99984 4.16675"
-                                    stroke="#344054"
-                                    strokeWidth="1.66667"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        }
-                        variant={'outline'}
-                    >
-                        Previous
-                    </Button>
-                    <ReactPaginate
-                        previousClassName="hidden"
-                        nextClassName="hidden"
-                        pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
-                        activeClassName="bg-gray-200 rounded-lg"
-                        containerClassName="flex items-center"
-                        breakLabel="..."
-                        breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
-                        pageRangeDisplayed={5}
-                        pageCount={13}
-                    />
-                    <Button
-                        rightIcon={
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M4.1665 10.0001H15.8332M15.8332 10.0001L9.99984 4.16675M15.8332 10.0001L9.99984 15.8334"
-                                    stroke="#344054"
-                                    strokeWidth="1.66667"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        }
-                        variant={'outline'}
-                    >
-                        Next
-                    </Button>
-                </div>
+                {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
             </div>
         </section>
     );
