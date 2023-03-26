@@ -182,27 +182,6 @@ const Registration = () => {
                             Submit
                         </Button>
                     </form>
-                    {/* <CustomTextInput placeholder="Organization Name" label="Organization Name" /> */}
-                    {/* <CustomTextInput className="mt-2.5" label="Adress" placeholder={'Address'} /> */}
-                    {/* <div className="mt-2.5 flex gap-6">
-                        <CustomTextInput placeholder="Email" className="w-full" label="Email" type={'email'} />
-                        <CustomTextInput className="w-full" placeholder="Phone Number" label="Phone Number" />
-                    </div> */}
-
-                    {/* <div className="mt-2.5 flex gap-6">
-                        <CustomTextInput placeholder="Password" className="w-full" label="Password" type={'password'} />
-                        <CustomTextInput
-                            placeholder="Confirm Password"
-                            className="w-full"
-                            label="Confirm Password"
-                            type={'password'}
-                        />
-                    </div> */}
-                    {/* <Link href={'/dashboard'}>
-                        <Button px={'10'} className="mt-8" colorScheme={'brand'}>
-                            Submit
-                        </Button>
-                    </Link> */}
                 </div>
             </div>
         </section>
