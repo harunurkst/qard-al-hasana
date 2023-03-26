@@ -147,7 +147,7 @@ const BranchPage = () => {
                     <div>
                         <div className="flex content-start items-center gap-2">
                             <h3 className="text-lg font-semibold">Brances</h3>
-                            <div className="self-center rounded-3xl bg-brand-100/80 py-0.5 px-2.5 text-xs font-semibold text-brand-600">
+                            <div className="self-center rounded-3xl bg-brand-100/80 py-0.5 px-2.5 text-base font-semibold text-brand-600">
                                 {branches.length}
                             </div>
                         </div>
@@ -279,7 +279,7 @@ const BranchPage = () => {
                     </Table>
                 </TableContainer>
                 {currentContents.length !== 0 ? (
-                    <div className="flex justify-center px-5 py-4 w-full">
+                    <div className="flex w-full justify-center px-5 py-4">
                         <ReactPaginate
                             previousLabel={
                                 <Button
