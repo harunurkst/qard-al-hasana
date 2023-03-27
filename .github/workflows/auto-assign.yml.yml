@@ -1,0 +1,30 @@
+name: Auto-assign issue to commenter
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get comment body
+        id: comment_body
+        run: echo "::set-output name=body::${{ github.event.comment.body }}"
+
+      - name: Check if comment contains "!assign me"
+        id: check_comment
+        run: |
+          if [[ "${{ steps.comment_body.outputs.body }}" == *"!assign me"* ]]; then
+            echo "::set-output name=should_assign::true"
+          else
+            echo "::set-output name=should_assign::false"
+          fi
+
+      - name: Assign issue to commenter
+        if: steps.check_comment.outputs.should_assign == 'true'
+        run: |
+          gh auth login --with-token <<<"${{ secrets.GITHUB_TOKEN }}"
+          gh api "/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/assignees" \
+            -H "Accept: application/vnd.github.v3+json" \
+            --input <(echo "{ \"assignees\": [\"${{ github.event.comment.user.login }}\"] }")
