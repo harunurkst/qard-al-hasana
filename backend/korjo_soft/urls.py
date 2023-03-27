@@ -38,6 +38,7 @@ urlpatterns = [
     path("api/v1/auth/refresh/", TokenRefreshView.as_view(), name="refresh"),
     # organization
     path("api/v1/organization/", include("organization.urls")),
+
 ]
 
 if settings.DEBUG:
