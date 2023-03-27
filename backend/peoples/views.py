@@ -7,6 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from peoples.models import Member
 from peoples.serializers import MemberCreateSerializer, MemberDetailSerializer
+from peoples.permissions import IsSameBranch
 
 
 class MemberListCreateView(ListCreateAPIView):
@@ -28,6 +29,8 @@ class MemberListCreateView(ListCreateAPIView):
 
 
 class MemberDetailsView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = Member.objects.all()
+    permission_classes = [IsAuthenticated, IsSameBranch]
     serializer_class = MemberDetailSerializer
+
+    def get_queryset(self):
+        return Member.objects.filter(branch=self.request.user.staff.branch)
