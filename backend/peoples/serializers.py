@@ -31,7 +31,6 @@ class MemberCreateSerializer(serializers.ModelSerializer):
             "gender",
             "serial_number",
             "team",
-            "branch",
         ]
 
     def validate_serial_number(self, value):

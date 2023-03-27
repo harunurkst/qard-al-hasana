@@ -11,10 +11,15 @@ from peoples.serializers import MemberCreateSerializer, MemberDetailSerializer
 
 class MemberListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = Member.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["team", "branch", "is_active", "gender"]
     search_fields = ["=nid_number", "=mobile_number"]
+
+    def get_queryset(self):
+        return Member.objects.filter(branch=self.request.user.staff.branch)
+
+    def perform_create(self, serializer):
+        serializer.save(branch=self.request.user.staff.branch)
 
     def get_serializer_class(self):
         if self.request.method == "POST":
