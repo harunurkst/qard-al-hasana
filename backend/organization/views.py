@@ -40,4 +40,4 @@ class TeamCreateListApiView(ListCreateAPIView):
     queryset = Team.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
-    filterset_fields = ["owner"]
+    filterset_fields = ["owner", "branch"]
