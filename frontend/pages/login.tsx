@@ -1,7 +1,7 @@
 import CustomTextInput from '@/components/CustomInput';
 import BaseLayout from '@/Layouts/BaseLayout';
 import { loginSchema, LoginType } from '@/schema/AuthSchema';
-import { Button, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/dist/client/router';
 import { ReactNode } from 'react';
@@ -36,42 +36,18 @@ const Login = () => {
                 </p>
                 <div className="w-full max-w-3xl rounded-md bg-white  p-7 shadow-md">
                     <form onSubmit={handleSubmit(submitLoginForm)}>
-                        <CustomTextInput label="Email" {...register('email')} />
-                        <FormControl isInvalid={Boolean(errors.email)}>
-                            <FormLabel htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700">
-                                Email
-                            </FormLabel>
-
-                            <Input
-                                id="email"
-                                placeholder="Email"
-                                className="w-full"
-                                type={'text'}
-                                {...register('email')}
-                            />
-                            <FormErrorMessage className="mb-3">
-                                {errors.email && errors.email.message?.toString()}
-                            </FormErrorMessage>
-                        </FormControl>
-
-                        <FormControl isInvalid={Boolean(errors.password)}>
-                            <FormLabel
-                                htmlFor="password"
-                                className="mb-1.5 mt-3 block text-sm font-medium text-gray-700"
-                            >
-                                Password
-                            </FormLabel>
-
-                            <Input
-                                className="w-full"
-                                placeholder="Password"
-                                type={'password'}
-                                {...register('password')}
-                            />
-                            <FormErrorMessage>
-                                {errors.password && errors.password.message?.toString()}
-                            </FormErrorMessage>
-                        </FormControl>
+                        <CustomTextInput
+                            label="Email"
+                            {...register('email')}
+                            error={!!errors.email?.message}
+                            helperText={errors.email?.message}
+                        />
+                        <CustomTextInput
+                            label="Password"
+                            {...register('password')}
+                            error={!!errors.email?.message}
+                            helperText={errors.email?.message}
+                        />
 
                         <Button px={'10'} className="mt-8" colorScheme={'brand'} isLoading={isSubmitting} type="submit">
                             Submit

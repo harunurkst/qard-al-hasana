@@ -9,7 +9,7 @@ interface ICustomTextInput extends InputProps {
 }
 
 const CustomTextInput: React.FC<ICustomTextInput> = forwardRef<HTMLInputElement, ICustomTextInput>(
-    ({ className, label, error, helperText, ...rest }, ref) => {
+    ({ className, label, error, helperText, name, ...rest }, ref) => {
         const uid = useId();
         return (
             <FormControl id={`${name}-${uid}`} className={className}>
@@ -22,9 +22,9 @@ const CustomTextInput: React.FC<ICustomTextInput> = forwardRef<HTMLInputElement,
                     ref={ref}
                     aria-invalid={error}
                     id={uid + name}
-                    {...rest}
                     background={'white'}
                     focusBorderColor="brand.500"
+                    {...rest}
                 />
                 {helperText ? (
                     error ? (
