@@ -37,17 +37,13 @@ const Login = () => {
                 <div className="w-full max-w-3xl rounded-md bg-white  p-7 shadow-md">
                     <form onSubmit={handleSubmit(submitLoginForm)}>
                         <CustomTextInput
+                            className="mb-2.5"
                             label="Email"
+                            error={errors.email?.message}
                             {...register('email')}
-                            error={!!errors.email?.message}
-                            helperText={errors.email?.message}
+                            type="email"
                         />
-                        <CustomTextInput
-                            label="Password"
-                            {...register('password')}
-                            error={!!errors.email?.message}
-                            helperText={errors.email?.message}
-                        />
+                        <CustomTextInput label="Password" error={errors.email?.message} {...register('password')} />
 
                         <Button px={'10'} className="mt-8" colorScheme={'brand'} isLoading={isSubmitting} type="submit">
                             Submit

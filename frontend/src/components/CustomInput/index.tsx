@@ -4,7 +4,7 @@ import { forwardRef, useId } from 'react';
 interface ICustomTextInput extends InputProps {
     className?: string;
     label?: string;
-    error?: boolean;
+    error?: boolean | string;
     helperText?: string;
 }
 
@@ -12,7 +12,7 @@ const CustomTextInput: React.FC<ICustomTextInput> = forwardRef<HTMLInputElement,
     ({ className, label, error, helperText, name, ...rest }, ref) => {
         const uid = useId();
         return (
-            <FormControl id={`${name}-${uid}`} className={className}>
+            <FormControl isInvalid={!!error} id={`${name}-${uid}`} className={className}>
                 {label ? (
                     <FormLabel htmlFor={uid + name} className="mb-1.5 block text-sm font-medium text-gray-700">
                         {label}
@@ -20,19 +20,15 @@ const CustomTextInput: React.FC<ICustomTextInput> = forwardRef<HTMLInputElement,
                 ) : null}
                 <Input
                     ref={ref}
-                    aria-invalid={error}
+                    aria-invalid={!!error}
                     id={uid + name}
                     background={'white'}
+                    name={name}
                     focusBorderColor="brand.500"
                     {...rest}
                 />
-                {helperText ? (
-                    error ? (
-                        <FormErrorMessage>{helperText}</FormErrorMessage>
-                    ) : (
-                        <FormHelperText>{helperText}</FormHelperText>
-                    )
-                ) : null}
+                <FormHelperText>{helperText}</FormHelperText>
+                {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
             </FormControl>
         );
     }
