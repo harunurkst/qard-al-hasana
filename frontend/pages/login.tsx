@@ -1,32 +1,23 @@
+import CustomTextInput from '@/components/CustomInput';
 import BaseLayout from '@/Layouts/BaseLayout';
-import { LoginFormData } from '@/types/loginFormTypes';
+import { loginSchema, LoginType } from '@/schema/AuthSchema';
 import { Button, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/dist/client/router';
 import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import { z, ZodType } from 'zod';
 
 const Login = () => {
     const router = useRouter();
-
-    const loginSchema: ZodType<LoginFormData> = z.object({
-        email: z
-            .string()
-            .trim()
-            .min(1, { message: 'Please insert your email address.' })
-            .email('This is not a valid email.'),
-        password: z.string().min(1, { message: 'Please insert your password.' }),
-    });
 
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
+    } = useForm<LoginType>({ resolver: zodResolver(loginSchema) });
 
     // form submit
-    const submitLoginForm = async (data: LoginFormData) => {
+    const submitLoginForm = async () => {
         return new Promise<void>((resolve) => {
             setTimeout(() => {
                 router.push('/dashboard');
@@ -45,6 +36,7 @@ const Login = () => {
                 </p>
                 <div className="w-full max-w-3xl rounded-md bg-white  p-7 shadow-md">
                     <form onSubmit={handleSubmit(submitLoginForm)}>
+                        <CustomTextInput label="Email" {...register('email')} />
                         <FormControl isInvalid={Boolean(errors.email)}>
                             <FormLabel htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700">
                                 Email
