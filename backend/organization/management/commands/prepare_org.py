@@ -10,6 +10,7 @@ from organization.models import (
     Division,
     District,
     Thana,
+    Team
 )
 
 
@@ -60,6 +61,6 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Successfully created organization '{org.name}', branch '{branch.name}' user '{user.username}' and staff '{staff.name}'"
+                f"Successfully created organization '{org.name}', branch '{branch.name}', user '{user.username}', and staff '{staff.name}'"
             )
         )
