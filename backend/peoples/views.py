@@ -1,13 +1,19 @@
+from rest_framework import viewsets
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-
-from peoples.models import Member
-from peoples.serializers import MemberCreateSerializer, MemberDetailSerializer
+# App related
+from peoples.models import Member, Staff
 from peoples.permissions import IsSameBranch
+from peoples.filters.staff_filters import StaffFilter
+from peoples.serializers import (
+    MemberCreateSerializer,
+    MemberDetailSerializer,
+    StaffListSerializer
+)
 
 
 class MemberListCreateView(ListCreateAPIView):
@@ -34,3 +40,18 @@ class MemberDetailsView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Member.objects.filter(branch=self.request.user.staff.branch)
+
+
+# Create (POST): {host}/api/v1/organization/staffs/
+# List (GET): {host}/api/v1/organization/staffs/
+# Filter (GET): {host}/api/v1/organization/staffs/?branch=1
+# Retrieve (GET): {host}/api/v1/organization/staffs/{id}/
+# Update (PUT): {host}/api/v1/organization/staffs/{id}/
+# Delete (DELETE): {host}/api/v1/organization/staffs/{id}/
+class StaffViewSet(viewsets.ModelViewSet):
+    queryset = Staff.objects.all()
+    serializer_class = StaffListSerializer
+    # permission_classes = [IsAuthenticated, IsSameBranch]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = StaffFilter
+

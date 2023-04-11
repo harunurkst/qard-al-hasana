@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 
-from peoples.models import Staff
 from organization.models import (
     Organization,
     Staff,
@@ -9,8 +8,7 @@ from organization.models import (
     Branch,
     Division,
     District,
-    Thana,
-    Team
+    Thana
 )
 
 

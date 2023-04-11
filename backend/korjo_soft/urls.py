@@ -10,6 +10,9 @@ from drf_yasg import openapi
 
 from organization.views import LoginView, RegisterView
 
+# peoples router
+from peoples.urls import peoples_router
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -44,6 +47,9 @@ urlpatterns = [
 
     # organization
     path("api/v1/organization/", include("organization.urls")),
+
+    # peoples router
+    path("api/v1/organization/", include(peoples_router.urls)),
 
 ]
 
