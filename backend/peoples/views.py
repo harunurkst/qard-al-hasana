@@ -51,7 +51,9 @@ class MemberDetailsView(RetrieveUpdateDestroyAPIView):
 class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffListSerializer
-    # permission_classes = [IsAuthenticated, IsSameBranch]
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = StaffFilter
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_class = StaffFilter
+
+    def get_queryset(self):
+        return self.queryset.filter(branch=self.request.user.staff.branch)
 
