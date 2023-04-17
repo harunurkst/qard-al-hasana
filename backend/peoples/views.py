@@ -42,17 +42,19 @@ class MemberDetailsView(RetrieveUpdateDestroyAPIView):
         return Member.objects.filter(branch=self.request.user.staff.branch)
 
 
-# Create (POST): {host}/api/v1/organization/staffs/
-# List (GET): {host}/api/v1/organization/staffs/
-# Filter (GET): {host}/api/v1/organization/staffs/?branch=1
-# Retrieve (GET): {host}/api/v1/organization/staffs/{id}/
-# Update (PUT): {host}/api/v1/organization/staffs/{id}/
-# Delete (DELETE): {host}/api/v1/organization/staffs/{id}/
 class StaffViewSet(viewsets.ModelViewSet):
+    """
+    accepts all these http requests with simple codes:
+
+    Create (POST): {host}/api/v1/organization/staffs/
+    List (GET): {host}/api/v1/organization/staffs/
+    Retrieve (GET): {host}/api/v1/organization/staffs/{id}/
+    Update (PUT): {host}/api/v1/organization/staffs/{id}/
+    Delete (DELETE): {host}/api/v1/organization/staffs/{id}/
+    """
+
     queryset = Staff.objects.all()
     serializer_class = StaffListSerializer
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_class = StaffFilter
 
     def get_queryset(self):
         return self.queryset.filter(branch=self.request.user.staff.branch)
