@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 
-from peoples.models import Staff
 from organization.models import (
     Organization,
     Staff,
@@ -9,7 +8,7 @@ from organization.models import (
     Branch,
     Division,
     District,
-    Thana,
+    Thana
 )
 
 
@@ -60,6 +59,6 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Successfully created organization '{org.name}', branch '{branch.name}' user '{user.username}' and staff '{staff.name}'"
+                f"Successfully created organization '{org.name}', branch '{branch.name}', user '{user.username}', and staff '{staff.name}'"
             )
         )

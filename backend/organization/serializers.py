@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from organization.models import User, Team
+from peoples.models import Staff
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -82,6 +83,15 @@ class MyRefreshSerializer(serializers.Serializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(many=False, queryset=Staff.objects.all())
+
     class Meta:
         model = Team
-        fields = "__all__"
+        fields = ('id', 'name', 'owner')
+
+    def create(self, validated_data):
+        team = Team(**validated_data)
+        team.branch = validated_data['owner'].branch
+        team.save()
+        return team
+

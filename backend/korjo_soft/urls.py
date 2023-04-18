@@ -10,6 +10,10 @@ from drf_yasg import openapi
 
 from organization.views import LoginView, RegisterView
 
+# peoples router
+from peoples.urls import peoples_router
+
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Korje Hasana Bangladesh",
@@ -24,23 +28,32 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+
     path("admin/", admin.site.urls),
+
     # api docs
     path(
         "",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
+
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+
     # authentications
     path("api/v1/auth/login/", LoginView.as_view(), name="login"),
     path("api/v1/auth/registration/", RegisterView.as_view(), name="register"),
     path("api/v1/auth/refresh/", TokenRefreshView.as_view(), name="refresh"),
+
     # organization
     path("api/v1/organization/", include("organization.urls")),
+
+    # peoples router
+    path("api/v1/organization/", include(peoples_router.urls)),
 
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

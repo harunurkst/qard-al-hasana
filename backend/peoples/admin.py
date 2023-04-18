@@ -2,8 +2,14 @@ from django.contrib.admin.sites import AlreadyRegistered
 from django.contrib import admin
 from django.apps import apps
 
+from peoples.models import Staff
 
-# write custom admin views
+
+@admin.register(Staff)
+class StaffAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'branch']
+    list_display_links = ['name']
+    ordering = ['id']
 
 
 # register all the models from this app
