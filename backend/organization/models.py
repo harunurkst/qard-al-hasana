@@ -88,8 +88,8 @@ class BranchMember(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=150)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True)
-    owner = models.OneToOneField(Staff, on_delete=models.CASCADE, null=True)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    owner = models.OneToOneField(Staff, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ("name", "branch")
