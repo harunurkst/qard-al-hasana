@@ -21,6 +21,7 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
+    "localhost",
 ]
 
 
@@ -37,9 +38,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
-    "drf_yasg",
     "django_filters",
     "corsheaders",
+    "drf_spectacular",
     # local
     "organization.apps.OrganizationConfig",
     "peoples.apps.PeoplesConfig",
@@ -150,6 +151,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     "PAGE_SIZE": 20,
 }
 
@@ -166,6 +168,15 @@ SIMPLE_JWT = {
     "USER_ID_CLAIM": "user_id",
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Your Project API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/api/v[0-9]'
+    # OTHER SETTINGS
 }
 
 # cors headers

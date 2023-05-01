@@ -21,4 +21,10 @@ python manage.py prepare_org
 python manage.py runserver
 ```
 
-API doc: 127.0.0.1:8000/redoc
+### API doc:
+
+[localhost:8000](http://localhost:8000/)  
+ get access token: [localhost:8000/api/v1/auth/login/](localhost:8000/api/v1/auth/login/)  
+ username: admin  
+ password: admin  
+ copy the access token and use "Authorize" buton for token authentication. Now you can access other API.

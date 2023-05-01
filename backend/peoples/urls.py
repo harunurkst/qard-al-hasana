@@ -19,3 +19,4 @@ urlpatterns = [
     path("members/<pk>/", MemberDetailsView.as_view(), name="details"),
 ]
 
+urlpatterns += peoples_router.urls
