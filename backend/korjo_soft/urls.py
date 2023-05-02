@@ -56,6 +56,9 @@ urlpatterns = [
     # peoples router
     path("api/v1/peoples/", include("peoples.urls")),
 
+    # transaction router
+    path("api/v1/transaction/", include("transaction.urls")),
+
 ]
 
 if settings.DEBUG:

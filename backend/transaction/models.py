@@ -6,11 +6,38 @@ class TransactionCategory(models.Model):
 
     def __str__(self):
         return self.name
+
+
+SAVINGS_TRANS_TYPE = (
+    ('deposit', 'Deposit'),
+    ('withdraw', 'Withdraw'),
+)
+
+
 class Savings(BaseModel):
     amount = models.IntegerField()
     date = models.DateField()
     balance = models.IntegerField(default=0)
+    transaction_type = models.CharField(max_length=10, choices=SAVINGS_TRANS_TYPE, default='deposit')
     member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
+
+    def deposit(self):
+        """
+        balance = last balance + savings amount
+        """
+        latest_savings = Savings.objects.filter(member=self.member).last()
+        if latest_savings:
+            last_balance = latest_savings.balance
+        else:
+            last_balance = 0
+        self.balance = self.amount + last_balance
+        self.save()
+
+
+    class Meta:
+        unique_together = ('member', 'date')
+
+
 
 
 class Loan(BaseModel):

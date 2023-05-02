@@ -8,7 +8,7 @@ from organization.models import (
     Branch,
     Division,
     District,
-    Thana
+    Thana, Team
 )
 
 
@@ -57,8 +57,14 @@ class Command(BaseCommand):
             user=user,
         )
 
+        team, _ = Team.objects.get_or_create(
+            name="বেলি",
+            owner=staff,
+            branch=branch
+        )
+
         self.stdout.write(
             self.style.SUCCESS(
-                f"Successfully created organization '{org.name}', branch '{branch.name}', user '{user.username}', and staff '{staff.name}'"
+                f"Successfully created organization '{org.name}', branch '{branch.name}', user '{user.username}', staff '{staff.name}' team '{team.name}'"
             )
         )

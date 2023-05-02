@@ -6,18 +6,7 @@ from peoples.models import Member, Staff
 class MemberDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = [
-            "name",
-            "mobile_number",
-            "nid_number",
-            "guardian_name",
-            "gender",
-            "serial_number",
-            "uuid",
-            "team",
-            "branch",
-            "is_active",
-        ]
+        fields = '__all__'
 
 
 class MemberCreateSerializer(serializers.ModelSerializer):
