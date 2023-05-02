@@ -1,25 +1,38 @@
 from django.db import models
-from django.db.models import Sum
-import datetime
+from organization.models import BaseModel
 
-class SavingsManager(models.Manager):
-    def member_total_savings(self, member):
-        queryset = self.filter(member=member).aggregate(total=Sum('amount'))
-        return queryset['total']
-
-class Savings(models.Model):
-    amount = models.IntegerField()
-    date = models.DateField(default=datetime.datetime.now)
-    member = models.ForeignKey('peoples.Member', on_delete=models.SET_NULL, blank=True, null=True, db_index=True)
-    staff = models.ForeignKey('peoples.Staff', on_delete=models.SET_NULL, blank=True, null=True, db_index=True)
-    branch = models.ForeignKey('organization.Branch', on_delete=models.CASCADE, db_index=True)
-    created_at = models.DateField(auto_now_add=True)
-
-    objects = SavingsManager()
-
-    class Meta:
-        unique_together = ('date', 'member')
+class TransactionCategory(models.Model):
+    name = models.CharField(max_length=50)
 
     def __str__(self):
-        return str(self.amount)
+        return self.name
+class Savings(BaseModel):
+    amount = models.IntegerField()
+    date = models.DateField()
+    balance = models.IntegerField(default=0)
+    member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
 
+
+class Loan(BaseModel):
+    amount = models.IntegerField()
+    date = models.DateField()
+    member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
+    is_paid = models.BooleanField(default=False)
+    total_installment = models.IntegerField(default=0)
+
+
+class Installment(models.Model):
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    date = models.DateField()
+
+TRANSACTION_TYPE = (
+    ('income', 'Income'),
+    ('expense', 'Expense'),
+)
+class GeneralTransaction(BaseModel):
+    amount = models.IntegerField()
+    date = models.DateField()
+    type = models.CharField(choices=TRANSACTION_TYPE, max_length=10)
+    category = models.ForeignKey(TransactionCategory, models.PROTECT)
+    summary = models.TextField(blank=True, max_length=150)
