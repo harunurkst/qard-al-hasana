@@ -31,11 +31,25 @@ class Savings(BaseModel):
         else:
             last_balance = 0
         self.balance = self.amount + last_balance
+        self.transaction_type = 'deposit'
+        self.save()
+
+    def withdraw(self):
+        """
+        balance = last balance - withdrawal amount
+        """
+        latest_savings = Savings.objects.filter(member=self.member).last()
+        if not latest_savings:
+            raise ValueError("Withdraw not possible")
+        if self.amount > latest_savings.balance:
+            raise ValueError("Invalid amount")
+        self.balance = latest_savings.balance - self.amount
+        self.transaction_type = 'withdraw'
         self.save()
 
 
     class Meta:
-        unique_together = ('member', 'date')
+        unique_together = ('member', 'date', 'transaction_type')
 
 
 
