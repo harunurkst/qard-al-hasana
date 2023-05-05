@@ -28,3 +28,9 @@ python manage.py runserver
  username: admin  
  password: admin  
  copy the access token and use "Authorize" buton for token authentication. Now you can access other API.
+
+## How to contribute
+
+About this project: [link](https://docs.google.com/document/d/1GiPgOxU19B5d-DzzesWb6RXrlbmu5xDvSKjMW0vDsC8/edit?usp=sharing)  
+Task list: [GitHub Link](https://github.com/users/harunurkst/projects/1)  
+Join to our Discord channel: [Invitation link](https://discord.gg/9dWdP8zM4K)

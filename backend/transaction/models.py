@@ -61,6 +61,20 @@ class Loan(BaseModel):
     total_paid = models.IntegerField(default=0)
     total_due = models.IntegerField(default=0)
 
+    def pay_installment(self, amount):
+        """
+        Update Loan status after installment submission
+        """
+        total_paid = self.total_paid + amount
+        total_due = self.total_due - amount
+        self.total_paid = total_paid
+        self.total_due = total_due
+        self.total_installment = self.total_installment + 1
+        if total_paid >= self.amount and total_due <= 0:
+            self.is_paid = True
+        self.save()
+
+
     def save(self, *args, **kwargs):
         if not self.pk:
             # total_due = Loan amount

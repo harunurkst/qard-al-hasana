@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Savings, Loan
+from .models import Savings, Loan, Installment
 
 
 class SavingsSerializer(serializers.ModelSerializer):
@@ -21,3 +21,8 @@ class LoanDisbursementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = ('amount', 'date', 'member','total_installment')
+
+class LoanInstallmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Installment
+        fields = ('amount', 'date', 'loan')
