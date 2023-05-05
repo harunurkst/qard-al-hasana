@@ -46,6 +46,7 @@ class Command(BaseCommand):
         user, created = User.objects.get_or_create(username="admin")
         if created:
             user.set_password("admin")
+            user.is_superuser = True
             user.save()
 
         # Create new staff

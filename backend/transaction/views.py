@@ -1,9 +1,11 @@
+
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 
 from peoples.permissions import IsSameBranch
-from .serializers import SavingsSerializer
+from .serializers import SavingsSerializer, LoanDisbursementSerializer
 
 
 class DepositView(CreateAPIView):
@@ -19,6 +21,7 @@ class DepositView(CreateAPIView):
             transaction_type='deposit'
         )
 
+
 class WithdrawView(CreateAPIView):
     serializer_class = SavingsSerializer
     permission_classes = [IsAuthenticated, IsSameBranch]
@@ -32,6 +35,23 @@ class WithdrawView(CreateAPIView):
             transaction_type='withdraw'
         )
 
+
+class LoanDisbursementView(APIView):
+    """
+    Member Loan Disbursement
+    """
+    serializer_class = LoanDisbursementSerializer
+    permission_classes = [IsAuthenticated, IsSameBranch]
+
+    def post(self, request):
+        serializer = LoanDisbursementSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(
+            branch=request.user.staff.branch,
+            organization=request.user.staff.branch.organization,
+            created_by=request.user,
+        )
+        return Response({'status':'success'}, status=201)
 
 
 

@@ -52,14 +52,21 @@ class Savings(BaseModel):
         unique_together = ('member', 'date', 'transaction_type')
 
 
-
-
 class Loan(BaseModel):
     amount = models.IntegerField()
     date = models.DateField()
     member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
     is_paid = models.BooleanField(default=False)
     total_installment = models.IntegerField(default=0)
+    total_paid = models.IntegerField(default=0)
+    total_due = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # total_due = Loan amount
+            self.total_due = self.amount
+            super().save(*args, **kwargs)
+
 
 
 class Installment(models.Model):
