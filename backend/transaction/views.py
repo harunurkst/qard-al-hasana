@@ -74,13 +74,11 @@ class LoanInstallmentView(APIView):
         if serializer.is_valid():
             installment = serializer.save()
             loan_object = installment.loan
-            if not loan_object.is_paid:
-                installment_amount = serializer.validated_data['amount']
-                # Update loan status
-                loan_object.pay_installment(installment_amount)
-                return Response({'status': 'success'}, status=201)
-            return Response({'status': 'failed', 'message': 'Loan already paid'}, status=400)
-        return Response({'status': 'failed', 'message': 'invalid data'}, status=400)
+            installment_amount = serializer.validated_data['amount']
+            # Update loan status
+            loan_object.pay_installment(installment_amount)
+            return Response({'status': 'success'}, status=201)
+        return Response({'status': 'failed', 'message': serializer.errors}, status=400)
 
 
 

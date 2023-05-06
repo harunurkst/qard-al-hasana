@@ -26,3 +26,9 @@ class LoanInstallmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Installment
         fields = ('amount', 'date', 'loan')
+
+    def validate(self, attrs):
+        loan = attrs.get('loan')
+        if loan.is_paid:
+            raise serializers.ValidationError("Loan is already paid")
+        return attrs

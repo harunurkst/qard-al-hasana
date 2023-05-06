@@ -58,6 +58,7 @@ class Loan(BaseModel):
     member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
     is_paid = models.BooleanField(default=False)
     total_installment = models.IntegerField(default=0)
+    installment_paid = models.IntegerField(default=0)
     total_paid = models.IntegerField(default=0)
     total_due = models.IntegerField(default=0)
 
@@ -69,17 +70,18 @@ class Loan(BaseModel):
         total_due = self.total_due - amount
         self.total_paid = total_paid
         self.total_due = total_due
-        self.total_installment = self.total_installment + 1
+        self.installment_paid = self.installment_paid + 1
         if total_paid >= self.amount and total_due <= 0:
             self.is_paid = True
         self.save()
+        print("after save")
 
 
     def save(self, *args, **kwargs):
         if not self.pk:
             # total_due = Loan amount
             self.total_due = self.amount
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 
@@ -87,6 +89,9 @@ class Installment(models.Model):
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     amount = models.IntegerField()
     date = models.DateField()
+
+    class Meta:
+        unique_together = ('loan', 'date')
 
 TRANSACTION_TYPE = (
     ('income', 'Income'),
