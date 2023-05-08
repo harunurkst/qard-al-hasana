@@ -7,7 +7,6 @@ import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'ne
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
 import React, { ReactElement, ReactNode } from 'react';
-//css
 
 import '../styles/globals.css';
 import '../styles/tailwind.css';
