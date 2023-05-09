@@ -7,11 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/dist/client/router';
 import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import useStore from '../src/store/store'
+// import useStore from '../src/store/store'
 
 const Registration = () => {
     const router = useRouter();
-    const {registerUser}=useStore()
+    // const {registerUser}=useStore()
     const {
         register,
         handleSubmit,
@@ -21,12 +21,18 @@ const Registration = () => {
     // form submit
     const submitRegistrationForm =  (data: RegistrationType) => {
         console.log('data', data);
-        const {email,password}=data
-        registerUser({
-            username:email,
-            password
-          })
-        router.push('/dashboard')
+        // const {email,password}=data
+        // registerUser({
+        //     username:email,
+        //     password
+        //   })
+        // router.push('/dashboard')
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                router.push('/dashboard');
+                resolve();
+            }, 3000);
+        });
     };
 
     return (
