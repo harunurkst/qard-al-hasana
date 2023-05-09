@@ -47,6 +47,7 @@ class Command(BaseCommand):
         if created:
             user.set_password("admin")
             user.is_superuser = True
+            user.is_staff = True
             user.save()
 
         # Create new staff
@@ -59,7 +60,7 @@ class Command(BaseCommand):
         )
 
         team, _ = Team.objects.get_or_create(
-            name="বেলি",
+            name="Demo Team",
             owner=staff,
             branch=branch
         )

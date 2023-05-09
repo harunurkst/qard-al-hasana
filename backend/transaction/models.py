@@ -20,6 +20,7 @@ class Savings(BaseModel):
     balance = models.IntegerField(default=0)
     transaction_type = models.CharField(max_length=10, choices=SAVINGS_TRANS_TYPE, default='deposit')
     member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
+    team = models.ForeignKey("organization.Team", on_delete=models.PROTECT)
 
     def deposit(self):
         """

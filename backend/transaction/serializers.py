@@ -9,7 +9,9 @@ class SavingsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         transaction_type = validated_data['transaction_type']
+        member = validated_data['member']
         savings = Savings(**validated_data)
+        savings.team = member.team
         if transaction_type == 'deposit':
             savings.deposit()
         else:
