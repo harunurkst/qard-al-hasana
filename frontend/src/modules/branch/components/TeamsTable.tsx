@@ -1,6 +1,9 @@
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import ReactPaginate from 'react-paginate';
 
+import EditGroup from '../../group/EditGroupModal'
+import { useState } from 'react';
+
 const taams = [
     {
         id: '1',
@@ -69,8 +72,15 @@ const taams = [
 ];
 
 const TeamsTable = () => {
+
+    const [ isOpenGroupEditModal, setIsOpenGroupEditModal ] = useState(false)
+
     return (
         <>
+            {/* handling team/group editing modal */}
+            <EditGroup isOpen={isOpenGroupEditModal} onClose={()=>setIsOpenGroupEditModal(false)}/>
+
+            {/* table of team list */}
             <TableContainer>
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
@@ -95,7 +105,10 @@ const TeamsTable = () => {
                                     <Td isNumeric> {data.cashInhand}</Td>
                                     <Td isNumeric> {data.totalIncome}</Td>
                                     <Td isNumeric gap={2}>
-                                        <span className="mr-5 font-semibold text-gray-500 hover:text-gray-600">
+                                        <span 
+                                            className="mr-5 font-semibold text-gray-500 hover:text-gray-600 cursor-pointer"
+                                            onClick={()=>setIsOpenGroupEditModal(true)}
+                                        >
                                             Edit
                                         </span>
                                         <span className="font-semibold text-red-500 hover:text-red-600">Delete</span>

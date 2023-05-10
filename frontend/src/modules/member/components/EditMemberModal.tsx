@@ -12,13 +12,13 @@ import React from 'react';
 import { Member } from '../../../../pages/member';
 import CustomTextInput from '../../../components/CustomInput';
 
-interface ICreateMemberModal {
+interface IEditMemberModal {
     isOpen: boolean;
     onClose: () => void;
     member: Member;
 }
 
-const EditMemberModal: React.FC<ICreateMemberModal> = ({ isOpen, onClose, member }) => {
+const EditMemberModal: React.FC<IEditMemberModal> = ({ isOpen, onClose, member }) => {
     return (
         <Modal size={'lg'} isCentered isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />

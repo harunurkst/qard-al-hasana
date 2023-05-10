@@ -61,12 +61,16 @@ const DashboardNavbar = () => {
                         })}
                     </div>
                 </div>
-                <div>
+                <div> 
                     <Avatar size={'md'} name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+                    <span className='cursor-pointer'>logout</span>
                 </div>
+
             </div>
         </header>
     );
 };
 
 export default DashboardNavbar;
+
+

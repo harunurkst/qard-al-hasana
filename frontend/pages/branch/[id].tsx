@@ -8,15 +8,50 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
-import { ReactNode, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import DashboardLayout from '../../src/Layouts/DashboardLayout';
-import EditBranchModal from '../../src/modules/branch/components/EditBranchModal';
 import MembersTable from '../../src/modules/branch/components/MembersTable';
 import TeamsTable from '../../src/modules/branch/components/TeamsTable';
 
+// modal imported
+import CreateNewGroup from '../../src/modules/group/CreateGroupModal';
+import CreateNewMember from '../../src/modules/member/components/CreateMemberModal'
+import EditBranchModal from '../../src/modules/branch/components/EditBranchModal';
+// import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
+
 const BranchDetailsPage = () => {
-    const [isOpenEditModal, setOpenEditModal] = useState(false);
+    
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
+
+    const [isOpenCreateModal, setOpenCreateModal] = useState(false); //handling group add modal
+    const [isOpenAddMemberModal, setOpenAddMemberModal] = useState(false); //handling member add modal
+    const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
+    const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
+
+    // const [memberId, setMemberId] = useState(0)
+
+
+    // sample member created here
+    // const member = {
+    //     name:'Abdullah',
+    //     mobile_number: '354353343',
+    //     nid_number:'31313131321',
+    //     guardian_name:'gurdian name',
+    //     serial_number:100,
+    //     team:'team name',
+    //     branch:'b-name',
+    //     gender:'male',
+    //     is_active:true,
+    //     uuid: '43434'
+    // }
+
+    const modalHandling=(e: React.MouseEvent<HTMLButtonElement>)=>{
+            if (tab == 'TEAM'){
+                setOpenCreateModal(true)
+            }else{
+                setOpenAddMemberModal(true)
+            }
+    }
 
     return (
         <section className="container mx-auto pt-4 pb-8">
@@ -33,7 +68,17 @@ const BranchDetailsPage = () => {
                     <BreadcrumbLink>Chandra Bazar Branch</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
+
+            {/* creating new group and new member modal */}
+
+            <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            <CreateNewMember isOpen={isOpenAddMemberModal} onClose={() => setOpenAddMemberModal(false)} />
+
+
+            {/* editing branch and member info */}
             <EditBranchModal isOpen={isOpenEditModal} onClose={() => setOpenEditModal(false)} />
+            {/* <EditMemberModal isOpen={isOpenMemberEditModal} onClose={() => setOpenMemberEditModal(false)} member={member} /> */}
+
             <div
                 className="mt-5 rounded-xl border border-gray-200 bg-white"
                 style={{ boxShadow: '0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)' }}
@@ -108,6 +153,7 @@ const BranchDetailsPage = () => {
 
                     <div>
                         <Button
+                        onClick={()=>setOpenEditModal(true)}
                             leftIcon={
                                 <svg
                                     width="18"
@@ -180,6 +226,7 @@ const BranchDetailsPage = () => {
                             Filters
                         </Button>
                         <Button
+                            onClick={modalHandling}
                             leftIcon={
                                 <svg
                                     width="20"
