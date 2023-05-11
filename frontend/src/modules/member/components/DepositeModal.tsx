@@ -21,7 +21,7 @@ const EditGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader borderBottom={1} borderBottomColor="red.100">
-                    Edit the group Info
+                    Deposite
                 </ModalHeader>
                 <ModalCloseButton />
 

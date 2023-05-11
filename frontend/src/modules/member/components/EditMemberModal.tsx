@@ -29,13 +29,13 @@ const EditMemberModal: React.FC<IEditMemberModal> = ({ isOpen, onClose, member }
                 <ModalCloseButton />
 
                 <ModalBody>
-                    <CustomTextInput className="mb-2" label="Name" value={member.name} />
-                    <CustomTextInput className="mb-2" label="Mobile Number" value={member.mobile_number} />
-                    <CustomTextInput className="mb-2" label="NID" value={member.nid_number} />
-                    <CustomTextInput className="mb-2" label="Guardian Name" value={member.guardian_name} />
-                    <CustomTextInput className="mb-2" label="Serial Number" value={member.serial_number} />
-                    <CustomTextInput className="mb-2" label="Team" value={member.team} />
-                    <CustomTextInput className="mb-2" label="Branch" value={member.branch} />
+                    <CustomTextInput className="mb-2" label="Name" value={member?.name} />
+                    <CustomTextInput className="mb-2" label="Mobile Number" value={member?.mobile_number} />
+                    <CustomTextInput className="mb-2" label="NID" value={member?.nid_number} />
+                    <CustomTextInput className="mb-2" label="Guardian Name" value={member?.guardian_name} />
+                    <CustomTextInput className="mb-2" label="Serial Number" value={member?.serial_number} />
+                    <CustomTextInput className="mb-2" label="Team" value={member?.team} />
+                    <CustomTextInput className="mb-2" label="Branch" value={member?.branch} />
                 </ModalBody>
                 <ModalFooter gap={4}>
                     <Button onClick={onClose}>Close</Button>

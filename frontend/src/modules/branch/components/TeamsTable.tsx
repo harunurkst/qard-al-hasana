@@ -1,8 +1,9 @@
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import ReactPaginate from 'react-paginate';
+import { useRouter } from 'next/router';
 
 import EditGroup from '../../group/EditGroupModal'
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 const taams = [
     {
@@ -73,7 +74,15 @@ const taams = [
 
 const TeamsTable = () => {
 
+    const router = useRouter()
+
     const [ isOpenGroupEditModal, setIsOpenGroupEditModal ] = useState(false)
+
+    const redirectToDetail=()=>{
+        // console.log('clicked on team name')
+
+        return router.push('/team')
+    }
 
     return (
         <>
@@ -99,7 +108,11 @@ const TeamsTable = () => {
                             return (
                                 <Tr key={data.id} className=" hover:bg-gray-50">
                                     <Td>{data.id}</Td>
-                                    <Td>{data.name}</Td>
+                                    <Td
+                                        onClick={redirectToDetail}
+                                    >
+                                        {data.name}
+                                    </Td>
                                     <Td isNumeric> {data.totalMember}</Td>
                                     <Td isNumeric> {data.totalLoan}</Td>
                                     <Td isNumeric> {data.cashInhand}</Td>
