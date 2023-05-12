@@ -17,7 +17,8 @@ const Login = () => {
     } = useForm<LoginType>({ resolver: zodResolver(loginSchema) });
 
     // form submit
-    const submitLoginForm = async () => {
+    const submitLoginForm = async (values:object) => {
+        console.log(values)
         return new Promise<void>((resolve) => {
             setTimeout(() => {
                 router.push('/dashboard');
@@ -38,12 +39,16 @@ const Login = () => {
                     <form onSubmit={handleSubmit(submitLoginForm)}>
                         <CustomTextInput
                             className="mb-2.5"
-                            label="Email"
+                            label="User Name"
                             error={errors.email?.message}
                             {...register('email')}
-                            type="email"
+                            // type="email"
                         />
-                        <CustomTextInput label="Password" error={errors.email?.message} {...register('password')} />
+                        <CustomTextInput 
+                            label="Password" 
+                            error={errors.password?.message} 
+                            {...register('password')} 
+                        />
 
                         <Button px={'10'} className="mt-8" colorScheme={'brand'} isLoading={isSubmitting} type="submit">
                             Submit

@@ -119,7 +119,9 @@ const BranchPage = () => {
                     <BreadcrumbLink href="/branch">Branch</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
+
             <CreateBranchModal isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+
             <EditBranchModal isOpen={isOpenEditModal} onClose={() => setOpenEditModal(false)} />
             <div
                 className="mt-5 rounded-xl border border-gray-200 bg-white"

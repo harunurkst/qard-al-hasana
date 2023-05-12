@@ -1,3 +1,6 @@
+import React, { ReactNode, useState } from 'react';
+import DashboardLayout from '../../src/Layouts/DashboardLayout';
+import MembersTable from '../../src/modules/branch/components/MembersTable';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -8,35 +11,34 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
-import React, { ReactNode, useState } from 'react';
-import DashboardLayout from '../../src/Layouts/DashboardLayout';
-import MembersTable from '../../src/modules/branch/components/MembersTable';
-import TeamsTable from '../../src/modules/branch/components/TeamsTable';
 
-// modal imported
-import CreateNewGroup from '../../src/modules/group/CreateGroupModal';
-import CreateNewMember from '../../src/modules/member/components/CreateMemberModal'
-import EditBranchModal from '../../src/modules/branch/components/EditBranchModal';
-// import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
+// Modals are imported here
+import AddMemberModal from '../../src/modules/member/components/CreateMemberModal'
+import EditTeamInfoModal from '../../src/modules/group/EditGroupModal'
 
-const BranchDetailsPage = () => {
-    
-    const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
-    const [isOpenCreateModal, setOpenCreateModal] = useState(false); //handling group add modal
-    const [isOpenAddMemberModal, setOpenAddMemberModal] = useState(false); //handling member add modal
-    const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
-    const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
+const TeamPage=()=>{
+    const [ isOpenAddMemberModal, setIsOpenAddMemberModal ] = useState(false)
+    const [ isOpenTeamEditModal, setIsOpenTeamEditModal ] = useState(false)
 
-    const modalHandling=(e: React.MouseEvent<HTMLButtonElement>)=>{
-            if (tab == 'TEAM'){
-                setOpenCreateModal(true)
-            }else{
-                setOpenAddMemberModal(true)
-            }
-    }
 
-    return (
+
+    const SearchIcon = () => {
+        return (
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M17.5 17.5L14.5834 14.5833M16.6667 9.58333C16.6667 13.4954 13.4954 16.6667 9.58333 16.6667C5.67132 16.6667 2.5 13.4954 2.5 9.58333C2.5 5.67132 5.67132 2.5 9.58333 2.5C13.4954 2.5 16.6667 5.67132 16.6667 9.58333Z"
+                    stroke="#667085"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        );
+    };
+
+    return(
+        <>
         <section className="container mx-auto pt-4 pb-8">
             <Breadcrumb>
                 <BreadcrumbItem>
@@ -48,18 +50,13 @@ const BranchDetailsPage = () => {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink>Chandra Bazar Branch</BreadcrumbLink>
+                    <BreadcrumbLink>Beli</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
 
-            {/* creating new group and new member modal */}
-            <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
-            <CreateNewMember isOpen={isOpenAddMemberModal} onClose={() => setOpenAddMemberModal(false)} />
-
-
-            {/* editing branch and member info */}
-            <EditBranchModal isOpen={isOpenEditModal} onClose={() => setOpenEditModal(false)} />
-            {/* <EditMemberModal isOpen={isOpenMemberEditModal} onClose={() => setOpenMemberEditModal(false)} member={member} /> */}
+            {/* Member add modal component here */}
+            <AddMemberModal isOpen={isOpenAddMemberModal} onClose={()=>setIsOpenAddMemberModal(false)}/>
+            <EditTeamInfoModal isOpen={isOpenTeamEditModal} onClose={()=>setIsOpenTeamEditModal(false)}/>
 
             <div
                 className="mt-5 rounded-xl border border-gray-200 bg-white"
@@ -67,8 +64,8 @@ const BranchDetailsPage = () => {
             >
                 <div className="flex justify-between border-b border-gray-200 py-5 px-5">
                     <div>
-                        <h3 className="mb-0.5 text-xl font-semibold">Chandra Bazar Branch</h3>
-                        <p className="text-sm font-medium text-gray-500">Chandra Bazar, Faridgonj, Chandpur</p>
+                        <h3 className="mb-0.5 text-xl font-semibold">Beli Team</h3>
+                        <p className="text-sm font-medium text-gray-500">village Name, Moshjid Name</p>
                         <div className="mt-2 flex gap-2 divide-x divide-gray-300 font-medium text-gray-500 ">
                             <div className="flex items-center gap-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -135,7 +132,7 @@ const BranchDetailsPage = () => {
 
                     <div>
                         <Button
-                        onClick={()=>setOpenEditModal(true)}
+                            onClick={()=>setIsOpenTeamEditModal(true)}
                             leftIcon={
                                 <svg
                                     width="18"
@@ -156,26 +153,12 @@ const BranchDetailsPage = () => {
                             variant="outline"
                             colorScheme={'gray'}
                         >
-                            Edit Branch
+                            Edit Team
                         </Button>
                     </div>
                 </div>
                 <div className="flex justify-between border-b border-gray-200 py-4 px-5">
                     <div>
-                        <ButtonGroup isAttached variant={'outline'}>
-                            <Button
-                                onClick={() => setTab('TEAM')}
-                                backgroundColor={tab === 'TEAM' ? 'gray.100' : 'white'}
-                            >
-                                Team - (100)
-                            </Button>
-                            <Button
-                                onClick={() => setTab('MEMBER')}
-                                backgroundColor={tab === 'MEMBER' ? 'gray.100' : 'white'}
-                            >
-                                Members - (2333){' '}
-                            </Button>
-                        </ButtonGroup>
                     </div>
                     <div className="flex gap-3">
                         <InputGroup width={300}>
@@ -208,7 +191,7 @@ const BranchDetailsPage = () => {
                             Filters
                         </Button>
                         <Button
-                            onClick={modalHandling}
+                            onClick={()=>setIsOpenAddMemberModal(true)}
                             leftIcon={
                                 <svg
                                     width="20"
@@ -228,32 +211,20 @@ const BranchDetailsPage = () => {
                             }
                             colorScheme={'brand'}
                         >
-                            Add New
+                            Add Member
                         </Button>
                     </div>
                 </div>
-                {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
+                <MembersTable />
             </div>
         </section>
-    );
-};
+            
+        </>
+    )
+}
 
-const SearchIcon = () => {
-    return (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M17.5 17.5L14.5834 14.5833M16.6667 9.58333C16.6667 13.4954 13.4954 16.6667 9.58333 16.6667C5.67132 16.6667 2.5 13.4954 2.5 9.58333C2.5 5.67132 5.67132 2.5 9.58333 2.5C13.4954 2.5 16.6667 5.67132 16.6667 9.58333Z"
-                stroke="#667085"
-                strokeWidth="1.66667"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-};
-
-BranchDetailsPage.getLayout = (page: ReactNode) => {
+TeamPage.getLayout = (page: ReactNode) => {
     return <DashboardLayout className="min-h-screen">{page}</DashboardLayout>;
 };
 
-export default BranchDetailsPage;
+export default TeamPage;
