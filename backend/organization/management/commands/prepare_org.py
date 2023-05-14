@@ -59,10 +59,10 @@ class Command(BaseCommand):
             user=user,
         )
 
-        team, _ = Team.objects.get_or_create(
+        team, created = Team.objects.get_or_create(
             name="Demo Team",
-            owner=staff,
-            branch=branch
+            branch=branch,
+            defaults={'owner': staff}
         )
 
         self.stdout.write(
