@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-    email: z
+    username: z
         .string()
         .trim()
-        .min(1, { message: 'Please insert your email address.' }),
-        // .email('This is not a valid email.'),
+        .min(1, { message: 'Please insert your username.' }),
+        // .username('This is not a valid username.'),
     password: z
         .string()
         .min(1, { message: 'Please insert your password.' }),
@@ -19,7 +19,7 @@ export const registrationSchema = z
             .string()
             .trim()
             .min(1, { message: 'Please insert your address.' })
-            .email({ message: 'Invalid email address' }),
+            .email({ message: 'Invalid username' }),
         phoneNumber: z
             .string()
             .regex(new RegExp(/^(?:\+88|88)?(01[3-9]\d{8})$/), { message: 'Not a valid Bangladeshi number' }),

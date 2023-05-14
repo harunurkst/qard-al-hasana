@@ -1,12 +1,14 @@
 import { FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, InputProps } from '@chakra-ui/react';
-import { forwardRef, useId } from 'react';
+import { forwardRef, useId, HTMLInputTypeAttribute } from 'react';
 
-interface ICustomTextInput extends InputProps {
+interface ICustomTextInput extends InputProps{
     className?: string;
     label?: string;
     error?: boolean | string;
     helperText?: string;
+    // type?: HTMLInputTypeAttribute 
 }
+
 
 const CustomTextInput: React.FC<ICustomTextInput> = forwardRef<HTMLInputElement, ICustomTextInput>(
     ({ className, label, error, helperText, name, ...rest }, ref) => {

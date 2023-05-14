@@ -4,10 +4,19 @@ import { loginSchema, LoginType } from '@/schema/AuthSchema';
 import { Button } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/dist/client/router';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import api from './api/api';
+import axios from 'axios';
+import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react"
+import { type } from 'os';
 
-const Login = () => {
+interface LoginFormData{
+    username: string,
+    password: string
+}
+
+const Login = (csrfToken:string) => {
     const router = useRouter();
 
     const {
@@ -17,14 +26,21 @@ const Login = () => {
     } = useForm<LoginType>({ resolver: zodResolver(loginSchema) });
 
     // form submit
-    const submitLoginForm = async (values:object) => {
-        console.log(values)
-        return new Promise<void>((resolve) => {
-            setTimeout(() => {
-                router.push('/dashboard');
-                resolve();
-            }, 3000);
+    const submitLoginForm = async (values:LoginFormData) => {
+        const res = await signIn('credentials', {
+            // 'redirect': false,
+            'username': values.username,
+            'password':values.password,
+            'callbackUrl': '/dashboard',
+
         });
+
+        // return new Promise<void>((resolve) => {
+        //     setTimeout(() => {
+        //         router.push('/dashboard');
+        //         resolve();
+        //     }, 3000);
+        // });
     };
 
     return (
@@ -36,17 +52,24 @@ const Login = () => {
                     doloribus quos hic culpa non
                 </p>
                 <div className="w-full max-w-3xl rounded-md bg-white  p-7 shadow-md">
-                    <form onSubmit={handleSubmit(submitLoginForm)}>
+                    <form onSubmit={handleSubmit(submitLoginForm)} >
+                    {/* <form method='post' action="/api/auth/callback/credentials"> */}
+                        <input
+                            name="csrfToken"
+                            type="hidden"
+                            defaultValue={csrfToken}
+                        />
                         <CustomTextInput
                             className="mb-2.5"
                             label="User Name"
-                            error={errors.email?.message}
-                            {...register('email')}
-                            // type="email"
+                            error={errors.username?.message}
+                            {...register('username')}
+                            type="text"
                         />
                         <CustomTextInput 
                             label="Password" 
                             error={errors.password?.message} 
+                            type='password'
                             {...register('password')} 
                         />
 
@@ -64,4 +87,14 @@ Login.getLayout = (page: ReactNode) => {
     return <BaseLayout className="flex min-h-screen flex-col bg-brand-25/50">{page}</BaseLayout>;
 };
 
+export async function getServerSideProps(context) {
+    return {
+      props: {
+        csrfToken: await getCsrfToken(context),
+      },
+    }
+  }
+
 export default Login;
+
+

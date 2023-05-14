@@ -1,9 +1,21 @@
 import { LoanIcon, LoanPlusIcon, PersonPlusIcon } from '@/icons';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import Analytics from '@/modules/dashboard/components/Analytics';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
+
 
 const Dashboard = () => {
+    const { data: session, status } = useSession()
+    const router = useRouter()
+
+    useEffect(()=>{
+        if(status=='unauthenticated'){
+            router.push('/login')
+        }
+    })
+
     return (
         <div className="container mx-auto">
             <h1 className="mb-6 mt-8 text-3xl font-semibold text-gray-900">Welcome back, Chandpur Islamic Socity</h1>
@@ -65,6 +77,7 @@ const Dashboard = () => {
             </section>
         </div>
     );
+    
 };
 
 Dashboard.getLayout = (page: ReactNode) => {
