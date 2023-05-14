@@ -61,7 +61,7 @@ const MemberPage = () => {
     };
 
     return (
-        <section className="container mx-auto pt-4 pb-8">
+        <section className="container mx-auto pb-8 pt-4">
             <Breadcrumb>
                 <BreadcrumbItem>
                     <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
@@ -83,11 +83,11 @@ const MemberPage = () => {
                 className="mt-5 rounded-xl border border-gray-200 bg-white"
                 style={{ boxShadow: '0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)' }}
             >
-                <div className="flex items-center justify-between border-b border-gray-200 py-5 px-5">
+                <div className="flex items-center justify-between border-b border-gray-200 px-5 py-5">
                     <div>
                         <div className="flex content-start items-center gap-2">
                             <h3 className="text-lg font-semibold">Members</h3>
-                            <div className="self-center rounded-3xl bg-brand-100/80 py-0.5 px-2.5 text-xs font-semibold text-brand-600">
+                            <div className="self-center rounded-3xl bg-brand-100/80 px-2.5 py-0.5 text-xs font-semibold text-brand-600">
                                 20
                             </div>
                         </div>
@@ -122,7 +122,7 @@ const MemberPage = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="flex justify-between border-b border-gray-200 py-4 px-5">
+                <div className="flex justify-between border-b border-gray-200 px-5 py-4">
                     <div>
                         <InputGroup width={350}>
                             <InputLeftElement pointerEvents="none">

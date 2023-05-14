@@ -2,10 +2,8 @@ import BaseLayout from '@/Layouts/BaseLayout';
 import { Button } from '@chakra-ui/react';
 import Head from 'next/head';
 import { ReactNode } from 'react';
-import {signIn, signOut} from "next-auth/react"
 
 export default function Home() {
-    
     return (
         <>
             <Head>
@@ -109,5 +107,3 @@ export default function Home() {
 Home.getLayout = (page: ReactNode) => {
     return <BaseLayout>{page}</BaseLayout>;
 };
-
-

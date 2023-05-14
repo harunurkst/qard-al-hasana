@@ -23,13 +23,14 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## One Importent note: About Environment Variable
-#Some time after cloning and running on local it shows an error that indicate there is no environment setup because there is no .env file in your project (Frontend).At that situation all you have to do is: 
+
+#Some time after cloning and running on local it shows an error that indicate there is no environment setup because there is no .env file in your project (Frontend).At that situation all you have to do is:
 
 1. after cloning and change directory to frontend folder and open with vs
-code
+   code
 2. run => npm install
 3. look there is an .env.example file just copy the whole code inside this
-file
+   file
 4. create .env file in root and paste that copied code in .env file
 5. then run npm run start
 

@@ -1,9 +1,9 @@
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import ReactPaginate from 'react-paginate';
 import { useRouter } from 'next/router';
+import ReactPaginate from 'react-paginate';
 
-import EditGroup from '../../group/EditGroupModal'
-import React, { useState } from 'react';
+import { useState } from 'react';
+import EditGroup from '../../group/EditGroupModal';
 
 const taams = [
     {
@@ -73,21 +73,20 @@ const taams = [
 ];
 
 const TeamsTable = () => {
+    const router = useRouter();
 
-    const router = useRouter()
+    const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
 
-    const [ isOpenGroupEditModal, setIsOpenGroupEditModal ] = useState(false)
-
-    const redirectToDetail=()=>{
+    const redirectToDetail = () => {
         // console.log('clicked on team name')
 
-        return router.push('/team')
-    }
+        return router.push('/team');
+    };
 
     return (
         <>
             {/* handling team/group editing modal */}
-            <EditGroup isOpen={isOpenGroupEditModal} onClose={()=>setIsOpenGroupEditModal(false)}/>
+            <EditGroup isOpen={isOpenGroupEditModal} onClose={() => setIsOpenGroupEditModal(false)} />
 
             {/* table of team list */}
             <TableContainer>
@@ -108,19 +107,15 @@ const TeamsTable = () => {
                             return (
                                 <Tr key={data.id} className=" hover:bg-gray-50">
                                     <Td>{data.id}</Td>
-                                    <Td
-                                        onClick={redirectToDetail}
-                                    >
-                                        {data.name}
-                                    </Td>
+                                    <Td onClick={redirectToDetail}>{data.name}</Td>
                                     <Td isNumeric> {data.totalMember}</Td>
                                     <Td isNumeric> {data.totalLoan}</Td>
                                     <Td isNumeric> {data.cashInhand}</Td>
                                     <Td isNumeric> {data.totalIncome}</Td>
                                     <Td isNumeric gap={2}>
-                                        <span 
-                                            className="mr-5 font-semibold text-gray-500 hover:text-gray-600 cursor-pointer"
-                                            onClick={()=>setIsOpenGroupEditModal(true)}
+                                        <span
+                                            className="mr-5 cursor-pointer font-semibold text-gray-500 hover:text-gray-600"
+                                            onClick={() => setIsOpenGroupEditModal(true)}
                                         >
                                             Edit
                                         </span>

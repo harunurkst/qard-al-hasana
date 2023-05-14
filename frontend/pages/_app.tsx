@@ -8,7 +8,7 @@ import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
 import React, { ReactElement, ReactNode } from 'react';
 //session provider
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from 'next-auth/react';
 //css
 
 import '../styles/globals.css';

@@ -1,10 +1,8 @@
 import isRouterPathnameMatched from '@/utils/isRouterPathnameMatched';
 import { Avatar, Button } from '@chakra-ui/react';
+import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
 
 const navItems = [
     {
@@ -35,22 +33,14 @@ const navItems = [
 ];
 
 const DashboardNavbar = () => {
-    const {data:session, status} = useSession()
-    console.log('session: ', session)
-    console.log('status: ', status)
+    // const { data: session, status } = useSession();
     const router = useRouter();
 
-    useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        }
-    });
-
     //handling Logout
-    const handleRedirectToLogin=()=>{
+    const handleRedirectToLogin = () => {
         signOut();
-        router.push('/login')
-    }
+        router.push('/login');
+    };
 
     return (
         <header className="flex h-16 items-center border-b bg-white">
@@ -79,20 +69,15 @@ const DashboardNavbar = () => {
                         })}
                     </div>
                 </div>
-                <div> 
+                <div>
                     <Avatar size={'md'} name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-                    <span className='cursor-pointer'
-                        onClick={handleRedirectToLogin}
-                    >
+                    <span className="text cursor-pointer" onClick={handleRedirectToLogin}>
                         logout
                     </span>
                 </div>
-
             </div>
         </header>
     );
 };
 
 export default DashboardNavbar;
-
-

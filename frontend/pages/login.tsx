@@ -3,21 +3,18 @@ import BaseLayout from '@/Layouts/BaseLayout';
 import { loginSchema, LoginType } from '@/schema/AuthSchema';
 import { Button } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/dist/client/router';
-import { ReactNode, useEffect } from 'react';
+import { GetServerSideProps } from 'next';
+import { getCsrfToken, signIn } from 'next-auth/react';
+import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import api from './api/api';
-import axios from 'axios';
-import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react"
-import { type } from 'os';
 
-interface LoginFormData{
-    username: string,
-    password: string
+interface LoginFormData {
+    username: string;
+    password: string;
 }
 
-const Login = (csrfToken:string) => {
-    const router = useRouter();
+const Login = (response: string) => {
+    // const router = useRouter();
 
     const {
         register,
@@ -26,13 +23,12 @@ const Login = (csrfToken:string) => {
     } = useForm<LoginType>({ resolver: zodResolver(loginSchema) });
 
     // form submit
-    const submitLoginForm = async (values:LoginFormData) => {
-        const res = await signIn('credentials', {
+    const submitLoginForm = async (values: LoginFormData) => {
+        await signIn('credentials', {
             // 'redirect': false,
-            'username': values.username,
-            'password':values.password,
-            'callbackUrl': '/dashboard',
-
+            username: values.username,
+            password: values.password,
+            callbackUrl: '/dashboard',
         });
 
         // return new Promise<void>((resolve) => {
@@ -52,13 +48,9 @@ const Login = (csrfToken:string) => {
                     doloribus quos hic culpa non
                 </p>
                 <div className="w-full max-w-3xl rounded-md bg-white  p-7 shadow-md">
-                    <form onSubmit={handleSubmit(submitLoginForm)} >
-                    {/* <form method='post' action="/api/auth/callback/credentials"> */}
-                        <input
-                            name="csrfToken"
-                            type="hidden"
-                            defaultValue={csrfToken}
-                        />
+                    <form onSubmit={handleSubmit(submitLoginForm)}>
+                        {/* <form method='post' action="/api/auth/callback/credentials"> */}
+                        <input name="csrfToken" type="hidden" defaultValue={response} />
                         <CustomTextInput
                             className="mb-2.5"
                             label="User Name"
@@ -66,11 +58,11 @@ const Login = (csrfToken:string) => {
                             {...register('username')}
                             type="text"
                         />
-                        <CustomTextInput 
-                            label="Password" 
-                            error={errors.password?.message} 
-                            type='password'
-                            {...register('password')} 
+                        <CustomTextInput
+                            label="Password"
+                            error={errors.password?.message}
+                            type="password"
+                            {...register('password')}
                         />
 
                         <Button px={'10'} className="mt-8" colorScheme={'brand'} isLoading={isSubmitting} type="submit">
@@ -87,14 +79,15 @@ Login.getLayout = (page: ReactNode) => {
     return <BaseLayout className="flex min-h-screen flex-col bg-brand-25/50">{page}</BaseLayout>;
 };
 
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const res = await getCsrfToken(context);
+
     return {
-      props: {
-        csrfToken: await getCsrfToken(context),
-      },
-    }
-  }
+        props: {
+            // csrfToken: await getCsrfToken(context),
+            response: JSON.stringify(res),
+        },
+    };
+};
 
 export default Login;
-
-

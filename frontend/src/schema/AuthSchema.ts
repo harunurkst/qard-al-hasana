@@ -1,14 +1,9 @@
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-    username: z
-        .string()
-        .trim()
-        .min(1, { message: 'Please insert your username.' }),
-        // .username('This is not a valid username.'),
-    password: z
-        .string()
-        .min(1, { message: 'Please insert your password.' }),
+    username: z.string().trim().min(1, { message: 'Please insert your username.' }),
+    // .username('This is not a valid username.'),
+    password: z.string().min(1, { message: 'Please insert your password.' }),
 });
 
 export const registrationSchema = z
