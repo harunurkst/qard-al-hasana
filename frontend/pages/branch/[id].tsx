@@ -1,3 +1,6 @@
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import MembersTable from '@/modules/branch/components/MembersTable';
+import TeamsTable from '@/modules/branch/components/TeamsTable';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -9,14 +12,11 @@ import {
     InputLeftElement,
 } from '@chakra-ui/react';
 import React, { ReactNode, useState } from 'react';
-import DashboardLayout from '../../src/Layouts/DashboardLayout';
-import MembersTable from '../../src/modules/branch/components/MembersTable';
-import TeamsTable from '../../src/modules/branch/components/TeamsTable';
 
 // modal imported
-import EditBranchModal from '../../src/modules/branch/components/EditBranchModal';
-import CreateNewGroup from '../../src/modules/group/CreateGroupModal';
-import CreateNewMember from '../../src/modules/member/components/CreateMemberModal';
+import EditBranchModal from '@/modules/branch/components/EditBranchModal';
+import CreateNewGroup from '@/modules/group/CreateGroupModal';
+import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
 const BranchDetailsPage = () => {
@@ -25,9 +25,10 @@ const BranchDetailsPage = () => {
     const [isOpenCreateModal, setOpenCreateModal] = useState(false); //handling group add modal
     const [isOpenAddMemberModal, setOpenAddMemberModal] = useState(false); //handling member add modal
     const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
-    const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
+    // const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
 
-    const modalHandling = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const modalHandling = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         if (tab == 'TEAM') {
             setOpenCreateModal(true);
         } else {

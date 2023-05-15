@@ -60,7 +60,7 @@ export const authOptions: AuthOptions = {
         }),
     ],
 
-    secret: 'string in scect key',
+    secret: process.env.NEXTAUTH_SECRET,
 
     callbacks: {
         jwt: async ({ token, user }) => {
@@ -88,7 +88,7 @@ export const authOptions: AuthOptions = {
     },
 
     jwt: {
-        secret: 'string in scect key',
+        secret: process.env.NEXTAUTH_SECRET,
     },
 
     pages: {
