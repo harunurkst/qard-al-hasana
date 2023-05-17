@@ -1,9 +1,10 @@
+import EditGroup from '@/modules/group/EditGroupModal';
+import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import ReactPaginate from 'react-paginate';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-
-import EditGroup from '../../group/EditGroupModal'
-import React, { useState } from 'react';
+import { useState } from 'react';
+import ReactPaginate from 'react-paginate';
 
 const taams = [
     {
@@ -73,21 +74,22 @@ const taams = [
 ];
 
 const TeamsTable = () => {
+    const router = useRouter();
 
-    const router = useRouter()
+    const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
 
-    const [ isOpenGroupEditModal, setIsOpenGroupEditModal ] = useState(false)
+    const redirectToDetail = () => {
+        return router.push('/team');
+    };
 
-    const redirectToDetail=()=>{
-        // console.log('clicked on team name')
+    const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
 
-        return router.push('/team')
-    }
+    console.log({ data, isFetching });
 
     return (
         <>
             {/* handling team/group editing modal */}
-            <EditGroup isOpen={isOpenGroupEditModal} onClose={()=>setIsOpenGroupEditModal(false)}/>
+            <EditGroup isOpen={isOpenGroupEditModal} onClose={() => setIsOpenGroupEditModal(false)} />
 
             {/* table of team list */}
             <TableContainer>
@@ -108,19 +110,15 @@ const TeamsTable = () => {
                             return (
                                 <Tr key={data.id} className=" hover:bg-gray-50">
                                     <Td>{data.id}</Td>
-                                    <Td
-                                        onClick={redirectToDetail}
-                                    >
-                                        {data.name}
-                                    </Td>
+                                    <Td onClick={redirectToDetail}>{data.name}</Td>
                                     <Td isNumeric> {data.totalMember}</Td>
                                     <Td isNumeric> {data.totalLoan}</Td>
                                     <Td isNumeric> {data.cashInhand}</Td>
                                     <Td isNumeric> {data.totalIncome}</Td>
                                     <Td isNumeric gap={2}>
-                                        <span 
-                                            className="mr-5 font-semibold text-gray-500 hover:text-gray-600 cursor-pointer"
-                                            onClick={()=>setIsOpenGroupEditModal(true)}
+                                        <span
+                                            className="mr-5 cursor-pointer font-semibold text-gray-500 hover:text-gray-600"
+                                            onClick={() => setIsOpenGroupEditModal(true)}
                                         >
                                             Edit
                                         </span>
