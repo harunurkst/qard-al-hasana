@@ -1,7 +1,7 @@
+import http from '@/utils/http';
 import { AuthOptions, DefaultUser } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import api from '../api';
 
 // const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -48,7 +48,7 @@ export const authOptions: AuthOptions = {
                     password: _credential.password,
                 };
 
-                const resp = await api.post('api/v1/auth/login/', credentialDetails);
+                const resp = await http.post('api/v1/auth/login/', credentialDetails);
                 const user = resp;
                 if (user && user.status == 200) {
                     return user.data;
@@ -81,7 +81,7 @@ export const authOptions: AuthOptions = {
 
         session: ({ session, token }) => {
             if (token) {
-                session.user.accessToken = token.jti;
+                session.user.accessToken = token.accessToken;
             }
             return session;
         },

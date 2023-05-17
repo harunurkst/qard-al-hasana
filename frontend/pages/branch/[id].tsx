@@ -11,7 +11,10 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
+import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
 import React, { ReactNode, useState } from 'react';
+import { authOptions } from '../api/auth/[...nextauth]';
 
 // modal imported
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
@@ -249,6 +252,24 @@ const SearchIcon = () => {
             />
         </svg>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getServerSession(context.req, context.res, authOptions);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: true,
+            },
+        };
+    }
+    return {
+        props: {
+            session: JSON.stringify(session),
+        },
+    };
 };
 
 BranchDetailsPage.getLayout = (page: ReactNode) => {

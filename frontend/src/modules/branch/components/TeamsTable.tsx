@@ -1,9 +1,10 @@
+import EditGroup from '@/modules/group/EditGroupModal';
+import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import ReactPaginate from 'react-paginate';
-
 import { useState } from 'react';
-import EditGroup from '../../group/EditGroupModal';
+import ReactPaginate from 'react-paginate';
 
 const taams = [
     {
@@ -78,10 +79,12 @@ const TeamsTable = () => {
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
 
     const redirectToDetail = () => {
-        // console.log('clicked on team name')
-
         return router.push('/team');
     };
+
+    const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
+
+    console.log({ data, isFetching });
 
     return (
         <>
