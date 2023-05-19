@@ -1,7 +1,7 @@
 import { env } from '@/env.mjs';
 import { useIsClient } from '@/hooks';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import jwt from 'jsonwebtoken';
 import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
 import type { AppProps } from 'next/app';
@@ -65,7 +65,9 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
             <ChakraProvider theme={theme}>
                 {getLayout(
                     <QueryClientProvider client={queryClient}>
-                        <Component {...pageProps} />
+                        <Hydrate state={pageProps.dehydratedState}>
+                            <Component {...pageProps} />
+                        </Hydrate>
 
                         {env.NEXT_PUBLIC_NODE_ENV === 'development' && isClient ? (
                             <React.Suspense fallback={null}>
