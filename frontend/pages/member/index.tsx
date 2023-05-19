@@ -1,3 +1,4 @@
+import http from '@/utils/http';
 import {
     Badge,
     Breadcrumb,
@@ -16,8 +17,6 @@ import {
     Tr,
 } from '@chakra-ui/react';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import crypto from 'crypto';
 import { ReactNode, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import DashboardLayout from '../../src/Layouts/DashboardLayout';
@@ -39,7 +38,7 @@ export type Member = {
 
 const members: Member[] = [
     {
-        uuid: String(crypto.randomUUID),
+        uuid: '11122',
         name: 'JR. John Doe',
         mobile_number: '01711111111',
         nid_number: '1234567879',
@@ -51,11 +50,10 @@ const members: Member[] = [
         is_active: true,
     },
 ];
-const getAllMembersAsync = () => {
-    axios.get('/api/v1/peoples/members/').then((res) => {
-        console.log(res.data);
-        return res.data;
-    });
+
+export const getMemberAsync = async () => {
+    const response = await http.get<any>(`/api/v1/peoples/members/`);
+    return response.data;
 };
 
 const MemberPage = () => {
@@ -68,9 +66,12 @@ const MemberPage = () => {
         setEditData(data);
     };
 
-    const { data } = useQuery({ queryKey: ['members'], queryFn: getAllMembersAsync });
+    const { data: allMembers } = useQuery({
+        queryKey: ['members'],
+        queryFn: getMemberAsync,
+    });
 
-    console.log({ data });
+    console.log('fgtgt', allMembers?.results);
     // This query was not prefetched on the server and will not start
     // fetching until on the client, both patterns are fine to mix
 
@@ -188,7 +189,7 @@ const MemberPage = () => {
                             </Tr>
                         </Thead>
                         <Tbody className="text-gray-600">
-                            {members.map((data) => {
+                            {allMembers?.results?.map((data: any) => {
                                 return (
                                     <Tr
                                         // onClick={() => Router.push(`/branch/${data.serial_number}`)}
@@ -307,10 +308,10 @@ const SearchIcon = () => {
     );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const queryClient = new QueryClient();
 
-    await queryClient.prefetchQuery(['members'], getAllMembersAsync);
+    await queryClient.prefetchQuery(['members'], getMemberAsync);
 
     return {
         props: {
