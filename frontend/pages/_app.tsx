@@ -7,6 +7,8 @@ import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'ne
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
 import React, { ReactElement, ReactNode } from 'react';
+//session provider
+import { SessionProvider } from 'next-auth/react';
 //css
 
 import '../styles/globals.css';
@@ -56,30 +58,32 @@ const colors = {
 
 const theme = extendTheme({ colors });
 
-const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
+const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppPropsWithLayout) => {
     const getLayout = Component.getLayout ?? ((page) => page);
 
     const isClient = useIsClient();
     return (
-        <div className={inter.className}>
-            <ChakraProvider theme={theme}>
-                {getLayout(
-                    <QueryClientProvider client={queryClient}>
-                        <Hydrate state={pageProps.dehydratedState}>
-                            <Component {...pageProps} />
-                        </Hydrate>
+        <SessionProvider session={session}>
+            <div className={inter.className}>
+                <ChakraProvider theme={theme}>
+                    {getLayout(
+                        <QueryClientProvider client={queryClient}>
+                            <Hydrate state={pageProps.dehydratedState}>
+                                <Component {...pageProps} />
+                            </Hydrate>
 
-                        {env.NEXT_PUBLIC_NODE_ENV === 'development' && isClient ? (
-                            <React.Suspense fallback={null}>
-                                <ReactQueryDevtoolsProduction initialIsOpen={false} />
-                            </React.Suspense>
-                        ) : null}
-                    </QueryClientProvider>,
+                            {env.NEXT_PUBLIC_NODE_ENV === 'development' && isClient ? (
+                                <React.Suspense fallback={null}>
+                                    <ReactQueryDevtoolsProduction initialIsOpen={false} />
+                                </React.Suspense>
+                            ) : null}
+                        </QueryClientProvider>,
 
-                    { ...pageProps }
-                )}
-            </ChakraProvider>
-        </div>
+                        { ...pageProps }
+                    )}
+                </ChakraProvider>
+            </div>
+        </SessionProvider>
     );
 };
 

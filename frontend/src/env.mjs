@@ -14,8 +14,8 @@ const server = z.object({
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
-    NEXT_PUBLIC_API_URL: z.string().url(),
-    NEXT_PUBLIC_NODE_ENV : z.enum(['development', 'test', 'production']),
+    NEXT_PUBLIC_BACKEND_API_URL: z.string().url(),
+    NEXT_PUBLIC_NODE_ENV: z.enum(['development', 'test', 'production']),
 });
 
 /**
@@ -24,9 +24,9 @@ const client = z.object({
  * @type {Record<keyof z.infer<typeof server> | keyof z.infer<typeof client>, string | undefined>}
  */
 const processEnv = {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NODE_ENV : process.env.NODE_ENV,
-    NEXT_PUBLIC_NODE_ENV : process.env.NODE_ENV,
+    NEXT_PUBLIC_BACKEND_API_URL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
 };
 
 // Don't touch the part below
@@ -36,7 +36,6 @@ const merged = server.merge(client);
 /** @type z.infer<merged>
  *  @ts-ignore - can't type this properly in jsdoc */
 let env = process.env;
-
 
 if (!!process.env.SKIP_ENV_VALIDATION == false) {
     const isServer = typeof window === 'undefined';
@@ -65,7 +64,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
                         ? '❌ Attempted to access a server-side environment variable on the client'
                         : `❌ Attempted to access server-side environment variable '${prop}' on the client`
                 );
-           
+
             return target[prop];
         },
     });

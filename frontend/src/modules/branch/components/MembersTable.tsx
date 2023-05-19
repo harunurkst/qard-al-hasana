@@ -15,14 +15,13 @@ import {
     Thead,
     Tr,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import { useRouter } from 'next/router';
 
 // modals are imported here
-import DespositeModal from '../../member/components/DepositeModal'
-import InstallmentModal from '../../member/components/InstallmentModal'
-
+import DespositeModal from '../../member/components/DepositeModal';
+import InstallmentModal from '../../member/components/InstallmentModal';
 
 function randomDateInMonth() {
     const date = new Date();
@@ -129,19 +128,17 @@ const members = [
 ];
 
 const Members = () => {
-    const router = useRouter()
+    const router = useRouter();
 
     // useState are handled here
-    const [ isOpenDepositeModal, setOpenDepositeModal ] = useState(false)
-    const [ isOpenInstallmentModal, setOpenInstallmentModal ] = useState(false)
-
+    const [isOpenDepositeModal, setOpenDepositeModal] = useState(false);
+    const [isOpenInstallmentModal, setOpenInstallmentModal] = useState(false);
 
     return (
         <>
             {/* Modal component used here */}
-            <DespositeModal isOpen={isOpenDepositeModal} onClose={()=>setOpenDepositeModal(false)} />
-            <InstallmentModal isOpen={isOpenInstallmentModal} onClose={()=>setOpenInstallmentModal(false)} />
-
+            <DespositeModal isOpen={isOpenDepositeModal} onClose={() => setOpenDepositeModal(false)} />
+            <InstallmentModal isOpen={isOpenInstallmentModal} onClose={() => setOpenInstallmentModal(false)} />
 
             {/* member list table started here */}
             <TableContainer>
@@ -196,18 +193,14 @@ const Members = () => {
                                             </MenuButton>
                                             <MenuList>
                                                 <MenuItem
-                                                    onClick={()=>{router.push('member/1')}}
+                                                    onClick={() => {
+                                                        router.push('member/1');
+                                                    }}
                                                 >
                                                     View
                                                 </MenuItem>
-                                                <MenuItem
-                                                    onClick={()=>setOpenDepositeModal(true)}
-                                                >
-                                                    Deposit
-                                                </MenuItem>
-                                                <MenuItem
-                                                    onClick={()=>setOpenInstallmentModal(true)}
-                                                >
+                                                <MenuItem onClick={() => setOpenDepositeModal(true)}>Deposit</MenuItem>
+                                                <MenuItem onClick={() => setOpenInstallmentModal(true)}>
                                                     InstallMent
                                                 </MenuItem>
                                             </MenuList>
