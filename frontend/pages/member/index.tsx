@@ -1,3 +1,7 @@
+import PreviousIcon from '@/icons/PreviousIcon';
+import RightIcon from '@/icons/RightIcon';
+import SearchIcon from '@/icons/SearchIcon';
+import { FetchedMemberType, MemberType } from '@/types/member.type';
 import http from '@/utils/http';
 import {
     Badge,
@@ -17,6 +21,7 @@ import {
     Tr,
 } from '@chakra-ui/react';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { NextPageContext } from 'next';
 import { ReactNode, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import DashboardLayout from '../../src/Layouts/DashboardLayout';
@@ -36,23 +41,8 @@ export type Member = {
     is_active: boolean;
 };
 
-const members: Member[] = [
-    {
-        uuid: '11122',
-        name: 'JR. John Doe',
-        mobile_number: '01711111111',
-        nid_number: '1234567879',
-        guardian_name: 'John Doe',
-        gender: 'male',
-        serial_number: 1,
-        team: 'Test Team',
-        branch: 'Test Branch',
-        is_active: true,
-    },
-];
-
-export const getMemberAsync = async () => {
-    const response = await http.get<any>(`/api/v1/peoples/members/`);
+export const getMemberAsync = async (pageNumber: number): Promise<FetchedMemberType> => {
+    const response = await http.get<FetchedMemberType>(`/api/v1/peoples/members/?limit=5&offset=${pageNumber * 5}`);
     return response.data;
 };
 
@@ -60,20 +50,21 @@ const MemberPage = () => {
     const [isOpenCreateModal, setOpenCreateModal] = useState(false);
     const [isOpenEditModal, setOpenEditModal] = useState(false);
     const [editData, setEditData] = useState<Member | null>(null);
-
+    const [pageNumber, setPageNumber] = useState<number>(0);
     const handleEditModal = (data: Member) => {
         setOpenEditModal(true);
         setEditData(data);
     };
 
-    const { data: allMembers } = useQuery({
-        queryKey: ['members'],
-        queryFn: getMemberAsync,
+    const { data: allMembers } = useQuery<FetchedMemberType>({
+        queryKey: ['members', pageNumber],
+        queryFn: () => getMemberAsync(pageNumber),
     });
+    const handlePageChange = (event: { selected: number }) => {
+        setPageNumber(event.selected);
+    };
 
-    console.log('fgtgt', allMembers?.results);
-    // This query was not prefetched on the server and will not start
-    // fetching until on the client, both patterns are fine to mix
+    console.log('allMembers', allMembers?.results);
 
     return (
         <section className="container mx-auto pb-8 pt-4">
@@ -189,7 +180,7 @@ const MemberPage = () => {
                             </Tr>
                         </Thead>
                         <Tbody className="text-gray-600">
-                            {allMembers?.results?.map((data: any) => {
+                            {allMembers?.results?.map((data: MemberType) => {
                                 return (
                                     <Tr
                                         // onClick={() => Router.push(`/branch/${data.serial_number}`)}
@@ -214,10 +205,10 @@ const MemberPage = () => {
                                         </Td>
                                         <Td gap={2}>
                                             <span
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    handleEditModal(data);
-                                                }}
+                                                // onClick={(event) => {
+                                                //     event.stopPropagation();
+                                                //     handleEditModal(data);
+                                                // }}
                                                 className="mr-5 font-semibold text-gray-500 hover:text-gray-600"
                                             >
                                                 Edit
@@ -234,28 +225,14 @@ const MemberPage = () => {
                 </TableContainer>
                 <div className="flex justify-between px-5 py-4  ">
                     <Button
-                        leftIcon={
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M15.8332 10.0001H4.1665M4.1665 10.0001L9.99984 15.8334M4.1665 10.0001L9.99984 4.16675"
-                                    stroke="#344054"
-                                    strokeWidth="1.66667"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        }
+                        leftIcon={<PreviousIcon />}
                         variant={'outline'}
+                        onClick={() => setPageNumber(pageNumber - 1)}
                     >
                         Previous
                     </Button>
                     <ReactPaginate
+                        forcePage={pageNumber}
                         previousClassName="hidden"
                         nextClassName="hidden"
                         pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
@@ -265,27 +242,9 @@ const MemberPage = () => {
                         breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
                         pageRangeDisplayed={5}
                         pageCount={13}
+                        onPageChange={handlePageChange}
                     />
-                    <Button
-                        rightIcon={
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M4.1665 10.0001H15.8332M15.8332 10.0001L9.99984 4.16675M15.8332 10.0001L9.99984 15.8334"
-                                    stroke="#344054"
-                                    strokeWidth="1.66667"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        }
-                        variant={'outline'}
-                    >
+                    <Button rightIcon={<RightIcon />} variant={'outline'} onClick={() => setPageNumber(pageNumber + 1)}>
                         Next
                     </Button>
                 </div>
@@ -294,24 +253,12 @@ const MemberPage = () => {
     );
 };
 
-const SearchIcon = () => {
-    return (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M17.5 17.5L14.5834 14.5833M16.6667 9.58333C16.6667 13.4954 13.4954 16.6667 9.58333 16.6667C5.67132 16.6667 2.5 13.4954 2.5 9.58333C2.5 5.67132 5.67132 2.5 9.58333 2.5C13.4954 2.5 16.6667 5.67132 16.6667 9.58333Z"
-                stroke="#667085"
-                strokeWidth="1.66667"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-};
-
-export async function getServerSideProps() {
+export async function getServerSideProps(context: NextPageContext) {
+    const { query } = context;
+    const pageNumber = query.pageNumber ? Number(query.pageNumber) : 0;
     const queryClient = new QueryClient();
 
-    await queryClient.prefetchQuery(['members'], getMemberAsync);
+    await queryClient.prefetchQuery(['members'], () => getMemberAsync(pageNumber));
 
     return {
         props: {
