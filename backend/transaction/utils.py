@@ -1,12 +1,16 @@
 
 
 def format_savings_date(member_savings, member):
+    blalance = 0
+    last_savings = member_savings.last()
+    if last_savings:
+        balance = last_savings.balance
     d = {
         "sl": member.serial_number,
         "member_id": member.id,
         "member_name": member.name,
         "guardian_name": member.guardian_name,
-        "balance": member_savings.last().balance,
+        "balance": blalance,
         "week1": 0,
         "week2": 0,
         "week3": 0,
