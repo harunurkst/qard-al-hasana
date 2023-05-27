@@ -6,72 +6,14 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
-const taams = [
-    {
-        id: '1',
-        name: 'Beli',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '2',
-        name: 'Rajani Gandha',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '3',
-        name: 'Taam 1',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '4',
-        name: 'Chandra Branch',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '5',
-        name: 'Chandra Branch',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '6',
-        name: 'Chandra Branch',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '7',
-        name: 'Chandra Branch',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-    {
-        id: '8',
-        name: 'Chandra Branch',
-        totalMember: 300,
-        cashInhand: 4000,
-        totalIncome: 2434,
-        totalLoan: 8999,
-    },
-];
+interface TeamObject {
+    id: number;
+    name: string;
+    totalMember: number;
+    totalLoan: number;
+    cashInhand: number;
+    totalIncome: number;
+}
 
 const TeamsTable = () => {
     const router = useRouter();
@@ -84,7 +26,9 @@ const TeamsTable = () => {
 
     const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
 
-    console.log({ data, isFetching });
+    // console.log({ data, isFetching });
+
+    // console.log('only data: ', data?.result.results);
 
     return (
         <>
@@ -106,27 +50,32 @@ const TeamsTable = () => {
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
-                        {taams.map((data) => {
-                            return (
-                                <Tr key={data.id} className=" hover:bg-gray-50">
-                                    <Td>{data.id}</Td>
-                                    <Td onClick={redirectToDetail}>{data.name}</Td>
-                                    <Td isNumeric> {data.totalMember}</Td>
-                                    <Td isNumeric> {data.totalLoan}</Td>
-                                    <Td isNumeric> {data.cashInhand}</Td>
-                                    <Td isNumeric> {data.totalIncome}</Td>
-                                    <Td isNumeric gap={2}>
-                                        <span
-                                            className="mr-5 cursor-pointer font-semibold text-gray-500 hover:text-gray-600"
-                                            onClick={() => setIsOpenGroupEditModal(true)}
-                                        >
-                                            Edit
-                                        </span>
-                                        <span className="font-semibold text-red-500 hover:text-red-600">Delete</span>
-                                    </Td>
-                                </Tr>
-                            );
-                        })}
+                        {data &&
+                            data?.result.results.map((team: TeamObject) => {
+                                return (
+                                    <Tr key={team.id} className=" hover:bg-gray-50">
+                                        <Td>{team.id}</Td>
+                                        <Td onClick={redirectToDetail} className="cursor-pointer">
+                                            {team.name}
+                                        </Td>
+                                        <Td isNumeric> {team.totalMember}</Td>
+                                        <Td isNumeric> {team.totalLoan}</Td>
+                                        <Td isNumeric> {team.cashInhand}</Td>
+                                        <Td isNumeric> {team.totalIncome}</Td>
+                                        <Td isNumeric gap={2}>
+                                            <span
+                                                className="mr-5 cursor-pointer font-semibold text-gray-500 hover:text-gray-600"
+                                                onClick={() => setIsOpenGroupEditModal(true)}
+                                            >
+                                                Edit
+                                            </span>
+                                            <span className="font-semibold text-red-500 hover:text-red-600">
+                                                Delete
+                                            </span>
+                                        </Td>
+                                    </Tr>
+                                );
+                            })}
                     </Tbody>
                 </Table>
             </TableContainer>
