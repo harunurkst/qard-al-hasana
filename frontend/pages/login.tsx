@@ -3,12 +3,18 @@ import BaseLayout from '@/Layouts/BaseLayout';
 import { loginSchema, LoginType } from '@/schema/AuthSchema';
 import { Button } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/dist/client/router';
+import { GetServerSideProps } from 'next';
+import { getCsrfToken, signIn } from 'next-auth/react';
 import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 
-const Login = () => {
-    const router = useRouter();
+interface LoginFormData {
+    username: string;
+    password: string;
+}
+
+const Login = (response: string) => {
+    // const router = useRouter();
 
     const {
         register,
@@ -17,13 +23,20 @@ const Login = () => {
     } = useForm<LoginType>({ resolver: zodResolver(loginSchema) });
 
     // form submit
-    const submitLoginForm = async () => {
-        return new Promise<void>((resolve) => {
-            setTimeout(() => {
-                router.push('/dashboard');
-                resolve();
-            }, 3000);
+    const submitLoginForm = async (values: LoginFormData) => {
+        await signIn('credentials', {
+            // 'redirect': false,
+            username: values.username,
+            password: values.password,
+            callbackUrl: '/dashboard',
         });
+
+        // return new Promise<void>((resolve) => {
+        //     setTimeout(() => {
+        //         router.push('/dashboard');
+        //         resolve();
+        //     }, 3000);
+        // });
     };
 
     return (
@@ -36,14 +49,21 @@ const Login = () => {
                 </p>
                 <div className="w-full max-w-3xl rounded-md bg-white  p-7 shadow-md">
                     <form onSubmit={handleSubmit(submitLoginForm)}>
+                        {/* <form method='post' action="/api/auth/callback/credentials"> */}
+                        <input name="csrfToken" type="hidden" defaultValue={response} />
                         <CustomTextInput
                             className="mb-2.5"
-                            label="Email"
-                            error={errors.email?.message}
-                            {...register('email')}
-                            type="email"
+                            label="User Name"
+                            error={errors.username?.message}
+                            {...register('username')}
+                            type="text"
                         />
-                        <CustomTextInput label="Password" error={errors.email?.message} {...register('password')} />
+                        <CustomTextInput
+                            label="Password"
+                            error={errors.password?.message}
+                            type="password"
+                            {...register('password')}
+                        />
 
                         <Button px={'10'} className="mt-8" colorScheme={'brand'} isLoading={isSubmitting} type="submit">
                             Submit
@@ -57,6 +77,17 @@ const Login = () => {
 
 Login.getLayout = (page: ReactNode) => {
     return <BaseLayout className="flex min-h-screen flex-col bg-brand-25/50">{page}</BaseLayout>;
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const res = await getCsrfToken(context);
+
+    return {
+        props: {
+            // csrfToken: await getCsrfToken(context),
+            response: JSON.stringify(res),
+        },
+    };
 };
 
 export default Login;

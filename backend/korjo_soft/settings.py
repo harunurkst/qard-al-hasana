@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django_filters",
     "corsheaders",
     "drf_spectacular",
+    "django_extensions",
     # local
     "organization.apps.OrganizationConfig",
     "peoples.apps.PeoplesConfig",

@@ -6,8 +6,9 @@ services:
     build: .
     command: >
       bash -c "python manage.py migrate &&
-               python manage.py runserver 0.0.0.0:8000 &&
-               python manage.py prepare_org"
+               python manage.py prepare_org &&
+               python manage.py runserver 0.0.0.0:8000
+               "
     volumes:
       - .:/app
       - static_data:/app/static

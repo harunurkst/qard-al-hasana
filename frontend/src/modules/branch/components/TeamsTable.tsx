@@ -1,4 +1,9 @@
+import EditGroup from '@/modules/group/EditGroupModal';
+import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
 const taams = [
@@ -69,8 +74,24 @@ const taams = [
 ];
 
 const TeamsTable = () => {
+    const router = useRouter();
+
+    const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
+
+    const redirectToDetail = () => {
+        return router.push('/team');
+    };
+
+    const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
+
+    console.log({ data, isFetching });
+
     return (
         <>
+            {/* handling team/group editing modal */}
+            <EditGroup isOpen={isOpenGroupEditModal} onClose={() => setIsOpenGroupEditModal(false)} />
+
+            {/* table of team list */}
             <TableContainer>
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
@@ -89,13 +110,16 @@ const TeamsTable = () => {
                             return (
                                 <Tr key={data.id} className=" hover:bg-gray-50">
                                     <Td>{data.id}</Td>
-                                    <Td>{data.name}</Td>
+                                    <Td onClick={redirectToDetail}>{data.name}</Td>
                                     <Td isNumeric> {data.totalMember}</Td>
                                     <Td isNumeric> {data.totalLoan}</Td>
                                     <Td isNumeric> {data.cashInhand}</Td>
                                     <Td isNumeric> {data.totalIncome}</Td>
                                     <Td isNumeric gap={2}>
-                                        <span className="mr-5 font-semibold text-gray-500 hover:text-gray-600">
+                                        <span
+                                            className="mr-5 cursor-pointer font-semibold text-gray-500 hover:text-gray-600"
+                                            onClick={() => setIsOpenGroupEditModal(true)}
+                                        >
                                             Edit
                                         </span>
                                         <span className="font-semibold text-red-500 hover:text-red-600">Delete</span>

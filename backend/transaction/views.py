@@ -1,12 +1,15 @@
+from datetime import datetime
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 
+from peoples.models import Member
 from peoples.permissions import IsSameBranch
-from .models import Loan
+from .models import Loan, Savings
 from .serializers import SavingsSerializer, LoanDisbursementSerializer, LoanInstallmentSerializer
+from .utils import format_savings_date
 
 
 class DepositView(CreateAPIView):
@@ -82,6 +85,30 @@ class LoanInstallmentView(APIView):
 
 
 
-
-
-
+class MemberSavingsData(APIView):
+    """
+    [{
+        "id": 1,
+        "sl":1,
+        "name":"name1",
+        "gurdian":",
+        "week1": 500,
+        "week2": 500,
+        "week3": 500,
+        "balance": 2000,
+    },
+    ]
+    """
+    def get(self, request):
+        data = []
+        month = self.request.query_params.get('month', datetime.today().month)
+        team = self.request.query_params.get('team', None)
+        staff_branch = request.user.staff.branch
+        members = Member.objects.filter(branch=staff_branch)
+        if team:
+            members = members.filter(team=team)
+        for member in members:
+            member_savings = Savings.objects.filter(member=member, date__month=month)
+            savings_data = format_savings_date(member_savings, member)
+            data.append(savings_data)
+        return Response(data)

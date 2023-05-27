@@ -9,7 +9,8 @@ from django.apps import apps
 # write custom admin views
 @admin.register(Savings)
 class SavingsAdmin(admin.ModelAdmin):
-    list_display = ("branch", "member", "amount", "balance")
+    list_display = ("id", "date", "member", "transaction_type", "amount", "balance")
+    list_filter = ("member",)
 
 
 # register all the models from this app

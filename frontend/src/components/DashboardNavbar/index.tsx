@@ -1,5 +1,6 @@
 import isRouterPathnameMatched from '@/utils/isRouterPathnameMatched';
 import { Avatar, Button } from '@chakra-ui/react';
+import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -32,7 +33,14 @@ const navItems = [
 ];
 
 const DashboardNavbar = () => {
+    // const { data: session, status } = useSession();
     const router = useRouter();
+
+    //handling Logout
+    const handleRedirectToLogin = () => {
+        signOut();
+        router.push('/login');
+    };
 
     return (
         <header className="flex h-16 items-center border-b bg-white">
@@ -63,6 +71,9 @@ const DashboardNavbar = () => {
                 </div>
                 <div>
                     <Avatar size={'md'} name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+                    <span className="text cursor-pointer" onClick={handleRedirectToLogin}>
+                        logout
+                    </span>
                 </div>
             </div>
         </header>

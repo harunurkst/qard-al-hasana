@@ -1,3 +1,6 @@
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import MembersTable from '@/modules/branch/components/MembersTable';
+import TeamsTable from '@/modules/branch/components/TeamsTable';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -8,18 +11,36 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
-import { ReactNode, useState } from 'react';
-import DashboardLayout from '../../src/Layouts/DashboardLayout';
-import EditBranchModal from '../../src/modules/branch/components/EditBranchModal';
-import MembersTable from '../../src/modules/branch/components/MembersTable';
-import TeamsTable from '../../src/modules/branch/components/TeamsTable';
+import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
+import React, { ReactNode, useState } from 'react';
+import { authOptions } from '../api/auth/[...nextauth]';
+
+// modal imported
+import EditBranchModal from '@/modules/branch/components/EditBranchModal';
+import CreateNewGroup from '@/modules/group/CreateGroupModal';
+import CreateNewMember from '@/modules/member/components/CreateMemberModal';
+// import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
 const BranchDetailsPage = () => {
-    const [isOpenEditModal, setOpenEditModal] = useState(false);
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
+    const [isOpenCreateModal, setOpenCreateModal] = useState(false); //handling group add modal
+    const [isOpenAddMemberModal, setOpenAddMemberModal] = useState(false); //handling member add modal
+    const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
+    // const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
+
+    const modalHandling = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        if (tab == 'TEAM') {
+            setOpenCreateModal(true);
+        } else {
+            setOpenAddMemberModal(true);
+        }
+    };
+
     return (
-        <section className="container mx-auto pt-4 pb-8">
+        <section className="container mx-auto pb-8 pt-4">
             <Breadcrumb>
                 <BreadcrumbItem>
                     <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
@@ -33,12 +54,20 @@ const BranchDetailsPage = () => {
                     <BreadcrumbLink>Chandra Bazar Branch</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
+
+            {/* creating new group and new member modal */}
+            <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            <CreateNewMember isOpen={isOpenAddMemberModal} onClose={() => setOpenAddMemberModal(false)} />
+
+            {/* editing branch and member info */}
             <EditBranchModal isOpen={isOpenEditModal} onClose={() => setOpenEditModal(false)} />
+            {/* <EditMemberModal isOpen={isOpenMemberEditModal} onClose={() => setOpenMemberEditModal(false)} member={member} /> */}
+
             <div
                 className="mt-5 rounded-xl border border-gray-200 bg-white"
                 style={{ boxShadow: '0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)' }}
             >
-                <div className="flex justify-between border-b border-gray-200 py-5 px-5">
+                <div className="flex justify-between border-b border-gray-200 px-5 py-5">
                     <div>
                         <h3 className="mb-0.5 text-xl font-semibold">Chandra Bazar Branch</h3>
                         <p className="text-sm font-medium text-gray-500">Chandra Bazar, Faridgonj, Chandpur</p>
@@ -108,6 +137,7 @@ const BranchDetailsPage = () => {
 
                     <div>
                         <Button
+                            onClick={() => setOpenEditModal(true)}
                             leftIcon={
                                 <svg
                                     width="18"
@@ -132,7 +162,7 @@ const BranchDetailsPage = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="flex justify-between border-b border-gray-200 py-4 px-5">
+                <div className="flex justify-between border-b border-gray-200 px-5 py-4">
                     <div>
                         <ButtonGroup isAttached variant={'outline'}>
                             <Button
@@ -180,6 +210,7 @@ const BranchDetailsPage = () => {
                             Filters
                         </Button>
                         <Button
+                            onClick={modalHandling}
                             leftIcon={
                                 <svg
                                     width="20"
@@ -221,6 +252,24 @@ const SearchIcon = () => {
             />
         </svg>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getServerSession(context.req, context.res, authOptions);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: true,
+            },
+        };
+    }
+    return {
+        props: {
+            session: JSON.stringify(session),
+        },
+    };
 };
 
 BranchDetailsPage.getLayout = (page: ReactNode) => {
