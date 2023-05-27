@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { ReactNode, useState } from 'react';
 import DashboardLayout from '../../src/Layouts/DashboardLayout';
-import MembersTable from '../../src/modules/branch/components/MembersTable';
+import MembersTable from '../../src/modules/team/components/MemberSavingsTable';
 
 // Modals are imported here
 import EditTeamInfoModal from '../../src/modules/group/EditGroupModal';

@@ -1,6 +1,6 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import MembersTable from '@/modules/branch/components/MembersTable';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
+import MembersTable from '@/modules/team/components/MemberSavingsTable';
 import {
     Breadcrumb,
     BreadcrumbItem,
