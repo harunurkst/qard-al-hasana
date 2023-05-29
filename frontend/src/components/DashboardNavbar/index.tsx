@@ -21,11 +21,6 @@ const navItems = [
         exact: false,
     },
     {
-        name: 'Member',
-        href: '/member',
-        exact: false,
-    },
-    {
         name: 'Withdraw',
         href: '/withdraw',
         exact: false,
