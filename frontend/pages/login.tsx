@@ -28,15 +28,8 @@ const Login = (response: string) => {
             // 'redirect': false,
             username: values.username,
             password: values.password,
-            callbackUrl: '/dashboard',
+            callbackUrl: '/branch/1',
         });
-
-        // return new Promise<void>((resolve) => {
-        //     setTimeout(() => {
-        //         router.push('/dashboard');
-        //         resolve();
-        //     }, 3000);
-        // });
     };
 
     return (

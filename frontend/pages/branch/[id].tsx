@@ -1,6 +1,6 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import MembersTable from '@/modules/branch/components/MembersTable';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
+import MembersTable from '@/modules/team/components/MemberSavingsTable';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -18,7 +18,7 @@ import { authOptions } from '../api/auth/[...nextauth]';
 
 // modal imported
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
-import CreateNewGroup from '@/modules/group/CreateGroupModal';
+import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
@@ -256,6 +256,7 @@ const SearchIcon = () => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await getServerSession(context.req, context.res, authOptions);
+    // console.log('session data in team list page: ', session);
 
     if (!session) {
         return {

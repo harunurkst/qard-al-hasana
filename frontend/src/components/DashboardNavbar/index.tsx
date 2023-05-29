@@ -21,11 +21,6 @@ const navItems = [
         exact: false,
     },
     {
-        name: 'Member',
-        href: '/member',
-        exact: false,
-    },
-    {
         name: 'Withdraw',
         href: '/withdraw',
         exact: false,
@@ -69,10 +64,10 @@ const DashboardNavbar = () => {
                         })}
                     </div>
                 </div>
-                <div>
+                <div className='flex items-center'>
                     <Avatar size={'md'} name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-                    <span className="text cursor-pointer" onClick={handleRedirectToLogin}>
-                        logout
+                    <span className="ml-4 font-semibold cursor-pointer" onClick={handleRedirectToLogin}>
+                        Log Out
                     </span>
                 </div>
             </div>
