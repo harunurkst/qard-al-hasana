@@ -1,6 +1,6 @@
 import { VerticalDotIcon } from '@/icons';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
-import randomNumber from '@/utils/randomNumber';
+import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
     Button,
     Menu,
@@ -15,45 +15,14 @@ import {
     Thead,
     Tr,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ReactPaginate from 'react-paginate';
-
-// modals are imported here
+import { MemberSavingsType } from '../../../types/memberSaving.type';
 import DespositeModal from '../../member/components/DepositeModal';
 import InstallmentModal from '../../member/components/InstallmentModal';
-
-function randomDateInMonth() {
-    const date = new Date();
-    const month = date.getMonth();
-    const year = date.getFullYear();
-
-    return new Date(year, month, Math.floor(Math.random() * 31) + 1);
-}
-
-function getWeeklyWiseData(arg: { date: Date; amount: number }[]) {
-    const data = {
-        week_1: 0,
-        week_2: 0,
-        week_3: 0,
-        week_4: 0,
-    };
-
-    arg.forEach((item) => {
-        const dayOfMonth = item.date.getDate();
-        if (dayOfMonth <= 7) {
-            data.week_1 += item.amount;
-        } else if (dayOfMonth > 7 && dayOfMonth <= 14) {
-            data.week_2 += item.amount;
-        } else if (dayOfMonth > 14 && dayOfMonth <= 21) {
-            data.week_3 += item.amount;
-        } else if (dayOfMonth > 21 && dayOfMonth <= 31) {
-            data.week_4 += item.amount;
-        }
-    });
-
-    return data;
-}
+import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -69,70 +38,29 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
     return 'PENDING';
 }
 
-const members = [
-    {
-        id: '1',
-        name: 'Abdul Qadir',
-        type: 'deposit',
-        balance: 2323,
-        loan: 0,
-        transactionsInCurrentMonth: getWeeklyWiseData([
-            {
-                date: randomDateInMonth(),
-                amount: randomNumber(50, 1000),
-            },
-            {
-                date: randomDateInMonth(),
-                amount: randomNumber(50, 1000),
-            },
-            {
-                date: randomDateInMonth(),
-                amount: randomNumber(50, 1000),
-            },
-            {
-                date: randomDateInMonth(),
-                amount: randomNumber(50, 1000),
-            },
-        ]),
-    },
-    {
-        id: '2',
-        name: 'Nure Alam',
-        type: 'deposit',
-        balance: 2323,
-        loan: 0,
-        transactionsInCurrentMonth: getWeeklyWiseData([
-            {
-                date: randomDateInMonth(),
-                amount: randomNumber(50, 1000),
-            },
-            {
-                date: randomDateInMonth(),
-                amount: randomNumber(50, 100),
-            },
-        ]),
-    },
-    {
-        id: '3',
-        name: 'Faruq',
-        type: 'loan',
-        balance: 2323,
-        loan: 0,
-        transactionsInCurrentMonth: getWeeklyWiseData([
-            {
-                date: randomDateInMonth(),
-                amount: randomNumber(50, 100),
-            },
-        ]),
-    },
-];
-
-const Members = () => {
+const MemberSavingsTable = () => {
     const router = useRouter();
-
-    // useState are handled here
     const [isOpenDepositeModal, setOpenDepositeModal] = useState(false);
     const [isOpenInstallmentModal, setOpenInstallmentModal] = useState(false);
+    const [pageNumber, setPageNumber] = useState<number>(0);
+    const handlePageChange = (event: { selected: number }) => {
+        setPageNumber(event.selected);
+    };
+    // use the hook to fetch member savings
+    const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
+    const setTransactions = useMemberSavingsStore((state) => state.actions.setTransactions);
+    const { data, isFetching, error } = useQuery(['memberSaving'], async () =>
+        zodSafeQuery('/api/v1/transaction/member-savings-list')()
+    );
+    console.log('data', data?.result, isFetching, error);
+    useEffect(() => {
+        console.log('memberTransactions', memberTransactions);
+    }, [memberTransactions]);
+    setTransactions(data?.result);
+
+    if (!data) {
+        return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
+    }
 
     return (
         <>
@@ -158,28 +86,29 @@ const Members = () => {
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
-                        {members.map((data) => {
+                        {data.result?.map((data: MemberSavingsType) => {
                             return (
-                                <Tr key={data.id} className="hover:bg-gray-50">
-                                    <Td>{data.id}</Td>
-                                    <Td>{data.name}</Td>
+                                <Tr key={data.member_id} className="hover:bg-gray-50">
+                                    <Td>{data.member_id}</Td>
+                                    <Td>{data.member_name}</Td>
                                     <Td className="capitalize">
                                         <div>
                                             <span
                                                 className={`rounded-2xl  px-2.5 py-1 text-xs font-medium ${
-                                                    data.type === 'deposit'
+                                                    data.member_id % 2 === 0
                                                         ? ' bg-brand-100 text-brand-600 '
                                                         : 'bg-error-200 text-error-600'
                                                 }`}
                                             >
-                                                {data.type}
+                                                {data.member_id % 2 === 0 ? 'deposit' : 'loan'}
                                             </span>
                                         </div>
                                     </Td>
-                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_1} weekNo={1} />
-                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_2} weekNo={2} />
-                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_3} weekNo={3} />
-                                    <TrasectionTD amount={data.transactionsInCurrentMonth.week_4} weekNo={4} />
+
+                                    <TrasectionTD amount={data.week1} weekNo={1} />
+                                    <TrasectionTD amount={data.week2} weekNo={2} />
+                                    <TrasectionTD amount={data.week3} weekNo={3} />
+                                    <TrasectionTD amount={data.week4} weekNo={4} />
                                     <Td isNumeric> {data.balance}</Td>
                                     <Td isNumeric>
                                         <Menu>
@@ -230,6 +159,7 @@ const Members = () => {
                     Previous
                 </Button>
                 <ReactPaginate
+                    forcePage={pageNumber}
                     previousClassName="hidden"
                     nextClassName="hidden"
                     pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
@@ -238,7 +168,8 @@ const Members = () => {
                     breakLabel="..."
                     breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
                     pageRangeDisplayed={5}
-                    pageCount={13}
+                    pageCount={10}
+                    onPageChange={handlePageChange}
                 />
                 <Button
                     rightIcon={
@@ -280,4 +211,4 @@ const TrasectionTD = ({ amount, weekNo }: { amount: number; weekNo: number }) =>
     );
 };
 
-export default Members;
+export default MemberSavingsTable;
