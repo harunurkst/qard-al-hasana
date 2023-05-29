@@ -1,5 +1,6 @@
 import { VerticalDotIcon } from '@/icons';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
+import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
     Button,
     Menu,
@@ -14,13 +15,14 @@ import {
     Thead,
     Tr,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import { MemberSavingsType } from '../../../types/memberSaving.type';
 import DespositeModal from '../../member/components/DepositeModal';
 import InstallmentModal from '../../member/components/InstallmentModal';
-import { useFetchMemberSavings } from '../hooks/useFetchMemberSavings';
-import { MemberSavingsType } from '../types/memberSaving.type';
+import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -35,7 +37,7 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 
     return 'PENDING';
 }
-  
+
 const MemberSavingsTable = () => {
     const router = useRouter();
     const [isOpenDepositeModal, setOpenDepositeModal] = useState(false);
@@ -45,13 +47,20 @@ const MemberSavingsTable = () => {
         setPageNumber(event.selected);
     };
     // use the hook to fetch member savings
-    const { allMembers } = useFetchMemberSavings(pageNumber);
+    const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
+    const setTransactions = useMemberSavingsStore((state) => state.actions.setTransactions);
+    const { data, isFetching, error } = useQuery(['memberSaving'], async () =>
+        zodSafeQuery('/api/v1/transaction/member-savings-list')()
+    );
+    console.log('data', data?.result, isFetching, error);
+    useEffect(() => {
+        console.log('memberTransactions', memberTransactions);
+    }, [memberTransactions]);
+    setTransactions(data?.result);
 
-    // check if data is still loading
-    if (!allMembers) {
-        return <div className='h-[200px] flex justify-center items-center'>Loading...</div>;
+    if (!data) {
+        return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
     }
-    
 
     return (
         <>
@@ -77,25 +86,25 @@ const MemberSavingsTable = () => {
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
-                        {allMembers.map((data:MemberSavingsType) => {
+                        {data.result?.map((data: MemberSavingsType) => {
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
-                                     <Td>{data.member_id}</Td>
+                                    <Td>{data.member_id}</Td>
                                     <Td>{data.member_name}</Td>
                                     <Td className="capitalize">
                                         <div>
                                             <span
                                                 className={`rounded-2xl  px-2.5 py-1 text-xs font-medium ${
-                                                    data.member_id%2===0 
+                                                    data.member_id % 2 === 0
                                                         ? ' bg-brand-100 text-brand-600 '
                                                         : 'bg-error-200 text-error-600'
                                                 }`}
                                             >
-                                                {data.member_id%2===0 ? 'deposit' : 'loan'}
+                                                {data.member_id % 2 === 0 ? 'deposit' : 'loan'}
                                             </span>
                                         </div>
-                                    </Td> 
-                                     
+                                    </Td>
+
                                     <TrasectionTD amount={data.week1} weekNo={1} />
                                     <TrasectionTD amount={data.week2} weekNo={2} />
                                     <TrasectionTD amount={data.week3} weekNo={3} />
@@ -150,18 +159,18 @@ const MemberSavingsTable = () => {
                     Previous
                 </Button>
                 <ReactPaginate
-                        forcePage={pageNumber}
-                        previousClassName="hidden"
-                        nextClassName="hidden"
-                        pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
-                        activeClassName="bg-gray-200 rounded-lg"
-                        containerClassName="flex items-center"
-                        breakLabel="..."
-                        breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
-                        pageRangeDisplayed={5}
-                        pageCount={10}
-                        onPageChange={handlePageChange}
-                    />
+                    forcePage={pageNumber}
+                    previousClassName="hidden"
+                    nextClassName="hidden"
+                    pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
+                    activeClassName="bg-gray-200 rounded-lg"
+                    containerClassName="flex items-center"
+                    breakLabel="..."
+                    breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
+                    pageRangeDisplayed={5}
+                    pageCount={10}
+                    onPageChange={handlePageChange}
+                />
                 <Button
                     rightIcon={
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

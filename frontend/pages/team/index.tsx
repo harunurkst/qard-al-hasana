@@ -12,7 +12,7 @@ import DashboardLayout from '../../src/Layouts/DashboardLayout';
 import MembersTable from '../../src/modules/team/components/MemberSavingsTable';
 
 // Modals are imported here
-import EditTeamInfoModal from '../../src/modules/group/EditGroupModal';
+import EditTeamInfoModal from '../../src/modules/team/components/EditGroupModal';
 import AddMemberModal from '../../src/modules/member/components/CreateMemberModal';
 
 const TeamPage = () => {

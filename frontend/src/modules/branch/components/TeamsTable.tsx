@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import EditGroup from '@/modules/group/EditGroupModal';
+import EditGroup from '@/modules/team/components/EditGroupModal';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';

@@ -18,7 +18,7 @@ import { authOptions } from '../api/auth/[...nextauth]';
 
 // modal imported
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
-import CreateNewGroup from '@/modules/group/CreateGroupModal';
+import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
