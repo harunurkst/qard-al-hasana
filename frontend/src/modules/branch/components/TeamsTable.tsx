@@ -24,11 +24,18 @@ const TeamsTable = () => {
         return router.push('/team');
     };
 
+    //handle get request
+    // const teamListGetRequest = async () => {
+    //     const response = zodSafeQuery('/api/v1/organization/teams');
+    //     return response;
+    // };
+
     const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
+    // const { data, isFetching } = useQuery(['teams'], teamListGetRequest);
 
     // console.log({ data, isFetching });
 
-    // console.log('only data: ', data?.result.results);
+    // console.log('only data: ', data);
 
     return (
         <>

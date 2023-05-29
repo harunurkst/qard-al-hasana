@@ -3,6 +3,7 @@ import {
     BreadcrumbItem,
     BreadcrumbLink,
     Button,
+    ButtonGroup,
     Input,
     InputGroup,
     InputLeftElement,
@@ -16,6 +17,8 @@ import EditTeamInfoModal from '../../src/modules/group/EditGroupModal';
 import AddMemberModal from '../../src/modules/member/components/CreateMemberModal';
 
 const TeamPage = () => {
+    const [tab, setTab] = useState<'DIPOSIT' | 'LOAN'>('DIPOSIT');
+
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
     const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
 
@@ -154,7 +157,24 @@ const TeamPage = () => {
                         </div>
                     </div>
                     <div className="flex justify-between border-b border-gray-200 px-5 py-4">
-                        <div></div>
+                        <div>
+                            <div>
+                                <ButtonGroup isAttached variant={'outline'}>
+                                    <Button
+                                        onClick={() => setTab('DIPOSIT')}
+                                        backgroundColor={tab === 'DIPOSIT' ? 'gray.100' : 'white'}
+                                    >
+                                        Diposit - (25)
+                                    </Button>
+                                    <Button
+                                        onClick={() => setTab('LOAN')}
+                                        backgroundColor={tab === 'LOAN' ? 'gray.100' : 'white'}
+                                    >
+                                        Installment - (10)
+                                    </Button>
+                                </ButtonGroup>
+                            </div>
+                        </div>
                         <div className="flex gap-3">
                             <InputGroup width={300}>
                                 <InputLeftElement pointerEvents="none">

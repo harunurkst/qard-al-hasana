@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 interface ICreateGroupModal {
     isOpen: boolean;
@@ -26,7 +27,7 @@ interface TeamCreateData {
 
 const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
     const { data: session, status } = useSession();
-    console.log(session);
+    // console.log(session);
     const {
         register,
         handleSubmit,
@@ -34,6 +35,9 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
     } = useForm<TeamCreateData>({ mode: 'onChange' });
 
     //owner/staff get request handling function
+    useEffect(() => {
+        getStaffList();
+    });
     const getStaffList = () => {
         console.log('get request enforced');
     };
@@ -51,7 +55,15 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
         return response.data;
     };
 
-    const { mutate, isLoading } = useMutation(postRequest);
+    const { mutate, isLoading } = useMutation(postRequest, {
+        onSuccess: (data) => {
+            console.log(data);
+            alert('Successfully posted');
+        },
+        onError: () => {
+            alert('There is an error');
+        },
+    });
 
     //team creation modal handling
     const CreateTeam = (values: TeamCreateData) => {
