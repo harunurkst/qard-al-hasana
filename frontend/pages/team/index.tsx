@@ -1,21 +1,28 @@
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import InstallmentMemberList from '@/modules/team/components/InstallmentMemberList';
+import MembersTable from '@/modules/team/components/MemberSavingsTable';
+
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     Button,
+    ButtonGroup,
     Input,
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
+import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
 import { ReactNode, useState } from 'react';
-import DashboardLayout from '../../src/Layouts/DashboardLayout';
-import MembersTable from '../../src/modules/team/components/MemberSavingsTable';
-
+import { authOptions } from '../api/auth/[...nextauth]';
 // Modals are imported here
-import EditTeamInfoModal from '../../src/modules/team/components/EditGroupModal';
-import AddMemberModal from '../../src/modules/member/components/CreateMemberModal';
+import AddMemberModal from '@/modules/member/components/CreateMemberModal';
+import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
 
 const TeamPage = () => {
+    const [tab, setTab] = useState<'DIPOSIT' | 'LOAN'>('DIPOSIT');
+
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
     const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
 
@@ -154,7 +161,24 @@ const TeamPage = () => {
                         </div>
                     </div>
                     <div className="flex justify-between border-b border-gray-200 px-5 py-4">
-                        <div></div>
+                        <div>
+                            <div>
+                                <ButtonGroup isAttached variant={'outline'}>
+                                    <Button
+                                        onClick={() => setTab('DIPOSIT')}
+                                        backgroundColor={tab === 'DIPOSIT' ? 'gray.100' : 'white'}
+                                    >
+                                        Diposit - (25)
+                                    </Button>
+                                    <Button
+                                        onClick={() => setTab('LOAN')}
+                                        backgroundColor={tab === 'LOAN' ? 'gray.100' : 'white'}
+                                    >
+                                        Installment - (10)
+                                    </Button>
+                                </ButtonGroup>
+                            </div>
+                        </div>
                         <div className="flex gap-3">
                             <InputGroup width={300}>
                                 <InputLeftElement pointerEvents="none">
@@ -210,11 +234,29 @@ const TeamPage = () => {
                             </Button>
                         </div>
                     </div>
-                    <MembersTable />
+                    {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable />}
                 </div>
             </section>
         </>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getServerSession(context.req, context.res, authOptions);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: true,
+            },
+        };
+    }
+    return {
+        props: {
+            session: JSON.stringify(session),
+        },
+    };
 };
 
 TeamPage.getLayout = (page: ReactNode) => {

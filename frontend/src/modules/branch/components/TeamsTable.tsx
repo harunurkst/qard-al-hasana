@@ -25,11 +25,8 @@ const TeamsTable = () => {
         return router.push('/team');
     };
 
+    //greating team list using transtak query
     const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
-
-    // console.log({ data, isFetching });
-
-    // console.log('only data: ', data?.result.results);
 
     return (
         <>
