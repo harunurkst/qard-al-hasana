@@ -21,8 +21,8 @@ const TeamsTable = () => {
 
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
 
-    const redirectToDetail = () => {
-        return router.push('/team');
+    const redirectToDetail = (teamId:number) => {
+        return router.push(`/team/${teamId}`);
     };
 
     const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
@@ -56,7 +56,7 @@ const TeamsTable = () => {
                                 return (
                                     <Tr key={team.id} className=" hover:bg-gray-50">
                                         <Td>{team.id}</Td>
-                                        <Td onClick={redirectToDetail} className="cursor-pointer">
+                                        <Td onClick={()=>redirectToDetail(team.id)} className="cursor-pointer">
                                             {team.name}
                                         </Td>
                                         <Td isNumeric> {team.totalMember}</Td>

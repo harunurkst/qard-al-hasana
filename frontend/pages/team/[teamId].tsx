@@ -14,8 +14,11 @@ import MembersTable from '../../src/modules/team/components/MemberSavingsTable';
 // Modals are imported here
 import EditTeamInfoModal from '../../src/modules/team/components/EditGroupModal';
 import AddMemberModal from '../../src/modules/member/components/CreateMemberModal';
+import { useRouter } from 'next/router';
 
 const TeamPage = () => {
+    const router = useRouter();
+    const { teamId } = router.query;
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
     const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
 
@@ -210,7 +213,7 @@ const TeamPage = () => {
                             </Button>
                         </div>
                     </div>
-                    <MembersTable />
+                    <MembersTable teamId={teamId} />
                 </div>
             </section>
         </>
