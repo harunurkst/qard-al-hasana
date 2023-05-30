@@ -95,3 +95,10 @@ class TeamSerializer(serializers.ModelSerializer):
         team.save()
         return team
 
+
+# Staff List Serializer
+class StaffListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Staff
+        fields = '__all__'
