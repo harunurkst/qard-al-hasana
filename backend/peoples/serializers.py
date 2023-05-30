@@ -28,12 +28,3 @@ class MemberCreateSerializer(serializers.ModelSerializer):
                 "Serial number must not be greater than 25."
             )
         return value
-
-
-# Staff List Serializer
-class StaffListSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Staff
-        fields = '__all__'
-

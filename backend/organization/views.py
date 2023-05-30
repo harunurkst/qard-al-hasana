@@ -1,4 +1,5 @@
 from django.contrib.auth.models import update_last_login
+from rest_framework import viewsets
 
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework.response import Response
@@ -11,9 +12,10 @@ from organization.serializers import (
     UserSerializer,
     UserSerilizerWithToken,
     MyRefreshSerializer,
-    TeamSerializer,
+    TeamSerializer, StaffListSerializer,
 )
 from organization.models import Team
+from peoples.models import Staff
 
 
 class LoginView(TokenObtainPairView):
@@ -42,3 +44,20 @@ class TeamCreateListApiView(ListCreateAPIView):
     serializer_class = TeamSerializer
     filterset_fields = ["owner", "branch"]
 
+
+class StaffViewSet(viewsets.ModelViewSet):
+    """
+    accepts all these http requests with simple codes:
+
+    Create (POST): {host}/api/v1/organization/staffs/
+    List (GET): {host}/api/v1/organization/staffs/
+    Retrieve (GET): {host}/api/v1/organization/staffs/{id}/
+    Update (PUT): {host}/api/v1/organization/staffs/{id}/
+    Delete (DELETE): {host}/api/v1/organization/staffs/{id}/
+    """
+
+    queryset = Staff.objects.all()
+    serializer_class = StaffListSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(branch=self.request.user.staff.branch)
