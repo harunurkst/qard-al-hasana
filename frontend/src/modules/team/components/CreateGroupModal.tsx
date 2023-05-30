@@ -12,7 +12,9 @@ import {
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
+import zodSafeQuery from '@/utils/zodSafeQuery';
+import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 interface ICreateGroupModal {
     isOpen: boolean;
@@ -25,6 +27,18 @@ interface TeamCreateData {
     owner_name: string;
 }
 
+interface StaffObject {
+    id: number;
+    branch: number;
+    gender: string;
+    guardian_name: string;
+    is_active: boolean;
+    mobile_number: string;
+    name: string;
+    nid_number: string;
+    serial_number: number;
+    team: number;
+}
 const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
     const { data: session, status } = useSession();
     // console.log(session);
@@ -35,20 +49,15 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
     } = useForm<TeamCreateData>({ mode: 'onChange' });
 
     //owner/staff get request handling function
-    useEffect(() => {
-        getStaffList();
-    });
-    const getStaffList = () => {
-        console.log('get request enforced');
-    };
+    const { data, isFetching } = useQuery(['staffs'], async () => zodSafeQuery(`/api/v1/organization/staffs/`)());
+    const staffList = data?.result?.results;
 
     //function creating post post request for create team. this will be called inside isMutation
     const postRequest = async (values: TeamCreateData) => {
-        console.log('inside post Request', values);
         const data = {
             name: values.group_name,
             address: values.address,
-            owner: 1,
+            owner: values.owner_name,
         };
 
         const response = await http.post(`/api/v1/organization/teams/`, data);
@@ -57,7 +66,6 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
 
     const { mutate, isLoading } = useMutation(postRequest, {
         onSuccess: (data) => {
-            console.log(data);
             alert('Successfully posted');
         },
         onError: () => {
@@ -67,7 +75,6 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
 
     //team creation modal handling
     const CreateTeam = (values: TeamCreateData) => {
-        console.log('values: ', values);
         const team = {
             ...values,
         };
@@ -95,8 +102,12 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
                                 {...register('owner_name')}
                             >
                                 <option>Select One</option>
-                                <option>Select 2</option>
-                                <option>Select 3</option>
+                                {staffList &&
+                                    staffList.map((data: StaffObject) => (
+                                        <option key={data.id} value={data.id}>
+                                            {data.name}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
                     </ModalBody>

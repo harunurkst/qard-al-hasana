@@ -1,3 +1,7 @@
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import InstallmentMemberList from '@/modules/team/components/InstallmentMemberList';
+import MembersTable from '@/modules/team/components/MemberSavingsTable';
+
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -8,13 +12,13 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
+import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
 import { ReactNode, useState } from 'react';
-import DashboardLayout from '../../src/Layouts/DashboardLayout';
-import MembersTable from '../../src/modules/team/components/MemberSavingsTable';
-
+import { authOptions } from '../api/auth/[...nextauth]';
 // Modals are imported here
-import EditTeamInfoModal from '../../src/modules/team/components/EditGroupModal';
-import AddMemberModal from '../../src/modules/member/components/CreateMemberModal';
+import AddMemberModal from '@/modules/member/components/CreateMemberModal';
+import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
 
 const TeamPage = () => {
     const [tab, setTab] = useState<'DIPOSIT' | 'LOAN'>('DIPOSIT');
@@ -230,11 +234,29 @@ const TeamPage = () => {
                             </Button>
                         </div>
                     </div>
-                    <MembersTable />
+                    {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable />}
                 </div>
             </section>
         </>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getServerSession(context.req, context.res, authOptions);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: true,
+            },
+        };
+    }
+    return {
+        props: {
+            session: JSON.stringify(session),
+        },
+    };
 };
 
 TeamPage.getLayout = (page: ReactNode) => {
