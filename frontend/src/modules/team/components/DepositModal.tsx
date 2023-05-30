@@ -1,7 +1,6 @@
+import CustomDatePicker from '@/components/CustomDatePicker/CustomDatePicker';
 import CustomTextInput from '@/components/CustomInput';
-import {  z } from 'zod';
-import { depositSchema,depositFormSubmitSchema } from '@/schema/TeamSchema';
-import zodSafeQuery from '@/utils/zodSafeQuery';
+import http from '@/utils/http';
 import {
     Button,
     Modal,
@@ -12,25 +11,29 @@ import {
     ModalHeader,
     ModalOverlay,
 } from '@chakra-ui/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation,useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
-import CustomDatePicker from '@/components/CustomDatePicker/CustomDatePicker';
-import {  useState } from 'react';
+import { showAlert } from '@/utils/sweatalert';
 
 interface IDepositModal {
     isOpen: boolean;
     onClose: () => void;
 }
-interface IDepositType {
+interface DepositFormType {
     amount: number;
+}
+interface DepositSubmitDataType {
+    member: number | undefined;
+    amount: number;
+    date: string;
 }
 
 const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<string | null>(null);
     const selectedMember = useMemberSavingsStore((state) => state.selectedMember);
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
     // useEffect(()=>{
     //     console.log('selectedMember',selectedMember)
     // },[selectedMember])
@@ -41,31 +44,36 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<IDepositType>({ resolver: zodResolver(depositSchema) });
+    } = useForm<DepositFormType>({ mode: 'onChange' });
 
-    const mutation = useMutation(
-        zodSafeQuery<z.infer<typeof depositFormSubmitSchema>>(
-            '/api/v1/transaction/deposit/', 
-            {
-                method: 'POST',
-                payloadSchema: depositSchema,
-                safeParse: true
-            }
-        ), 
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries('memberSaving');
-            },
-        }
-    );
-    const onSubmit = async (values: IDepositType) => {
-        if (!selectedMember) return;
-        const payload = depositSchema.parse({ ...values, member: selectedMember.member_id, date });
-        console.log('values', payload);
-        mutation.mutate(payload);
+    const postRequest = async (payload: DepositSubmitDataType) => {
+        const response = await http.post(`/api/v1/transaction/deposit/`, payload);
+        return response.data;
     };
-    
-    
+    const queryClient = useQueryClient();
+    const { mutate, isLoading, error } = useMutation(postRequest, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['memberSaving']);
+        },
+        onError: (error) => {
+            console.error("Failed to deposit:", error);
+        },
+    });
+
+    //team creation modal handling
+    const onSubmit = (values: DepositSubmitDataType) => {
+        // console.log('values: ', values);
+        const tempSubmittingData = {
+            member: selectedMember?.member_id,
+            amount: values.amount,
+            date: date,
+        };
+        mutate(tempSubmittingData);
+        
+        showAlert({title:"Deposit Successful!", text: `${selectedMember?.member_name} has successfully depositted BDT ${tempSubmittingData.amount}.`})
+        onClose();
+    };
+
     // const onSubmit = async (values: IDepositType) => {
     //     const payload = {
     //         member: selectedMember?.member_id,
@@ -79,22 +87,26 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
     //         console.log('Failed to deposit:', error);
     //     }
     // };
-    
 
     return (
         <Modal size={'lg'} isCentered isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader className='text-xl font-semibold text-brand-800 font-noto' borderBottom={1} borderBottomColor="red.100">
+                <ModalHeader
+                    className="font-noto text-xl font-semibold text-brand-800"
+                    borderBottom={1}
+                    borderBottomColor="red.100"
+                >
                     সঞ্চয় জমা
                 </ModalHeader>
                 <ModalCloseButton />
 
-                
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
-                    <h2 className='text-xl font-semibold text-brand-800 font-nikosh'>{selectedMember?.member_name}</h2>
-                        <CustomDatePicker label="তারিখ" setDate={setDate}  />
+                        <h2 className="font-nikosh text-xl font-semibold text-brand-800">
+                            {selectedMember?.member_name}
+                        </h2>
+                        <CustomDatePicker label="তারিখ" setDate={setDate} />
 
                         <CustomTextInput
                             className="mt-2.5"
