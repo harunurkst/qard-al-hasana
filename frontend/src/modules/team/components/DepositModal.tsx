@@ -70,7 +70,7 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
         };
         mutate(tempSubmittingData);
         
-        showAlert({title:"Deposit Successful!", text: `${selectedMember?.member_name} has successfully depositted BDT ${tempSubmittingData.amount}.`})
+        showAlert({title:"Deposit Successful!", text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় ${tempSubmittingData.amount} টাকা`})
         onClose();
     };
 
@@ -103,9 +103,9 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ModalBody>
-                        <h2 className="font-nikosh text-xl font-semibold text-brand-800">
+                        {/* <h2 className="font-nikosh text-xl font-semibold text-brand-800">
                             {selectedMember?.member_name}
-                        </h2>
+                        </h2> */}
                         <CustomDatePicker label="তারিখ" setDate={setDate} />
 
                         <CustomTextInput
