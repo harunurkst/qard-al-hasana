@@ -19,8 +19,11 @@ import { authOptions } from '../api/auth/[...nextauth]';
 // Modals are imported here
 import AddMemberModal from '@/modules/member/components/CreateMemberModal';
 import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
+import { useRouter } from 'next/router';
 
 const TeamPage = () => {
+    const router = useRouter();
+    const { teamId } = router.query;
     const [tab, setTab] = useState<'DIPOSIT' | 'LOAN'>('DIPOSIT');
 
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
@@ -234,7 +237,8 @@ const TeamPage = () => {
                             </Button>
                         </div>
                     </div>
-                    {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable />}
+                    
+                    {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable teamId={teamId} />}
                 </div>
             </section>
         </>

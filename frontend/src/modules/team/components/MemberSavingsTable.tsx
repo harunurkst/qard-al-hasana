@@ -2,7 +2,6 @@ import { VerticalDotIcon } from '@/icons';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
-    Button,
     Menu,
     MenuButton,
     MenuItem,
@@ -17,10 +16,9 @@ import {
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import ReactPaginate from 'react-paginate';
+import { useMemo, useState } from 'react';
 import { MemberSavingsType } from '../../../types/memberSaving.type';
-import DespositeModal from '../../member/components/DepositeModal';
+import DespositeModal from './DepositModal';
 import InstallmentModal from '../../member/components/InstallmentModal';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
 
@@ -37,25 +35,24 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 
     return 'PENDING';
 }
-
-const MemberSavingsTable = () => {
+interface IMemberSavingsTable {
+    teamId: string | string[] | undefined;
+}
+const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
     const router = useRouter();
     const [isOpenDepositeModal, setOpenDepositeModal] = useState(false);
     const [isOpenInstallmentModal, setOpenInstallmentModal] = useState(false);
-    const [pageNumber, setPageNumber] = useState<number>(0);
-    const handlePageChange = (event: { selected: number }) => {
-        setPageNumber(event.selected);
-    };
+
     // use the hook to fetch member savings
-    const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
-    const setTransactions = useMemberSavingsStore((state) => state.actions.setTransactions);
-    const { data, isFetching, error } = useQuery(['memberSaving'], async () =>
-        zodSafeQuery('/api/v1/transaction/member-savings-list')()
+    // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
+    const {setTransactions,setSelectedMember} = useMemberSavingsStore((state) => state.actions);
+    const { data } = useQuery(['memberSaving'], async () =>
+        zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
     );
-    console.log('data', data?.result, isFetching, error);
-    useEffect(() => {
-        console.log('memberTransactions', memberTransactions);
-    }, [memberTransactions]);
+    // console.log('data', data?.result, isFetching, error);
+    // useEffect(() => {
+    // console.log('memberTransactions', memberTransactions);
+    // }, [memberTransactions]);
     setTransactions(data?.result);
 
     if (!data) {
@@ -123,12 +120,19 @@ const MemberSavingsTable = () => {
                                             <MenuList>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        router.push('member/1');
+                                                        router.push(`member/${data.member_id}`);
                                                     }}
                                                 >
                                                     View
                                                 </MenuItem>
-                                                <MenuItem onClick={() => setOpenDepositeModal(true)}>Deposit</MenuItem>
+                                                <MenuItem
+                                                    onClick={() => {
+                                                        setSelectedMember(data)
+                                                        setOpenDepositeModal(true);
+                                                    }}
+                                                >
+                                                    সঞ্চয় জমা
+                                                </MenuItem>
                                                 <MenuItem onClick={() => setOpenInstallmentModal(true)}>
                                                     InstallMent
                                                 </MenuItem>
@@ -141,53 +145,6 @@ const MemberSavingsTable = () => {
                     </Tbody>
                 </Table>
             </TableContainer>
-            <div className="flex justify-between px-5 py-4  ">
-                <Button
-                    leftIcon={
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M15.8332 10.0001H4.1665M4.1665 10.0001L9.99984 15.8334M4.1665 10.0001L9.99984 4.16675"
-                                stroke="#344054"
-                                strokeWidth="1.66667"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    }
-                    variant={'outline'}
-                >
-                    Previous
-                </Button>
-                <ReactPaginate
-                    forcePage={pageNumber}
-                    previousClassName="hidden"
-                    nextClassName="hidden"
-                    pageLinkClassName="h-10 cursor-pointer flex items-center justify-center w-10 text-gray-800 font-medium text-sm rounded-lg hover:bg-gray-100"
-                    activeClassName="bg-gray-200 rounded-lg"
-                    containerClassName="flex items-center"
-                    breakLabel="..."
-                    breakClassName="h-10 flex items-center justify-center px-2 text-gray-800 font-bold text-base"
-                    pageRangeDisplayed={5}
-                    pageCount={10}
-                    onPageChange={handlePageChange}
-                />
-                <Button
-                    rightIcon={
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M4.1665 10.0001H15.8332M15.8332 10.0001L9.99984 4.16675M15.8332 10.0001L9.99984 15.8334"
-                                stroke="#344054"
-                                strokeWidth="1.66667"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    }
-                    variant={'outline'}
-                >
-                    Next
-                </Button>
-            </div>
         </>
     );
 };
