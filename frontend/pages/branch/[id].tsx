@@ -18,8 +18,8 @@ import { authOptions } from '../api/auth/[...nextauth]';
 
 // modal imported
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
-import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
+import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
 const BranchDetailsPage = () => {
@@ -56,7 +56,10 @@ const BranchDetailsPage = () => {
             </Breadcrumb>
 
             {/* creating new group and new member modal */}
-            <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            {isOpenCreateModal && (
+                <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            )}
+
             <CreateNewMember isOpen={isOpenAddMemberModal} onClose={() => setOpenAddMemberModal(false)} />
 
             {/* editing branch and member info */}
