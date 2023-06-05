@@ -12,19 +12,17 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
 import { ReactNode, useState } from 'react';
-import { authOptions } from '../api/auth/[...nextauth]';
 // Modals are imported here
 import AddMemberModal from '@/modules/member/components/CreateMemberModal';
 import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
+
 import { useRouter } from 'next/router';
 
 const TeamPage = () => {
     const router = useRouter();
     const { teamId } = router.query;
-    const [tab, setTab] = useState<'DIPOSIT' | 'LOAN'>('DIPOSIT');
+    const [tab, setTab] = useState<'DEPOSITE' | 'LOAN'>('DEPOSITE');
 
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
     const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
@@ -168,8 +166,8 @@ const TeamPage = () => {
                             <div>
                                 <ButtonGroup isAttached variant={'outline'}>
                                     <Button
-                                        onClick={() => setTab('DIPOSIT')}
-                                        backgroundColor={tab === 'DIPOSIT' ? 'gray.100' : 'white'}
+                                        onClick={() => setTab('DEPOSITE')}
+                                        backgroundColor={tab === 'DEPOSITE' ? 'gray.100' : 'white'}
                                     >
                                         Diposit - (25)
                                     </Button>
@@ -237,30 +235,12 @@ const TeamPage = () => {
                             </Button>
                         </div>
                     </div>
-                    
+
                     {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable teamId={teamId} />}
                 </div>
             </section>
         </>
     );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await getServerSession(context.req, context.res, authOptions);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: true,
-            },
-        };
-    }
-    return {
-        props: {
-            session: JSON.stringify(session),
-        },
-    };
 };
 
 TeamPage.getLayout = (page: ReactNode) => {
