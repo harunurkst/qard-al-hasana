@@ -68,6 +68,7 @@ export const authOptions: AuthOptions = {
                 token.refreshToken = user.refresh;
                 token.accessToken = user.access;
             }
+            // console.log('right now date: ', Date.now());
             // else if(Date.now()<(token.exp * 1000)){
             //     return token
             // }else{
@@ -75,6 +76,7 @@ export const authOptions: AuthOptions = {
             //     const res = refreshResponse
             //     console.log('res:.....', res)
             // }
+            // console.log('token object: ', token);
 
             return token;
         },

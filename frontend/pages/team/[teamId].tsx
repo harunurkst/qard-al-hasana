@@ -12,18 +12,16 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
 import { ReactNode, useState } from 'react';
-import { authOptions } from '../api/auth/[...nextauth]';
 // Modals are imported here
 import AddMemberModal from '@/modules/member/components/CreateMemberModal';
 import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
-// import { useSession } from 'next-auth/react';
+
+import { useRouter } from 'next/router';
 
 const TeamPage = () => {
-    // const { data: session } = useSession();
-
+    const router = useRouter();
+    const { teamId } = router.query;
     const [tab, setTab] = useState<'DEPOSITE' | 'LOAN'>('DEPOSITE');
 
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
@@ -237,29 +235,12 @@ const TeamPage = () => {
                             </Button>
                         </div>
                     </div>
-                    {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable />}
+
+                    {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable teamId={teamId} />}
                 </div>
             </section>
         </>
     );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await getServerSession(context.req, context.res, authOptions);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: true,
-            },
-        };
-    }
-    return {
-        props: {
-            session: JSON.stringify(session),
-        },
-    };
 };
 
 TeamPage.getLayout = (page: ReactNode) => {

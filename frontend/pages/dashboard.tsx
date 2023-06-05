@@ -3,10 +3,6 @@ import { LoanIcon, LoanPlusIcon, PersonPlusIcon } from '@/icons';
 import Analytics from '@/modules/dashboard/components/Analytics';
 import { ReactNode } from 'react';
 
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]';
-
 const Dashboard = () => {
     // const { data: session, status } = useSession();
     // const router = useRouter();
@@ -72,24 +68,6 @@ const Dashboard = () => {
             </section>
         </div>
     );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await getServerSession(context.req, context.res, authOptions);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: true,
-            },
-        };
-    }
-    return {
-        props: {
-            session: JSON.stringify(session),
-        },
-    };
 };
 
 Dashboard.getLayout = (page: ReactNode) => {
