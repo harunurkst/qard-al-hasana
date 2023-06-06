@@ -57,6 +57,7 @@ class Loan(BaseModel):
     amount = models.IntegerField()
     date = models.DateField()
     member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
+    team = models.ForeignKey("organization.Team", on_delete=models.PROTECT)
     is_paid = models.BooleanField(default=False)
     total_installment = models.IntegerField(default=0)
     installment_paid = models.IntegerField(default=0)

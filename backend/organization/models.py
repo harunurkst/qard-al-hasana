@@ -47,10 +47,24 @@ class Organization(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    MEMBER = "ME"
+    BRANCH_OWNER = "BO"
+    COLLECTOR = "CL"
+    ORGANIZATION_OWNER = "OO"
+    ORGANIZATION_MEMBER = "OM"
+    ROLES = [
+        (MEMBER, 'Member'),
+        (BRANCH_OWNER, 'Branch Owner'),
+        (COLLECTOR, 'Collector'),
+        (ORGANIZATION_OWNER, 'Organization Owner'),
+        (ORGANIZATION_MEMBER, 'Organization Member'),
+    ]
     username = models.CharField(unique=True, max_length=45)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    branch = models.ForeignKey("organization.Branch", null=True, blank=True, on_delete=models.SET_NULL)
+    role = models.CharField(max_length=10, choices=ROLES, default=MEMBER)
 
     USERNAME_FIELD = "username"
 
