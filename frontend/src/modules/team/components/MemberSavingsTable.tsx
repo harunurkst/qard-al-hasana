@@ -18,9 +18,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { MemberSavingsType } from '../../../types/memberSaving.type';
-import DespositeModal from './DepositModal';
-import InstallmentModal from '../../member/components/InstallmentModal';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
+import DespositeModal from './DepositModal';
+import InstallmentModal from './InstallmentModal';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -45,7 +45,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
 
     // use the hook to fetch member savings
     // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
-    const {setTransactions,setSelectedMember} = useMemberSavingsStore((state) => state.actions);
+    const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
     const { data } = useQuery(['memberSaving'], async () =>
         zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
     );
@@ -62,8 +62,12 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
     return (
         <>
             {/* Modal component used here */}
-            <DespositeModal isOpen={isOpenDepositeModal} onClose={() => setOpenDepositeModal(false)} />
-            <InstallmentModal isOpen={isOpenInstallmentModal} onClose={() => setOpenInstallmentModal(false)} />
+            {isOpenDepositeModal && (
+                <DespositeModal isOpen={isOpenDepositeModal} onClose={() => setOpenDepositeModal(false)} />
+            )}
+            {isOpenInstallmentModal && (
+                <InstallmentModal isOpen={isOpenInstallmentModal} onClose={() => setOpenInstallmentModal(false)} />
+            )}
 
             {/* member list table started here */}
             <TableContainer>
@@ -127,7 +131,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        setSelectedMember(data)
+                                                        setSelectedMember(data);
                                                         setOpenDepositeModal(true);
                                                     }}
                                                 >

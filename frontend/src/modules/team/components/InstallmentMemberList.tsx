@@ -1,6 +1,6 @@
 import { VerticalDotIcon } from '@/icons';
 // import DespositeModal from '@/modules/member/components/DepositeModal';
-import InstallmentModal from '@/modules/member/components/InstallmentModal';
+import InstallmentModal from '@/modules/team/components/InstallmentModal';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import {
     Menu,
