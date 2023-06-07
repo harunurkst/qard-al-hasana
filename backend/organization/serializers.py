@@ -30,8 +30,7 @@ class UserSerilizerWithToken(UserSerializer):
 
         user_data = {
             "username": obj.username,
-            "is_staff": obj.is_staff,
-            "is_superuser": obj.is_superuser,
+
         }
         access["user"] = user_data
 
@@ -49,8 +48,8 @@ class LoginSerializer(TokenObtainPairSerializer):
         # Add custom claims
         user_data = {
             "username": user.username,
-            "is_staff": user.is_staff,
-            "is_superuser": user.is_superuser,
+            "branch": user.branch.id,
+            "role": user.role
         }
         token["user"] = user_data
 
