@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Savings, Loan, Installment
+from .models import GeneralTransaction, Savings, Loan, Installment
 
 
 class SavingsSerializer(serializers.ModelSerializer):
@@ -34,3 +34,8 @@ class LoanInstallmentSerializer(serializers.ModelSerializer):
         if loan.is_paid:
             raise serializers.ValidationError("Loan is already paid")
         return attrs
+
+class GeneralTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GeneralTransaction
+        fields = ('amount', 'date', 'category', 'summary', )
