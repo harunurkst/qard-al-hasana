@@ -5,17 +5,26 @@ from django.apps import apps
 from organization.models import Team, User
 
 
-@admin.register(User)
-class CustomUser(admin.ModelAdmin):
-    list_display = ('username', 'is_staff', 'is_superuser', 'is_active')
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ["username", "is_staff", "is_superuser", "is_active"]
 
+    def save_model(self, request, obj, form, change):
+        # Hash the password only if it has been modified
+        if "password" in form.changed_data:
+            obj.set_password(obj.password)
+        super().save_model(request, obj, form, change)
+
+
+@admin.register(User)
+class CustomUser(CustomUserAdmin):
+    pass
 
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'branch', 'owner']
-    list_display_links = ['name']
-    ordering = ['id']
+    list_display = ["id", "name", "branch", "owner"]
+    list_display_links = ["name"]
+    ordering = ["id"]
 
 
 # register all the models from this app

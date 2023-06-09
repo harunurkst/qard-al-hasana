@@ -1,6 +1,6 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import MembersTable from '@/modules/branch/components/MembersTable';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
+import MembersTable from '@/modules/team/components/MemberSavingsTable';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -11,15 +11,12 @@ import {
     InputGroup,
     InputLeftElement,
 } from '@chakra-ui/react';
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
 import React, { ReactNode, useState } from 'react';
-import { authOptions } from '../api/auth/[...nextauth]';
 
 // modal imported
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
-import CreateNewGroup from '@/modules/group/CreateGroupModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
+import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
 const BranchDetailsPage = () => {
@@ -56,7 +53,10 @@ const BranchDetailsPage = () => {
             </Breadcrumb>
 
             {/* creating new group and new member modal */}
-            <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            {isOpenCreateModal && (
+                <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            )}
+
             <CreateNewMember isOpen={isOpenAddMemberModal} onClose={() => setOpenAddMemberModal(false)} />
 
             {/* editing branch and member info */}
@@ -252,25 +252,6 @@ const SearchIcon = () => {
             />
         </svg>
     );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await getServerSession(context.req, context.res, authOptions);
-    // console.log('session data in team list page: ', session);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: true,
-            },
-        };
-    }
-    return {
-        props: {
-            session: JSON.stringify(session),
-        },
-    };
 };
 
 BranchDetailsPage.getLayout = (page: ReactNode) => {

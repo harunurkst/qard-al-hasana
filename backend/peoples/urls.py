@@ -2,16 +2,12 @@ from django.urls import path
 from rest_framework import routers
 from peoples.views import (
     MemberListCreateView,
-    MemberDetailsView,
-    StaffViewSet
+    MemberDetailsView
 )
 
 
 # peoples router config
 peoples_router = routers.DefaultRouter()
-
-# registered endpoints verbs
-peoples_router.register('staffs', StaffViewSet)
 
 
 urlpatterns = [

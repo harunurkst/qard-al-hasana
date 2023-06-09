@@ -33,8 +33,7 @@ const DashboardNavbar = () => {
 
     //handling Logout
     const handleRedirectToLogin = () => {
-        signOut();
-        router.push('/login');
+        signOut({ callbackUrl: '/login' });
     };
 
     return (
@@ -64,10 +63,10 @@ const DashboardNavbar = () => {
                         })}
                     </div>
                 </div>
-                <div>
+                <div className="flex items-center">
                     <Avatar size={'md'} name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-                    <span className="text cursor-pointer" onClick={handleRedirectToLogin}>
-                        logout
+                    <span className="ml-4 cursor-pointer font-semibold" onClick={handleRedirectToLogin}>
+                        Log Out
                     </span>
                 </div>
             </div>

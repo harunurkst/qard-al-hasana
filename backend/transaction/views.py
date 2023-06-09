@@ -7,9 +7,9 @@ from rest_framework.generics import CreateAPIView
 
 from peoples.models import Member
 from peoples.permissions import IsSameBranch
-from .models import Loan, Savings
+from .models import Loan, Savings, Installment
 from .serializers import SavingsSerializer, LoanDisbursementSerializer, LoanInstallmentSerializer
-from .utils import format_savings_date
+from .utils import format_savings_date, format_loan_data
 
 
 class DepositView(CreateAPIView):
@@ -58,9 +58,10 @@ class LoanDisbursementView(APIView):
                     'message': 'Member already have unpaid loan'
                 }
                 return Response(resp, status=400)
-
+            member = serializer.validated_data['member']
             serializer.save(
                 branch=request.user.staff.branch,
+                team=member.team,
                 organization=request.user.staff.branch.organization,
                 created_by=request.user,
             )
@@ -88,15 +89,16 @@ class LoanInstallmentView(APIView):
 class MemberSavingsData(APIView):
     """
     [{
-        "id": 1,
-        "sl":1,
-        "name":"name1",
-        "gurdian":",
-        "week1": 500,
-        "week2": 500,
-        "week3": 500,
-        "balance": 2000,
-    },
+        "sl": 1,
+        "member_id": 1,
+        "member_name": "Harun",
+        "guardian_name": "Sadrul Islam",
+        "balance": 0,
+        "week1": 0,
+        "week2": 0,
+        "week3": 0,
+        "week4": 0
+    }
     ]
     """
     def get(self, request):
@@ -112,3 +114,40 @@ class MemberSavingsData(APIView):
             savings_data = format_savings_date(member_savings, member)
             data.append(savings_data)
         return Response(data)
+
+
+class MemberLoanData(APIView):
+    """
+    [
+    {
+        "sl": 1,
+        "member_id": 1,
+        "member_name": "Harun",
+        "guardian_name": "Test",
+        "loan_id": 1,
+        "loan_amount": 5000,
+        "loan_balance": 2000,
+        "week1": 500,
+        "week2": 300,
+        "week3": 0,
+        "week4": 0
+    }
+    ]
+    """
+    def get(self, request):
+        data = []
+        month = self.request.query_params.get('month', datetime.today().month)
+        team = self.request.query_params.get('team', None)
+        staff_branch = request.user.staff.branch
+        active_loans = Loan.objects.filter(branch=staff_branch, is_paid=False).select_related('member')
+
+        if team:
+            active_loans = active_loans.filter(team=team)
+        for loan in active_loans:
+            installments = Installment.objects.filter(loan=loan, date__month=month)
+            installment_data = format_loan_data(loan, installments)
+            data.append(installment_data)
+        return Response(data)
+
+
+

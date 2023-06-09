@@ -1,4 +1,5 @@
-import EditGroup from '@/modules/group/EditGroupModal';
+/* eslint-disable no-console */
+import EditGroup from '@/modules/team/components/EditGroupModal';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
@@ -20,15 +21,12 @@ const TeamsTable = () => {
 
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
 
-    const redirectToDetail = () => {
-        return router.push('/team');
+    const redirectToDetail = (teamId:number) => {
+        return router.push(`/team/${teamId}`);
     };
 
+    //greating team list using transtak query
     const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
-
-    // console.log({ data, isFetching });
-
-    // console.log('only data: ', data?.result.results);
 
     return (
         <>
@@ -55,7 +53,7 @@ const TeamsTable = () => {
                                 return (
                                     <Tr key={team.id} className=" hover:bg-gray-50">
                                         <Td>{team.id}</Td>
-                                        <Td onClick={redirectToDetail} className="cursor-pointer">
+                                        <Td onClick={()=>redirectToDetail(team.id)} className="cursor-pointer">
                                             {team.name}
                                         </Td>
                                         <Td isNumeric> {team.totalMember}</Td>

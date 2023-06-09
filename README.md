@@ -20,6 +20,11 @@ python manage.py migrate
 python manage.py prepare_org
 python manage.py runserver
 ```
+Run backend with docker
+```
+cd backend
+docker compose up
+```
 
 ### API doc:
 
