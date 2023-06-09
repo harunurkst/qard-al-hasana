@@ -12,7 +12,7 @@ import {
     ModalOverlay,
 } from '@chakra-ui/react';
 import { useMutation,useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
 import { showAlert } from '@/utils/sweatalert';
@@ -34,9 +34,9 @@ const InstallmentModal: React.FC<IInstallmentModal> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<string | null>(null);
     const selectedMember = useMemberSavingsStore((state) => state.selectedMember);
     // const queryClient = useQueryClient();
-    // useEffect(()=>{
-    //     console.log('selectedMember',selectedMember)
-    // },[selectedMember])
+    useEffect(()=>{
+        console.log('selectedMember',selectedMember)
+    },[selectedMember])
     // useEffect(()=>{
     //     console.log('date',date)
     // },[date])

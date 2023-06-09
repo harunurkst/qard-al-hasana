@@ -18,8 +18,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { MemberSavingsType } from '../../../types/memberSaving.type';
-import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
-import DepositModal from './DepositModal';
+// import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
+import { useMemberInstallmentsStore } from '../stores/useMemberInstallmentsStore';
+import InstallmentModal from './InstallmentModal';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -34,18 +35,17 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 
     return 'PENDING';
 }
-interface IMemberSavingsTable {
+interface IMemberInstallmentsTable {
     teamId: string | string[] | undefined;
 }
-const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
+const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId }) => {
     const router = useRouter();
-    const [isOpenDepositModal, setOpenDepositModal] = useState(false);
+    const [isOpenInstallmentModal, setOpenInstallmentModal] = useState(false);
 
     // use the hook to fetch member savings
-    // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
-    const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
-    const { data } = useQuery(['memberSaving'], async () =>
-        zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
+    const { setTransactions, setSelectedMember } = useMemberInstallmentsStore((state) => state.actions);
+    const { data } = useQuery(['memberInstallments'], async () =>
+        zodSafeQuery(`/api/v1/transaction/member-installment-list?teamId=${teamId}`)()
     );
     // console.log('data', data?.result, isFetching, error);
     // useEffect(() => {
@@ -59,23 +59,24 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
 
     return (
         <>
-            {isOpenDepositModal && (
-                <DepositModal isOpen={isOpenDepositModal} onClose={() => setOpenDepositModal(false)} />
+            {isOpenInstallmentModal && (
+                <InstallmentModal isOpen={isOpenInstallmentModal} onClose={() => setOpenInstallmentModal(false)} />
             )}
-            
+
+            {/* member list table started here */}
             <TableContainer>
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
                         <Tr>
                             <Th>ID</Th>
                             <Th>Name</Th>
-                            <Th>Account type</Th>
+                            <Th>Guardian Name</Th>
 
                             <Th>Week 1</Th>
                             <Th>Week 2</Th>
                             <Th>Week 3</Th>
                             <Th>Week 4</Th>
-                            <Th isNumeric>Deposit / Credit</Th>
+                            <Th isNumeric>Installment</Th>
                             <Th isNumeric>Action</Th>
                         </Tr>
                     </Thead>
@@ -85,7 +86,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
                                     <Td>{data.member_id}</Td>
                                     <Td>{data.member_name}</Td>
-                                    <Td className="capitalize">
+                                    {/* <Td className="capitalize">
                                         <div>
                                             <span
                                                 className={`rounded-2xl  px-2.5 py-1 text-xs font-medium ${
@@ -97,8 +98,8 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                                 {data.member_id % 2 === 0 ? 'deposit' : 'loan'}
                                             </span>
                                         </div>
-                                    </Td>
-
+                                    </Td> */}
+                                    <Td>{data.guardian_name}</Td>
                                     <TrasectionTD amount={data.week1} weekNo={1} />
                                     <TrasectionTD amount={data.week2} weekNo={2} />
                                     <TrasectionTD amount={data.week3} weekNo={3} />
@@ -125,10 +126,10 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                                 <MenuItem
                                                     onClick={() => {
                                                         setSelectedMember(data);
-                                                        setOpenDepositModal(true);
+                                                        setOpenInstallmentModal(true);
                                                     }}
                                                 >
-                                                    সঞ্চয় জমা
+                                                    InstallMent
                                                 </MenuItem>
                                             </MenuList>
                                         </Menu>
@@ -162,4 +163,4 @@ const TrasectionTD = ({ amount, weekNo }: { amount: number; weekNo: number }) =>
     );
 };
 
-export default MemberSavingsTable;
+export default MemberInstallmentsTable;
