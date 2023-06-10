@@ -41,10 +41,3 @@ class GeneralTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralTransaction
         fields = ('amount', 'date', 'category', 'summary', )
-
-    # def to_representation(self, instance):
-    #     data = super().to_representation(instance)
-    #     data.update({
-    #         "transaction_type": instance.transaction_type
-    #     })
-    #     return data

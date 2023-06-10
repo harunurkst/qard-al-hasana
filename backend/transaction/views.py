@@ -1,9 +1,11 @@
 from datetime import datetime
-
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework import status
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+
 
 from peoples.models import Member
 from peoples.permissions import IsSameBranch
@@ -156,12 +158,22 @@ class MemberLoanData(APIView):
         return Response(data)
 
 
-class IncomeTransaction(ListCreateAPIView):
+class IncomeTransactionListCreate(ListCreateAPIView):
     serializer_class = GeneralTransactionSerializer
     permission_classes = [IsBranchOwner]
 
     def perform_create(self, serializer):
-        serializer.save(transaction_type='income', branch=self.request.user.branch, organization=self.request.user.branch.organization)
+        user = self.request.user
+        serializer.save(transaction_type='income', branch=user.branch, organization=user.branch.organization)
     
     def get_queryset(self):
         return GeneralTransaction.objects.filter(transaction_type='income', branch=self.request.user.branch)
+
+class IncomeTransactionDetailUpdateDelete(RetrieveUpdateDestroyAPIView):
+    serializer_class = GeneralTransactionSerializer
+    permission_classes = [IsBranchOwner]
+    http_method_names = ["get", "patch", "delete"]
+
+    def get_object(self):
+        return get_object_or_404(GeneralTransaction, id=self.kwargs.get('id'))
+    
