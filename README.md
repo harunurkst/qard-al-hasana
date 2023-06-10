@@ -17,6 +17,7 @@ Qard al-Hasana is an interest free loan. You will pay back exactly the amount we
 ## Our Goal
 
 We want to create such a platform so that anyone can manage Qard al-Hasana project in any part of the country using this platform.
+[details about the project](https://docs.google.com/document/d/1GiPgOxU19B5d-DzzesWb6RXrlbmu5xDvSKjMW0vDsC8/edit?usp=sharing)
 
 ## Frontend
 
