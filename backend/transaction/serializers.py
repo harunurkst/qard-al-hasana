@@ -40,4 +40,4 @@ class LoanInstallmentSerializer(serializers.ModelSerializer):
 class GeneralTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralTransaction
-        fields = ('amount', 'date', 'category', 'summary', )
+        fields = ('id','amount', 'date', 'category', 'summary', )

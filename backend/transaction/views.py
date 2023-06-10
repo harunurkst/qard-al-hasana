@@ -177,3 +177,22 @@ class IncomeTransactionDetailUpdateDelete(RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return get_object_or_404(GeneralTransaction, id=self.kwargs.get('id'))
     
+
+class ExpenseTransactionListCreate(ListCreateAPIView):
+    serializer_class = GeneralTransactionSerializer
+    permission_classes = [IsBranchOwner]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(transaction_type='expense', branch=user.branch, organization=user.branch.organization)
+    
+    def get_queryset(self):
+        return GeneralTransaction.objects.filter(transaction_type='expense', branch=self.request.user.branch)
+
+class ExpenseTransactionDetailUpdateDelete(RetrieveUpdateDestroyAPIView):
+    serializer_class = GeneralTransactionSerializer
+    permission_classes = [IsBranchOwner]
+    http_method_names = ["get", "patch", "delete"]
+
+    def get_object(self):
+        return get_object_or_404(GeneralTransaction, id=self.kwargs.get('id'))
