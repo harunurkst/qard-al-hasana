@@ -112,6 +112,7 @@ class Team(models.Model):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     owner = models.ForeignKey(Staff, on_delete=models.CASCADE)
 
+
     class Meta:
         unique_together = ("name", "branch")
 

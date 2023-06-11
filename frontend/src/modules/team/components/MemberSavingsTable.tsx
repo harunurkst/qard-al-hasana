@@ -18,9 +18,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { MemberSavingsType } from '../../../types/memberSaving.type';
-import DespositeModal from './DepositModal';
 import InstallmentModal from '../../member/components/InstallmentModal';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
+import DespositeModal from './DepositModal';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -45,7 +45,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
 
     // use the hook to fetch member savings
     // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
-    const {setTransactions,setSelectedMember} = useMemberSavingsStore((state) => state.actions);
+    const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
     const { data } = useQuery(['memberSaving'], async () =>
         zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
     );
@@ -87,7 +87,12 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
                                     <Td>{data.member_id}</Td>
-                                    <Td>{data.member_name}</Td>
+                                    <Td
+                                        onClick={() => router.push(`/member/${data.member_id}`)}
+                                        className="cursor-pointer"
+                                    >
+                                        {data.member_name}
+                                    </Td>
                                     <Td className="capitalize">
                                         <div>
                                             <span
@@ -120,14 +125,14 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                             <MenuList>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        router.push(`member/${data.member_id}`);
+                                                        router.push(`/member/${data.member_id}`);
                                                     }}
                                                 >
                                                     View
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        setSelectedMember(data)
+                                                        setSelectedMember(data);
                                                         setOpenDepositeModal(true);
                                                     }}
                                                 >
