@@ -1,4 +1,3 @@
-import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 import environ
@@ -19,21 +18,20 @@ SECRET_KEY = env("SECRET_KEY")
 # False if not in os.environ because of casting above
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = [
-    "*"
-]
-
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 # Application definition
 
-INSTALLED_APPS = [
+DEFAULT_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # third party
+
+]
+THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -41,7 +39,9 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_spectacular",
     "django_extensions",
-    # local
+]
+
+LOCAL_APPS = [
     "organization.apps.OrganizationConfig",
     "peoples.apps.PeoplesConfig",
     "accounts.apps.AccountsConfig",
@@ -49,8 +49,11 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
 ]
 
+INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # cors middleware
     "django.middleware.common.CommonMiddleware",
@@ -95,6 +98,11 @@ DATABASES = {
     }
 }
 
+# Update database configuration from $DATABASE_URL.
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
 
 # Password validation
 
@@ -127,7 +135,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_ROOT = BASE_DIR / "server/staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -181,12 +189,6 @@ SPECTACULAR_SETTINGS = {
 
 # cors headers
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "http://0.0.0.0:3000"
-]
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:3000"
-]
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
