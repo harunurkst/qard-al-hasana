@@ -327,6 +327,7 @@ fabric.properties
 # Django stuff:
 **/migrations/*
 !**/migrations/__init__.py
+staticfiles/
 # Flask stuff:
 
 # Scrapy stuff:
