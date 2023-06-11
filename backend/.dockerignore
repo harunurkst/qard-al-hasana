@@ -1,0 +1,43 @@
+# virtualenvs
+.venv
+venv
+
+# Ignore Python bytecodes and caches
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Django generated files
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+*.sqlite3
+*.pyc
+*.pyo
+*.coverage
+
+# Ignore local development files
+*.env
+*.env.*
+*.sqlite
+
+# Ignore test and documentation directories
+/docs
+/tests
+.coverage
+
+# Ignore node modules and dependencies
+node_modules
+package-lock.json
+yarn.lock
+
+# Ignore other unnecessary files
+.DS_Store
+.idea
+.vscode
+*.bak
+*.tmp
+*.swp
