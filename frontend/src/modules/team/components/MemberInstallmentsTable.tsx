@@ -17,7 +17,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import { MemberSavingsType } from '../../../types/memberSaving.type';
+import { MemberInstallmentType } from '../../../types/memberInstallment.type';
 // import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
 import { useMemberInstallmentsStore } from '../stores/useMemberInstallmentsStore';
 import InstallmentModal from './InstallmentModal';
@@ -81,7 +81,7 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
-                        {data.result?.map((data: MemberSavingsType) => {
+                        {data.result?.map((data: MemberInstallmentType) => {
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
                                     <Td>{data.member_id}</Td>
@@ -104,7 +104,7 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                                     <TrasectionTD amount={data.week2} weekNo={2} />
                                     <TrasectionTD amount={data.week3} weekNo={3} />
                                     <TrasectionTD amount={data.week4} weekNo={4} />
-                                    <Td isNumeric> {data.balance}</Td>
+                                    <Td isNumeric> {data.loan_balance}</Td>
                                     <Td isNumeric>
                                         <Menu>
                                             <MenuButton
@@ -125,6 +125,7 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
+                                                        // console.log('data',data)
                                                         setSelectedMember(data);
                                                         setOpenInstallmentModal(true);
                                                     }}
