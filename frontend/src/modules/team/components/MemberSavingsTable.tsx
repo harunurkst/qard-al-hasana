@@ -69,7 +69,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                         <Tr>
                             <Th>ID</Th>
                             <Th>Name</Th>
-                            <Th>Account type</Th>
+                            <Th>Guardian Name</Th>
 
                             <Th>Week 1</Th>
                             <Th>Week 2</Th>
@@ -90,7 +90,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                     >
                                         {data.member_name}
                                     </Td>
-                                    <Td className="capitalize">
+                                    {/* <Td className="capitalize">
                                         <div>
                                             <span
                                                 className={`rounded-2xl  px-2.5 py-1 text-xs font-medium ${
@@ -102,8 +102,8 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                                 {data.member_id % 2 === 0 ? 'deposit' : 'loan'}
                                             </span>
                                         </div>
-                                    </Td>
-
+                                    </Td> */}
+                                    <Td>{data.guardian_name}</Td>
                                     <TrasectionTD amount={data.week1} weekNo={1} />
                                     <TrasectionTD amount={data.week2} weekNo={2} />
                                     <TrasectionTD amount={data.week3} weekNo={3} />
@@ -129,6 +129,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
+                                                        console.log('data',data)
                                                         setSelectedMember(data);
                                                         setOpenDepositModal(true);
                                                     }}

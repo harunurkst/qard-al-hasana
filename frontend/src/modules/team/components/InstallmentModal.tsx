@@ -73,7 +73,7 @@ const InstallmentModal: React.FC<IInstallmentModal> = ({ isOpen, onClose }) => {
 
         showAlert({
             title: 'Deposit Successful!',
-            text: `কর্জের কিস্তি জমা হয়েছে, ${selectedMember?.member_name}, কর্জ  ${tempSubmittingData.amount} টাকা`,
+            text: `কর্জের কিস্তি জমা হয়েছে, ${selectedMember?.member_name}, কর্জ  ${tempSubmittingData.amount} টাকা`
         });
         onClose();
     };

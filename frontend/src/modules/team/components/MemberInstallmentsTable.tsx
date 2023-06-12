@@ -85,7 +85,7 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
                                     <Td>{data.member_id}</Td>
-                                    <Td>{data.member_name}</Td>
+                                    <Td className="cursor-pointer" onClick={() => router.push(`/member/${data.member_id}`)}>{data.member_name}</Td>
                                     {/* <Td className="capitalize">
                                         <div>
                                             <span
