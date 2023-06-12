@@ -15,11 +15,11 @@ const navItems = [
         href: '/branch',
         exact: false,
     },
-    {
-        name: 'Team',
-        href: '/team',
-        exact: false,
-    },
+    // {
+    //     name: 'Team',
+    //     href: '/team',
+    //     exact: false,
+    // },
     {
         name: 'Withdraw',
         href: '/withdraw',

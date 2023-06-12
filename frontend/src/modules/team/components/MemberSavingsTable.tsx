@@ -84,7 +84,12 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
                                     <Td>{data.member_id}</Td>
-                                    <Td>{data.member_name}</Td>
+                                    <Td
+                                        onClick={() => router.push(`/member/${data.member_id}`)}
+                                        className="cursor-pointer"
+                                    >
+                                        {data.member_name}
+                                    </Td>
                                     <Td className="capitalize">
                                         <div>
                                             <span
@@ -117,7 +122,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                             <MenuList>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        router.push(`member/${data.member_id}`);
+                                                        router.push(`/member/${data.member_id}`);
                                                     }}
                                                 >
                                                     View
