@@ -39,7 +39,7 @@ class MemberCreateSerializer(serializers.ModelSerializer):
         return value
     
 class MemberSavingsLoanInfoSerializer(serializers.Serializer):
-    total_savings = serializers.CharField()
+    total_savings = serializers.IntegerField()
     last_loan = serializers.IntegerField()
     loan_date = serializers.DateField()
     loan_paid = serializers.IntegerField()

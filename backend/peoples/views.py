@@ -56,14 +56,15 @@ class MemberSavingLoanInfo(APIView):
         member = get_object_or_404(Member, id=kwargs.get('id'))
         savings=Savings.objects.filter(member=member).aggregate(Sum('amount'))['amount__sum']
         last_loan = Loan.objects.filter(member=member).last()
-        print("total_savings: ", savings)
+        total_loan = Loan.objects.filter(member=member).count()
+
         data = {
-            "total_savings":savings,
-            "last_loan": last_loan.amount,
-            "loan_date": 0,
-            "loan_paid": 0,
-            "installment_paid": 0,
-            "total_loan_count": 0
+            "total_savings": savings if savings else 0,
+            "last_loan": last_loan.amount if last_loan else 0,
+            "loan_date": last_loan.date,
+            "loan_paid": last_loan.total_paid,
+            "installment_paid": last_loan.installment_paid,
+            "total_loan_count": total_loan
         }
         serializer = self.serializer_class(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
