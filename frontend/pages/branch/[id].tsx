@@ -17,9 +17,14 @@ import React, { ReactNode, useState } from 'react';
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
+import { useSession } from 'next-auth/react';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
 const BranchDetailsPage = () => {
+    const { data: session } = useSession();
+    console.log(' inside branch page: ', session);
+    const branchId = session?.user?.branch;
+
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
     const [isOpenCreateModal, setOpenCreateModal] = useState(false); //handling group add modal
@@ -234,7 +239,8 @@ const BranchDetailsPage = () => {
                         </Button>
                     </div>
                 </div>
-                {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
+                {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
+                {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />}
             </div>
         </section>
     );

@@ -9,6 +9,7 @@ import InstallMentGraph from './installmentGraph';
 
 //Modals are imported here
 import DisbursementModal from '@/modules/member/components/DisbursementModal';
+import EditMemberModal from '@/modules/member/components/EditMemberModal';
 import WithdrawModal from '@/modules/member/components/WithdrawModal';
 
 const getPath = (x, y, width, height) =>
@@ -26,9 +27,11 @@ const TriangleBar = (props) => {
 const MemberDetailPage = () => {
     const router = useRouter();
     const { data: session, status } = useSession();
+    console.log('session : ', session);
 
     const [openDisbursementModal, setDisbursementModal] = useState(false);
     const [openWithdrawModal, setWithdrawModal] = useState(false);
+    const [openEditMemberModal, setEditMemberModal] = useState(false);
     // useEffect(() => {
     //     if (status == 'unauthenticated') {
     //         router.push('/login');
@@ -63,10 +66,18 @@ const MemberDetailPage = () => {
                 {openWithdrawModal && (
                     <WithdrawModal isOpen={openWithdrawModal} onClose={() => setWithdrawModal(false)} member={member} />
                 )}
+
+                {openEditMemberModal && (
+                    <EditMemberModal
+                        isOpen={openEditMemberModal}
+                        onClose={() => setEditMemberModal(false)}
+                        member={member}
+                    />
+                )}
                 {/*=============== basic info section =====================*/}
 
                 <div className="user-basic-info my-10 flex space-x-20">
-                    <div className="user-info w-1/2 w-full rounded-md bg-gray-200 p-10">
+                    <div className="user-info w-full rounded-md bg-gray-200 p-10">
                         <dt className="space-y-3">
                             <dl className="flex">
                                 <dd className="w-3/12">Name</dd>
@@ -100,7 +111,7 @@ const MemberDetailPage = () => {
                             </dl>
                         </dt>
                     </div>
-                    <div className="user-info w-1/2 w-full rounded-md bg-gray-200 p-10">
+                    <div className="user-info w-full rounded-md bg-gray-200 p-10">
                         <dt className="space-y-3">
                             <dl className="flex">
                                 <dd className="w-3/12">Total Savings</dd>
@@ -173,7 +184,12 @@ const MemberDetailPage = () => {
 
                 {/*====================================disbursement, withdraw and edit button====================== */}
                 <div className="button-section mb-10 flex gap-4">
-                    <button className="w-24 rounded bg-brand-700 p-2 text-white">Edit</button>
+                    <button
+                        className="w-24 rounded bg-brand-700 p-2 text-white"
+                        onClick={() => setEditMemberModal(true)}
+                    >
+                        Edit
+                    </button>
                     <button className=" w-30 rounded bg-brand-700 p-2 text-white" onClick={disbursement}>
                         Disbursement
                     </button>

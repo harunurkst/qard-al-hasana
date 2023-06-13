@@ -8,7 +8,8 @@ from organization.models import (
     Branch,
     Division,
     District,
-    Thana, Team
+    Thana,
+    Team,
 )
 
 
@@ -19,7 +20,6 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        print("hello ===>")
         # Create new division
         division, _ = Division.objects.get_or_create(name="Test Division")
 
@@ -60,9 +60,7 @@ class Command(BaseCommand):
         )
 
         team, created = Team.objects.get_or_create(
-            name="Demo Team",
-            branch=branch,
-            defaults={'owner': staff}
+            name="Demo Team", branch=branch, defaults={"owner": staff}
         )
 
         self.stdout.write(
