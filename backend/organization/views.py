@@ -1,4 +1,3 @@
-from django.contrib.auth.models import update_last_login
 from rest_framework import viewsets
 
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
@@ -12,7 +11,8 @@ from organization.serializers import (
     UserSerializer,
     UserSerilizerWithToken,
     MyRefreshSerializer,
-    TeamSerializer, StaffListSerializer,
+    TeamSerializer,
+    StaffListSerializer,
 )
 from organization.models import Team
 from peoples.models import Staff
