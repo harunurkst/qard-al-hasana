@@ -57,8 +57,10 @@ const TeamPage = () => {
                         <BreadcrumbLink>Beli</BreadcrumbLink>
                     </BreadcrumbItem>
                 </Breadcrumb>
+                {isOpenAddMemberModal && (
+                    <AddMemberModal isOpen={isOpenAddMemberModal} onClose={() => setIsOpenAddMemberModal(false)} />
+                )}
 
-                <AddMemberModal isOpen={isOpenAddMemberModal} onClose={() => setIsOpenAddMemberModal(false)} />
                 <EditTeamInfoModal isOpen={isOpenTeamEditModal} onClose={() => setIsOpenTeamEditModal(false)} />
 
                 <div
@@ -231,7 +233,11 @@ const TeamPage = () => {
                         </div>
                     </div>
 
-                    {tab == 'LOAN' ? <MemberInstallmentsTable teamId={teamId} /> : <MemberSavingsTable teamId={teamId} />}
+                    {tab == 'LOAN' ? (
+                        <MemberInstallmentsTable teamId={teamId} />
+                    ) : (
+                        <MemberSavingsTable teamId={teamId} />
+                    )}
                 </div>
             </section>
         </>

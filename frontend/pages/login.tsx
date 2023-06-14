@@ -4,7 +4,7 @@ import { loginSchema, LoginType } from '@/schema/AuthSchema';
 import { Button } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GetServerSideProps } from 'next';
-import { getCsrfToken, getSession, signIn, useSession } from 'next-auth/react';
+import { getCsrfToken, signIn } from 'next-auth/react';
 import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -15,11 +15,6 @@ interface LoginFormData {
 
 const Login = (response: string) => {
     // const router = useRouter();
-    const { data: session } = useSession();
-    console.log('session data: ', session);
-
-    // const providers = getProviders();
-    // console.log('Providers', providers);
 
     const {
         register,
@@ -33,7 +28,7 @@ const Login = (response: string) => {
             // 'redirect': false,
             username: values.username,
             password: values.password,
-            callbackUrl: '/branch/1',
+            callbackUrl: `/dashboard`,
         });
     };
 
@@ -79,8 +74,6 @@ Login.getLayout = (page: ReactNode) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const res = await getCsrfToken(context);
-    const session = await getSession();
-    console.log('session in server sidde: ', session);
 
     return {
         props: {

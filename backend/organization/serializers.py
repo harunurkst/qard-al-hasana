@@ -86,13 +86,13 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'owner')
+        fields = ('id', 'name', 'owner', 'branch')
 
-    def create(self, validated_data):
-        team = Team(**validated_data)
-        team.branch = validated_data['owner'].branch
-        team.save()
-        return team
+    # def create(self, validated_data):
+    #     team = Team(**validated_data)
+    #     team.branch = validated_data['owner'].branch
+    #     team.save()
+    #     return team
 
 
 # Staff List Serializer

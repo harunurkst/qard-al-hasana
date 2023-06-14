@@ -3,6 +3,7 @@ import EditGroup from '@/modules/team/components/EditGroupModal';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
@@ -18,15 +19,19 @@ interface TeamObject {
 
 const TeamsTable = () => {
     const router = useRouter();
+    const { data: session } = useSession();
 
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
+    const branchId = router.query.id;
 
-    const redirectToDetail = (teamId:number) => {
+    const redirectToDetail = (teamId: number) => {
         return router.push(`/team/${teamId}`);
     };
 
     //greating team list using transtak query
-    const { data, isFetching } = useQuery(['teams'], async () => zodSafeQuery('/api/v1/organization/teams')());
+    const { data, isFetching } = useQuery(['teams'], async () =>
+        zodSafeQuery(`/api/v1/organization/teams?branch=${branchId}`)()
+    );
 
     return (
         <>
@@ -53,7 +58,7 @@ const TeamsTable = () => {
                                 return (
                                     <Tr key={team.id} className=" hover:bg-gray-50">
                                         <Td>{team.id}</Td>
-                                        <Td onClick={()=>redirectToDetail(team.id)} className="cursor-pointer">
+                                        <Td onClick={() => redirectToDetail(team.id)} className="cursor-pointer">
                                             {team.name}
                                         </Td>
                                         <Td isNumeric> {team.totalMember}</Td>
