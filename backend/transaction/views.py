@@ -106,11 +106,13 @@ class MemberSavingsData(APIView):
     """
 
     def get(self, request):
+        team_id = self.request.query_params.get('teamId')
         data = []
         month = self.request.query_params.get('month', datetime.today().month)
         team = self.request.query_params.get('team', None)
         staff_branch = request.user.staff.branch
-        members = Member.objects.filter(branch=staff_branch)
+        # members = Member.objects.filter(branch=staff_branch)
+        members = Member.objects.filter(team__id=team_id)
         if team:
             members = members.filter(team=team)
         for member in members:

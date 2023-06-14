@@ -3,6 +3,7 @@ import EditGroup from '@/modules/team/components/EditGroupModal';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
@@ -16,12 +17,12 @@ interface TeamObject {
     totalIncome: number;
 }
 
-const TeamsTable = (props) => {
+const TeamsTable = () => {
     const router = useRouter();
+    const { data: session } = useSession();
 
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
-    const branchId = props.branchId;
-    console.log('inside team table: ', branchId);
+    const branchId = router.query.id;
 
     const redirectToDetail = (teamId: number) => {
         return router.push(`/team/${teamId}`);
