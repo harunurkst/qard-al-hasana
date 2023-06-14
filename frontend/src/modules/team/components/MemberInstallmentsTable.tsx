@@ -17,9 +17,10 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import { MemberSavingsType } from '../../../types/memberSaving.type';
-import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
-import DepositModal from './DepositModal';
+import { MemberInstallmentType } from '../../../types/memberInstallment.type';
+// import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
+import { useMemberInstallmentsStore } from '../stores/useMemberInstallmentsStore';
+import InstallmentModal from './InstallmentModal';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -34,18 +35,17 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 
     return 'PENDING';
 }
-interface IMemberSavingsTable {
+interface IMemberInstallmentsTable {
     teamId: string | string[] | undefined;
 }
-const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
+const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId }) => {
     const router = useRouter();
-    const [isOpenDepositModal, setOpenDepositModal] = useState(false);
+    const [isOpenInstallmentModal, setOpenInstallmentModal] = useState(false);
 
     // use the hook to fetch member savings
-    // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
-    const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
-    const { data } = useQuery(['memberSaving'], async () =>
-        zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
+    const { setTransactions, setSelectedMember } = useMemberInstallmentsStore((state) => state.actions);
+    const { data } = useQuery(['memberInstallments'], async () =>
+        zodSafeQuery(`/api/v1/transaction/member-installment-list?teamId=${teamId}`)()
     );
     // console.log('data', data?.result, isFetching, error);
     // useEffect(() => {
@@ -59,10 +59,11 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
 
     return (
         <>
-            {isOpenDepositModal && (
-                <DepositModal isOpen={isOpenDepositModal} onClose={() => setOpenDepositModal(false)} />
+            {isOpenInstallmentModal && (
+                <InstallmentModal isOpen={isOpenInstallmentModal} onClose={() => setOpenInstallmentModal(false)} />
             )}
 
+            {/* member list table started here */}
             <TableContainer>
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
@@ -75,21 +76,16 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                             <Th>Week 2</Th>
                             <Th>Week 3</Th>
                             <Th>Week 4</Th>
-                            <Th isNumeric>Deposit / Credit</Th>
+                            <Th isNumeric>Installment</Th>
                             <Th isNumeric>Action</Th>
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
-                        {data.result?.map((data: MemberSavingsType) => {
+                        {data.result?.map((data: MemberInstallmentType) => {
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
                                     <Td>{data.member_id}</Td>
-                                    <Td
-                                        onClick={() => router.push(`/member/${data.member_id}`)}
-                                        className="cursor-pointer"
-                                    >
-                                        {data.member_name}
-                                    </Td>
+                                    <Td className="cursor-pointer" onClick={() => router.push(`/member/${data.member_id}`)}>{data.member_name}</Td>
                                     {/* <Td className="capitalize">
                                         <div>
                                             <span
@@ -108,7 +104,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                     <TrasectionTD amount={data.week2} weekNo={2} />
                                     <TrasectionTD amount={data.week3} weekNo={3} />
                                     <TrasectionTD amount={data.week4} weekNo={4} />
-                                    <Td isNumeric> {data.balance}</Td>
+                                    <Td isNumeric> {data.loan_balance}</Td>
                                     <Td isNumeric>
                                         <Menu>
                                             <MenuButton
@@ -122,19 +118,19 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                             <MenuList>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        router.push(`/member/${data.member_id}`);
+                                                        router.push(`member/${data.member_id}`);
                                                     }}
                                                 >
                                                     View
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        console.log('data', data);
+                                                        // console.log('data',data)
                                                         setSelectedMember(data);
-                                                        setOpenDepositModal(true);
+                                                        setOpenInstallmentModal(true);
                                                     }}
                                                 >
-                                                    সঞ্চয় জমা
+                                                    InstallMent
                                                 </MenuItem>
                                             </MenuList>
                                         </Menu>
@@ -168,4 +164,4 @@ const TrasectionTD = ({ amount, weekNo }: { amount: number; weekNo: number }) =>
     );
 };
 
-export default MemberSavingsTable;
+export default MemberInstallmentsTable;

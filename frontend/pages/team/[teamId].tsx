@@ -1,6 +1,6 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import InstallmentMemberList from '@/modules/team/components/InstallmentMemberList';
-import MembersTable from '@/modules/team/components/MemberSavingsTable';
+import MemberInstallmentsTable from '@/modules/team/components/MemberInstallmentsTable';
+import MemberSavingsTable from '@/modules/team/components/MemberSavingsTable';
 
 import {
     Breadcrumb,
@@ -22,7 +22,7 @@ import { useRouter } from 'next/router';
 const TeamPage = () => {
     const router = useRouter();
     const { teamId } = router.query;
-    const [tab, setTab] = useState<'DEPOSITE' | 'LOAN'>('DEPOSITE');
+    const [tab, setTab] = useState<'DEPOSIT' | 'LOAN'>('DEPOSIT');
 
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
     const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
@@ -57,9 +57,10 @@ const TeamPage = () => {
                         <BreadcrumbLink>Beli</BreadcrumbLink>
                     </BreadcrumbItem>
                 </Breadcrumb>
+                {isOpenAddMemberModal && (
+                    <AddMemberModal isOpen={isOpenAddMemberModal} onClose={() => setIsOpenAddMemberModal(false)} />
+                )}
 
-                {/* Member add modal component here */}
-                <AddMemberModal isOpen={isOpenAddMemberModal} onClose={() => setIsOpenAddMemberModal(false)} />
                 <EditTeamInfoModal isOpen={isOpenTeamEditModal} onClose={() => setIsOpenTeamEditModal(false)} />
 
                 <div
@@ -161,26 +162,22 @@ const TeamPage = () => {
                             </Button>
                         </div>
                     </div>
-                    <div className="flex justify-between border-b border-gray-200 px-5 py-4">
-                        <div>
-                            <div>
-                                <ButtonGroup isAttached variant={'outline'}>
-                                    <Button
-                                        onClick={() => setTab('DEPOSITE')}
-                                        backgroundColor={tab === 'DEPOSITE' ? 'gray.100' : 'white'}
-                                    >
-                                        Diposit - (25)
-                                    </Button>
-                                    <Button
-                                        onClick={() => setTab('LOAN')}
-                                        backgroundColor={tab === 'LOAN' ? 'gray.100' : 'white'}
-                                    >
-                                        Installment - (10)
-                                    </Button>
-                                </ButtonGroup>
-                            </div>
-                        </div>
-                        <div className="flex gap-3">
+                    <div className="flex flex-col gap-4 border-b border-gray-200 px-5 py-4 lg:flex-row lg:justify-between">
+                        <ButtonGroup isAttached variant={'outline'}>
+                            <Button
+                                onClick={() => setTab('DEPOSIT')}
+                                backgroundColor={tab === 'DEPOSIT' ? 'gray.100' : 'white'}
+                            >
+                                Deposit - (25)
+                            </Button>
+                            <Button
+                                onClick={() => setTab('LOAN')}
+                                backgroundColor={tab === 'LOAN' ? 'gray.100' : 'white'}
+                            >
+                                Installment - (10)
+                            </Button>
+                        </ButtonGroup>
+                        <div className="flex flex-col gap-3 md:flex-row">
                             <InputGroup width={300}>
                                 <InputLeftElement pointerEvents="none">
                                     <SearchIcon />
@@ -236,7 +233,11 @@ const TeamPage = () => {
                         </div>
                     </div>
 
-                    {tab == 'LOAN' ? <InstallmentMemberList /> : <MembersTable teamId={teamId} />}
+                    {tab == 'LOAN' ? (
+                        <MemberInstallmentsTable teamId={teamId} />
+                    ) : (
+                        <MemberSavingsTable teamId={teamId} />
+                    )}
                 </div>
             </section>
         </>

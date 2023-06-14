@@ -1,3 +1,4 @@
+import { decoderFunction } from '@/utils/decoder';
 import http from '@/utils/http';
 import { AuthOptions, DefaultUser } from 'next-auth';
 import NextAuth from 'next-auth/next';
@@ -11,14 +12,6 @@ type UserCredential = {
 };
 
 declare module 'next-auth' {
-    // interface Session {
-    //     user?: DefaultUser & { accessToken: string };
-    // }
-    // interface Session {
-    //     user: {
-    //         accessToken: string;
-    //     };
-    // }
     interface Session {
         accessToken: string;
     }
@@ -53,7 +46,6 @@ export const authOptions: AuthOptions = {
                 if (user && user.status == 200) {
                     return user.data;
                 } else {
-                    //   console.log("check your credentials");
                     return null;
                 }
             },
@@ -64,26 +56,24 @@ export const authOptions: AuthOptions = {
 
     callbacks: {
         jwt: async ({ token, user }) => {
+            const jwtKen = token.accessToken;
+            const decodedToken = decoderFunction(jwtKen);
             if (user) {
                 token.refreshToken = user.refresh;
                 token.accessToken = user.access;
             }
-            // console.log('right now date: ', Date.now());
-            // else if(Date.now()<(token.exp * 1000)){
-            //     return token
-            // }else{
-            //     const refreshResponse = await api('api/v1/auth/refresh/', token.refreshToken )
-            //     const res = refreshResponse
-            //     console.log('res:.....', res)
-            // }
-            // console.log('token object: ', token);
-
+            // implement refresh here
+            token.details = decodedToken;
             return token;
         },
 
         session: ({ session, token }) => {
             if (token) {
                 session.user.accessToken = token.accessToken;
+                session.user.username = token.details.user.username;
+                session.user.user_id = token.details.user_id;
+                session.user.branch = token.details.user.branch;
+                session.user.role = token.details.user.role;
             }
             return session;
         },

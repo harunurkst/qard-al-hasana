@@ -37,9 +37,7 @@ const WithdrawModal: React.FC<ICreateWithdrawModal> = ({ isOpen, onClose, member
     } = useForm({ mode: 'onChange' });
 
     const postRequest = (values: WithdrawSchema) => {
-        console.log('values : ', values);
         const res = http.post(`/api/v1/transaction/withdraw/`, values);
-        console.log('response :', res);
         return res;
     };
 
@@ -57,7 +55,6 @@ const WithdrawModal: React.FC<ICreateWithdrawModal> = ({ isOpen, onClose, member
         // const data = {
         //     ...values,
         // };
-        console.log('member value: ', values.member);
         const data = {
             member: member.id,
             amount: values.amount,
