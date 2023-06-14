@@ -1,6 +1,6 @@
 import { VerticalDotIcon } from '@/icons';
 // import DespositeModal from '@/modules/member/components/DepositeModal';
-import InstallmentModal from '@/modules/member/components/InstallmentModal';
+import InstallmentModal from '@/modules/team/components/InstallmentModal';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import {
     Menu,
@@ -39,11 +39,8 @@ const MemberSavingsTable = () => {
 
     return (
         <>
-            {/* Modal component used here */}
-            {/* <DespositeModal isOpen={isOpenDepositeModal} onClose={() => setOpenDepositeModal(false)} /> */}
             <InstallmentModal isOpen={isOpenInstallmentModal} onClose={() => setOpenInstallmentModal(false)} />
-
-            {/* member list table started here */}
+            
             <TableContainer>
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
