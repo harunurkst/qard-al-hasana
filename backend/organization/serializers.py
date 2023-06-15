@@ -84,10 +84,11 @@ class TeamSerializerBase(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'owner', 'branch')
+        fields = ('id', 'name','address', 'branch')
 
 class TeamSerializer(TeamSerializerBase):
-    pass
+    class Meta:
+        fields = TeamSerializerBase.Meta.fields + ['owner',]
 
 # Staff List Serializer
 class StaffListSerializer(serializers.ModelSerializer):
