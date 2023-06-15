@@ -84,12 +84,23 @@ class TeamSerializerBase(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name','address', 'branch')
+        fields = ('id', 'name','address',)
 
 class TeamSerializer(TeamSerializerBase):
-    class Meta:
-        fields = TeamSerializerBase.Meta.fields + ['owner',]
+    class Meta(TeamSerializerBase.Meta):
+        fields = TeamSerializerBase.Meta.fields + ('owner',)
 
+class TeamDetailSerializer(TeamSerializerBase):
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.update({
+            'total_unpaid_loan': instance.total_unpaid_loan(),
+            'total_deposit': instance.total_deposit(),
+            'active_loan': instance.active_loan()
+        })
+        return data
+    
 # Staff List Serializer
 class StaffListSerializer(serializers.ModelSerializer):
 

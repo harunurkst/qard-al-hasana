@@ -1,6 +1,7 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -8,6 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from organization.serializers import (
     LoginSerializer,
+    TeamDetailSerializer,
     UserSerializer,
     UserSerilizerWithToken,
     MyRefreshSerializer,
@@ -46,6 +48,16 @@ class TeamCreateListApiView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(branch=serializer.validated_data["owner"].branch)
+
+class TeamRetriveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamDetailSerializer
+
+    def get_object(self):
+        return get_object_or_404(Team, id=self.kwargs['pk'])
+
+
+
 
 class StaffViewSet(viewsets.ModelViewSet):
     """

@@ -6,6 +6,7 @@ from django.db import models
 
 from organization.managers import UserManager
 from peoples.models import Staff
+from django.db.models import Sum
 
 
 class BaseModel(models.Model):
@@ -121,4 +122,12 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def total_unpaid_loan(self):
+        return self.loan_set.filter(is_paid=False).aggregate(Sum('total_due'))['total_due__sum']
 
+    def total_deposit(self):
+        return self.savings_set.filter(transaction_type='deposit').aggregate(Sum('amount'))['amount__sum']
+    
+    def active_loan(self):
+        return self.loan_set.filter(is_paid=False).count()
