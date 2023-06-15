@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
     if (requireAuth.some((path) => pathname.startsWith(path))) {
         const token = await getToken({
             req: request,
-            secret: process.env.SECRET,
+            secret: process.env.NEXTAUTH_SECRET,
         });
         //check not logged in
         if (!token) {
