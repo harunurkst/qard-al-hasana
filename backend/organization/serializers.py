@@ -80,19 +80,28 @@ class MyRefreshSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError("Refresh token is required")
 
-
-class TeamSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(many=False, queryset=Staff.objects.all())
+class TeamSerializerBase(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'owner')
+        fields = ('id', 'name', 'owner','address',)
 
-    def create(self, validated_data):
-        team = Team(**validated_data)
-        team.branch = validated_data['owner'].branch
-        team.save()
-        return team
+class TeamSerializer(TeamSerializerBase):
+    pass
+    # owner = serializers.PrimaryKeyRelatedField(many=False, queryset=Staff.objects.all())
+
+    # class Meta:
+    #     model = Team
+    #     fields = ('id', 'name', 'owner',)
+
+    # def create(self, validated_data):
+    #     team = Team(**validated_data)
+    #     team.branch = validated_data['owner'].branch
+    #     team.save()
+    #     return
+     
+class TeamDetailSerializer(TeamSerializerBase):
+    pass
 
 
 # Staff List Serializer

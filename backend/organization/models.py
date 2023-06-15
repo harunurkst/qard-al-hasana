@@ -113,6 +113,7 @@ class Team(models.Model):
     name = models.CharField(max_length=150)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     owner = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    address = models.CharField(max_length=200, blank=True)
 
 
     class Meta:
