@@ -11,6 +11,7 @@ from organization.models import (
     Thana,
     Team,
 )
+from transaction.models import TransactionCategory
 
 
 class Command(BaseCommand):
@@ -20,6 +21,8 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+        TransactionCategory.objects.get_or_create(name='Registration Fee')
+        TransactionCategory.objects.get_or_create(name='Office Rent')
         # Create new division
         division, _ = Division.objects.get_or_create(name="Test Division")
 
