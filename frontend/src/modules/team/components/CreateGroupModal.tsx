@@ -1,7 +1,6 @@
 import CustomTextInput from '@/components/CustomInput';
 import http from '@/utils/http';
 import { showNotification } from '@/utils/messages';
-import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
     Button,
     Modal,
@@ -12,7 +11,7 @@ import {
     ModalHeader,
     ModalOverlay,
 } from '@chakra-ui/react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 interface ICreateGroupModal {
@@ -26,20 +25,10 @@ interface TeamCreateData {
     owner_name: string;
 }
 
-interface StaffObject {
-    id: number;
-    branch: number;
-    email: string;
-    mobile_number: string;
-    name: string;
-    role: string;
-    user: number;
-}
-
-1;
 const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
     const { data: session, status } = useSession();
-    // console.log(session);
+    const userId = session?.user?.user_id;
+    const branchId = session?.user?.branch;
 
     const queryClient = useQueryClient();
     const {
@@ -49,17 +38,13 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
         reset,
     } = useForm<TeamCreateData>({ mode: 'onChange' });
 
-    //owner/staff get request handling function
-    const { data, isFetching } = useQuery(['staffs'], async () => zodSafeQuery(`/api/v1/organization/staffs/`)());
-    const staffList = data?.result?.results;
-    console.log('staffList: ', staffList);
-
     //function creating post post request for create team. this will be called inside isMutation
     const postRequest = async (values: TeamCreateData) => {
         const data = {
             name: values.group_name,
             address: values.address,
-            owner: values.owner_name,
+            owner: userId,
+            branch: branchId,
         };
 
         const response = await http.post(`/api/v1/organization/teams/`, data);
@@ -100,21 +85,6 @@ const CreateGroupModal: React.FC<ICreateGroupModal> = ({ isOpen, onClose }) => {
                     <ModalBody>
                         <CustomTextInput className="mb-2" label="Group Name" {...register('group_name')} />
                         <CustomTextInput className="mb-2" label="Address" {...register('address')} />
-                        <div className="w-full">
-                            <label className="mb-1.5 block font-medium text-gray-700">Owner Name</label>
-                            <select
-                                className="border-gray-350 h-10 w-full rounded border bg-white"
-                                {...register('owner_name')}
-                            >
-                                <option>Select One</option>
-                                {staffList &&
-                                    staffList.map((data: StaffObject) => (
-                                        <option key={data.id} value={data.id}>
-                                            {data.name}
-                                        </option>
-                                    ))}
-                            </select>
-                        </div>
                     </ModalBody>
                     <ModalFooter gap={4}>
                         <Button onClick={onClose}>Close</Button>

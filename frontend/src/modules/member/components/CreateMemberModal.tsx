@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -32,8 +33,10 @@ interface MemberObject {
 }
 
 const CreateMemberModal: React.FC<ICreateMemberModal> = ({ isOpen, onClose }) => {
+    const router = useRouter();
     const { data: session } = useSession();
     const queryClient = useQueryClient();
+    const teamId = router.query.teamId;
 
     const {
         handleSubmit,
@@ -52,7 +55,7 @@ const CreateMemberModal: React.FC<ICreateMemberModal> = ({ isOpen, onClose }) =>
             gender: values.gender,
             serial_number: values.serial_number,
             // team: values.team,
-            team: 1,
+            team: teamId,
         };
 
         const postData = await http.post(`/api/v1/peoples/members/`, data);

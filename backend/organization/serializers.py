@@ -84,24 +84,13 @@ class TeamSerializerBase(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'owner','address',)
-
-class TeamSerializer(TeamSerializerBase):
-    pass
-    # owner = serializers.PrimaryKeyRelatedField(many=False, queryset=Staff.objects.all())
-
-    # class Meta:
-    #     model = Team
-    #     fields = ('id', 'name', 'owner',)
+        fields = ('id', 'name', 'owner', 'branch')
 
     # def create(self, validated_data):
     #     team = Team(**validated_data)
     #     team.branch = validated_data['owner'].branch
     #     team.save()
-    #     return
-     
-class TeamDetailSerializer(TeamSerializerBase):
-    pass
+    #     return team
 
 
 # Staff List Serializer
