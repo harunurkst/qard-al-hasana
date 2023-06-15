@@ -86,12 +86,8 @@ class TeamSerializerBase(serializers.ModelSerializer):
         model = Team
         fields = ('id', 'name', 'owner', 'branch')
 
-    # def create(self, validated_data):
-    #     team = Team(**validated_data)
-    #     team.branch = validated_data['owner'].branch
-    #     team.save()
-    #     return team
-
+class TeamSerializer(TeamSerializerBase):
+    pass
 
 # Staff List Serializer
 class StaffListSerializer(serializers.ModelSerializer):
