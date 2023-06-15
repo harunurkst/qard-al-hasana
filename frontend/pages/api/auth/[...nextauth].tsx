@@ -1,3 +1,4 @@
+import { isDateExpired } from '@/utils/datetime';
 import { decoderFunction } from '@/utils/decoder';
 import http from '@/utils/http';
 import { AuthOptions, DefaultUser } from 'next-auth';
@@ -19,6 +20,19 @@ declare module 'next-auth' {
         refresh: string;
         access: string;
         user: object;
+    }
+}
+
+async function refreshAccessToken(tokenObject: any) {
+    try {
+        const response = await http.post('/api/v1/auth/refresh/', { refresh: tokenObject.refreshToken });
+
+        tokenObject.accessToken = response.data.access;
+        tokenObject.refreshToken = response.data.refresh;
+
+        return tokenObject;
+    } catch (error) {
+        return tokenObject;
     }
 }
 
@@ -62,7 +76,13 @@ export const authOptions: AuthOptions = {
                 token.refreshToken = user.refresh;
                 token.accessToken = user.access;
             }
+           
             // implement refresh here
+
+            if (isDateExpired(decodedToken && decodedToken.exp) && token) {
+                token = await refreshAccessToken(token);
+            }
+
             token.details = decodedToken;
             return token;
         },
