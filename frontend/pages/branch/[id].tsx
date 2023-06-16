@@ -17,9 +17,14 @@ import React, { ReactNode, useState } from 'react';
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
+import { useRouter } from 'next/router';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
-const BranchDetailsPage = () => {
+const BranchDetailsPage = (session) => {
+    // const { data: session } = useSession();
+    const router = useRouter();
+    const branchId = router.query.id;
+
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
     const [isOpenCreateModal, setOpenCreateModal] = useState(false); //handling group add modal
@@ -234,6 +239,7 @@ const BranchDetailsPage = () => {
                         </Button>
                     </div>
                 </div>
+                {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
                 {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
             </div>
         </section>
@@ -257,5 +263,13 @@ const SearchIcon = () => {
 BranchDetailsPage.getLayout = (page: ReactNode) => {
     return <DashboardLayout className="min-h-screen">{page}</DashboardLayout>;
 };
-
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//     const session = await getServerSession(context.req, context.res, authOptions);
+//     console.log('session response:....................................................... ', session);
+//     return {
+//         props: {
+//             session: JSON.stringify(session),
+//         },
+//     };
+// };
 export default BranchDetailsPage;

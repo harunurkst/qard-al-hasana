@@ -15,7 +15,7 @@ http.interceptors.request.use(async (request) => {
     const session = await getSession();
 
     if (session) {
-        request.headers.Authorization = `Bearer ${session.user.accessToken}`;
+        request.headers.Authorization = `Bearer ${session?.user?.accessToken}`;
     }
     return request;
 });

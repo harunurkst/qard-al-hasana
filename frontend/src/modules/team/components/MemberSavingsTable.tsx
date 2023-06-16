@@ -62,7 +62,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
             {isOpenDepositModal && (
                 <DepositModal isOpen={isOpenDepositModal} onClose={() => setOpenDepositModal(false)} />
             )}
-            
+
             <TableContainer>
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
@@ -129,7 +129,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        console.log('data',data)
+                                                        console.log('data', data);
                                                         setSelectedMember(data);
                                                         setOpenDepositModal(true);
                                                     }}

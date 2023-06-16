@@ -1,7 +1,10 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { LoanIcon, LoanPlusIcon, PersonPlusIcon } from '@/icons';
 import Analytics from '@/modules/dashboard/components/Analytics';
+import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
 import { ReactNode } from 'react';
+import { authOptions } from './api/auth/[...nextauth]';
 
 const Dashboard = () => {
     // const { data: session, status } = useSession();
@@ -72,6 +75,24 @@ const Dashboard = () => {
 
 Dashboard.getLayout = (page: ReactNode) => {
     return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getServerSession(context.req, context.res, authOptions);
+    const branch_id = session?.user?.branch;
+    if (session?.user?.role == 'BO') {
+        return {
+            redirect: {
+                destination: `/branch/${branch_id}`,
+                permanent: false,
+            },
+        };
+    }
+    return {
+        props: {
+            session: JSON.stringify(session),
+        },
+    };
 };
 
 export default Dashboard;
