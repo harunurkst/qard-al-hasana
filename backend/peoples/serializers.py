@@ -6,7 +6,16 @@ from peoples.models import Member, Staff
 class MemberDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = '__all__'
+        fields = ('id','name', 'mobile_number', 'guardian_name', 'serial_number', 'team', 'branch', )
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.update({
+            "team": instance.team.name,
+            "branch": instance.branch.name,
+            "joined_date": instance.created_at
+        })
+        return data
 
 
 class MemberCreateSerializer(serializers.ModelSerializer):
