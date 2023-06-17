@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import GeneralTransaction, Savings, Loan, Installment
+from .models import GeneralTransaction, Savings, Loan, Installment, TransactionCategory
 
 
 class SavingsSerializer(serializers.ModelSerializer):
@@ -41,3 +41,9 @@ class GeneralTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralTransaction
         fields = ('id','amount', 'date', 'category', 'summary', )
+
+
+class TransactionCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TransactionCategory
+        fields = ('name', )

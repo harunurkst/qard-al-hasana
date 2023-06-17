@@ -4,13 +4,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 
 from peoples.models import Member
 from peoples.permissions import IsSameBranch
-from .models import GeneralTransaction, Loan, Savings, Installment
-from .serializers import GeneralTransactionSerializer, SavingsSerializer, LoanDisbursementSerializer, LoanInstallmentSerializer
+from .models import GeneralTransaction, Loan, Savings, Installment, TransactionCategory
+from .serializers import GeneralTransactionSerializer, SavingsSerializer, LoanDisbursementSerializer, LoanInstallmentSerializer, TransactionCategorySerializer
 from .utils import format_savings_date, format_loan_data
 from korjo_soft.permissions import IsBranchOwner
 
@@ -198,3 +197,9 @@ class ExpenseTransactionDetailUpdateDelete(RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         return get_object_or_404(GeneralTransaction, id=self.kwargs.get('id'))
+
+
+class TransactionCategoryList(ListAPIView):
+    serializer_class = TransactionCategorySerializer
+    permission_classes = [IsAuthenticated]
+    queryset = TransactionCategory.objects.all()
