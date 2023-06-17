@@ -6,8 +6,9 @@ from peoples.models import Member, Staff
 class MemberDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ('id','name', 'mobile_number', 'guardian_name', 'serial_number', 'team', 'branch', )
-    
+        fields = ('id', 'name', 'mobile_number', 'guardian_name',
+                  'serial_number', 'team', 'branch', )
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data.update({
@@ -37,3 +38,12 @@ class MemberCreateSerializer(serializers.ModelSerializer):
                 "Serial number must not be greater than 25."
             )
         return value
+
+
+class MemberSavingsLoanInfoSerializer(serializers.Serializer):
+    total_savings = serializers.IntegerField()
+    last_loan = serializers.IntegerField()
+    loan_date = serializers.DateField()
+    loan_paid = serializers.IntegerField()
+    installment_paid = serializers.CharField()
+    total_loan_count = serializers.IntegerField()

@@ -1,9 +1,14 @@
+from django.shortcuts import get_object_or_404
+from django.db.models import Sum
 from rest_framework import viewsets
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
-
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
+from transaction.models import Loan, Savings
 
 # App related
 from peoples.models import Member, Staff
@@ -11,6 +16,7 @@ from peoples.permissions import IsSameBranch
 from peoples.serializers import (
     MemberCreateSerializer,
     MemberDetailSerializer,
+    MemberSavingsLoanInfoSerializer,
 )
 
 
@@ -41,3 +47,22 @@ class MemberDetailsView(RetrieveUpdateDestroyAPIView):
 
 
 
+class MemberSavingLoanInfo(APIView):
+    serializer_class = MemberSavingsLoanInfoSerializer
+
+    def get(self, request, *args, **kwargs):
+        member = get_object_or_404(Member, id=kwargs.get('id'))
+        savings=Savings.objects.filter(member=member).aggregate(Sum('amount'))['amount__sum']
+        last_loan = Loan.objects.filter(member=member).last()
+        total_loan = Loan.objects.filter(member=member).count()
+
+        data = {
+            "total_savings": savings if savings else 0,
+            "last_loan": last_loan.amount if last_loan else 0,
+            "loan_date": last_loan.date,
+            "loan_paid": last_loan.total_paid,
+            "installment_paid": last_loan.installment_paid,
+            "total_loan_count": total_loan
+        }
+        serializer = self.serializer_class(data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
