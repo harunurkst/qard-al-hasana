@@ -13,5 +13,6 @@ urlpatterns =[
     path('income/', views.IncomeTransactionListCreate.as_view(), name='income_create_list'),
     path('income/<int:id>/', views.IncomeTransactionDetailUpdateDelete.as_view(), name='income_re_up_del'),
     path('expense/', views.ExpenseTransactionListCreate.as_view(), name='expense_create_list'),
-    path('expense/<int:id>/', views.ExpenseTransactionDetailUpdateDelete.as_view(), name='expense_re_up_del')
+    path('expense/<int:id>/', views.ExpenseTransactionDetailUpdateDelete.as_view(), name='expense_re_up_del'),
+    path('transaction-category-list/', views.TransactionCategoryList.as_view(), name='transaction_category_list'),
 ]
