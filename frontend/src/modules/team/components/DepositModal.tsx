@@ -15,6 +15,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
+import { showAlert } from '@/utils/sweatalert';
 
 interface IDepositModal {
     isOpen: boolean;
@@ -62,15 +63,15 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
     //team creation modal handling
     const onSubmit = (values: DepositSubmitDataType) => {
         console.log('values: ', values);
-        // const tempSubmittingData = {
-        //     member: selectedMember?.member_id,
-        //     amount: values.amount,
-        //     date: date,
-        // };
-        // mutate(tempSubmittingData);
+        const tempSubmittingData = {
+            member: selectedMember?.member_id,
+            amount: values.amount,
+            date: date,
+        };
+        mutate(tempSubmittingData);
 
-        // showAlert({title:"Deposit Successful!", text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় ${tempSubmittingData.amount} টাকা`})
-        // onClose();
+        showAlert({title:"Deposit Successful!", text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় ${tempSubmittingData.amount} টাকা`})
+        onClose();
     };
 
     // const onSubmit = async (values: IDepositType) => {
