@@ -81,17 +81,28 @@ class MyRefreshSerializer(serializers.Serializer):
             raise serializers.ValidationError("Refresh token is required")
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class TeamSerializerBase(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'owner', 'branch')
+        fields = ('id', 'name', 'address',)
 
-    # def create(self, validated_data):
-    #     team = Team(**validated_data)
-    #     team.branch = validated_data['owner'].branch
-    #     team.save()
-    #     return team
+
+class TeamSerializer(TeamSerializerBase):
+    class Meta(TeamSerializerBase.Meta):
+        fields = TeamSerializerBase.Meta.fields + ('owner',)
+
+
+class TeamDetailSerializer(TeamSerializerBase):
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.update({
+            'total_unpaid_loan': instance.total_unpaid_loan(),
+            'total_deposit': instance.total_deposit(),
+            'active_loan': instance.active_loan()
+        })
+        return data
 
 
 # Staff List Serializer
