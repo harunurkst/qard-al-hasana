@@ -82,7 +82,6 @@ class MyRefreshSerializer(serializers.Serializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(many=False, queryset=Staff.objects.all())
 
     class Meta:
         model = Team
