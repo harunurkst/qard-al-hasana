@@ -64,9 +64,9 @@ class LoanDisbursementView(APIView):
                 return Response(resp, status=400)
             member = serializer.validated_data['member']
             serializer.save(
-                branch=request.user.staff.branch,
+                branch=request.user.branch,
                 team=member.team,
-                organization=request.user.staff.branch.organization,
+                organization=request.user.branch.organization,
                 created_by=request.user,
             )
             return Response({'status': 'success'}, status=201)
@@ -110,7 +110,7 @@ class MemberSavingsData(APIView):
         data = []
         month = self.request.query_params.get('month', datetime.today().month)
         team = self.request.query_params.get('team', None)
-        staff_branch = request.user.staff.branch
+        #staff_branch = request.user.branch
         # members = Member.objects.filter(branch=staff_branch)
         members = Member.objects.filter(team__id=team_id)
         if team:
@@ -146,7 +146,7 @@ class MemberLoanData(APIView):
         data = []
         month = self.request.query_params.get('month', datetime.today().month)
         team = self.request.query_params.get('team', None)
-        staff_branch = request.user.staff.branch
+        staff_branch = request.user.branch
         active_loans = Loan.objects.filter(
             branch=staff_branch, is_paid=False).select_related('member')
 

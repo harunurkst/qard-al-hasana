@@ -13,7 +13,6 @@ from django.db.models import Sum
 # App related
 from peoples.models import Member, Staff
 from peoples.permissions import IsSameBranch
-from peoples.filters.staff_filters import StaffFilter
 from peoples.serializers import (
     MemberCreateSerializer,
     MemberDetailSerializer,
@@ -30,10 +29,10 @@ class MemberListCreateView(ListCreateAPIView):
     search_fields = ["=nid_number", "=mobile_number"]
 
     def get_queryset(self):
-        return Member.objects.filter(branch=self.request.user.staff.branch)
+        return Member.objects.filter(branch=self.request.user.branch)
 
     def perform_create(self, serializer):
-        serializer.save(branch=self.request.user.staff.branch)
+        serializer.save(branch=self.request.user.branch)
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -46,7 +45,7 @@ class MemberDetailsView(RetrieveUpdateDestroyAPIView):
     serializer_class = MemberDetailSerializer
 
     def get_queryset(self):
-        return Member.objects.filter(branch=self.request.user.staff.branch)
+        return Member.objects.filter(branch=self.request.user.branch)
 
 
 class MemberSavingLoanInfo(APIView):

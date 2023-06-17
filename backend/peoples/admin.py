@@ -7,7 +7,7 @@ from peoples.models import Member, Staff
 
 @admin.register(Staff)
 class StaffAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'branch']
+    list_display = ['id', 'name',]
     list_display_links = ['name']
     ordering = ['id']
 
