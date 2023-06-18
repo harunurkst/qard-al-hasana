@@ -1,11 +1,13 @@
+from django.db import models
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
 )
-from django.db import models
 
-from organization.managers import UserManager
 from peoples.models import Staff
+
+from .managers import UserManager
 
 
 class BaseModel(models.Model):

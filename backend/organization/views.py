@@ -1,21 +1,25 @@
-from rest_framework import viewsets
+from django.db.models import Count, Q, Sum, Avg, Max, Min
 
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from peoples.models import Staff
+from transaction.models import Savings
 
-from organization.serializers import (
+from .serializers import (
     LoginSerializer,
     UserSerializer,
     UserSerilizerWithToken,
     MyRefreshSerializer,
     TeamSerializer,
     StaffListSerializer,
+    BranchSerializer
 )
-from organization.models import Team
-from peoples.models import Staff
+
+from .models import Team, Branch
 
 
 class LoginView(TokenObtainPairView):
@@ -46,18 +50,24 @@ class TeamCreateListApiView(ListCreateAPIView):
 
 
 class StaffViewSet(viewsets.ModelViewSet):
-    """
-    accepts all these http requests with simple codes:
-
-    Create (POST): {host}/api/v1/organization/staffs/
-    List (GET): {host}/api/v1/organization/staffs/
-    Retrieve (GET): {host}/api/v1/organization/staffs/{id}/
-    Update (PUT): {host}/api/v1/organization/staffs/{id}/
-    Delete (DELETE): {host}/api/v1/organization/staffs/{id}/
-    """
-
+    """ allowed http methods: GET, PUT, PATCH, DELETE, HEAD, OPTIONS """
     queryset = Staff.objects.all()
     serializer_class = StaffListSerializer
 
     def get_queryset(self):
         return self.queryset.filter(branch=self.request.user.branch)
+
+
+class BranchViewSet(viewsets.ModelViewSet):
+    """ allowed http methods: GET, PUT, PATCH, DELETE, HEAD, OPTIONS """
+    queryset = Branch.objects.all()
+    serializer_class = BranchSerializer
+
+    def get_queryset(self):
+        # self.queryset.filter(branch=self.request.user.branch)
+
+        return self.queryset.annotate(
+            total_deposit=Count('organization'),
+            total_due_loan=Count('thana')
+        )
+
