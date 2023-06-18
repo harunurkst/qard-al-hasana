@@ -110,7 +110,7 @@ class BranchMember(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=150)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-    owner = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     class Meta:

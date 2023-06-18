@@ -11,6 +11,7 @@ from organization.models import (
     Thana,
     Team,
 )
+from transaction.models import TransactionCategory
 
 
 class Command(BaseCommand):
@@ -20,6 +21,8 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+        TransactionCategory.objects.get_or_create(name='Registration Fee')
+        TransactionCategory.objects.get_or_create(name='Office Rent')
         # Create new division
         division, _ = Division.objects.get_or_create(name="Test Division")
 
@@ -44,11 +47,12 @@ class Command(BaseCommand):
 
         # Create new user
         user, created = User.objects.get_or_create(username="admin")
-        if created:
-            user.set_password("admin")
-            user.is_superuser = True
-            user.is_staff = True
-            user.save()
+        user.set_password("admin")
+        user.is_superuser = True
+        user.is_staff = True
+        user.branch = branch
+        user.role = 'BO'
+        user.save()
 
         # Create new staff
         staff, _ = Staff.objects.get_or_create(

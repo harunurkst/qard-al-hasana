@@ -60,4 +60,4 @@ class StaffViewSet(viewsets.ModelViewSet):
     serializer_class = StaffListSerializer
 
     def get_queryset(self):
-        return self.queryset.filter(branch=self.request.user.staff.branch)
+        return self.queryset.filter(branch=self.request.user.branch)

@@ -8,7 +8,7 @@ from api.serializers import MemberSerializer, SavingPostingSerializer
 
 class GetMemberView(APIView):
     def get(self, request, team_id, serial_number):
-        user_branch = request.user.staff.branch
+        user_branch = request.user.branch
         try:
             member = Member.objects.get(branch=user_branch, team_id=team_id, serial_number=serial_number, is_active=True)
             total_savings = Savings.objects.member_total_savings(member)
