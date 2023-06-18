@@ -11,6 +11,9 @@ export { default as LoanIcon } from './LoanIcon';
 export { default as LoanPlusIcon } from './LoanPlusIcon';
 export { default as PersonPlusIcon } from './PersonPlusIcon';
 export { default as PersonsIcon } from './PersonsIcon';
+export { default as PlusIcon } from './PlusIcon';
+export { default as PreviousIcon } from './PreviousIcon';
+export { default as SearchIcon } from './SearchIcon';
 export { default as VerticalDotIcon } from './VerticalDotIcon';
 export { default as WithdrawIcon } from './WithdrawIcon';
 
