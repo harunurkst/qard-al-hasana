@@ -38,6 +38,8 @@ class Member(models.Model):
     )
     branch = models.ForeignKey("organization.Branch", on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("team", "serial_number")
