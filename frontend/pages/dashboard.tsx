@@ -80,7 +80,7 @@ Dashboard.getLayout = (page: ReactNode) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await getServerSession(context.req, context.res, authOptions);
     const branch_id = session?.user?.branch;
-    if (session?.user?.role == 'ME') {
+    if (session?.user?.role == 'BO') {
         return {
             redirect: {
                 destination: `/branch/${branch_id}`,
