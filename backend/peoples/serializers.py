@@ -45,5 +45,5 @@ class MemberSavingsLoanInfoSerializer(serializers.Serializer):
     last_loan = serializers.IntegerField()
     loan_date = serializers.DateField()
     loan_paid = serializers.IntegerField()
-    installment_paid = serializers.CharField()
+    installment_paid = serializers.IntegerField()
     total_loan_count = serializers.IntegerField()

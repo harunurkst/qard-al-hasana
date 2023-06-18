@@ -59,9 +59,9 @@ class MemberSavingLoanInfo(APIView):
         data = {
             "total_savings": savings if savings else 0,
             "last_loan": last_loan.amount if last_loan else 0,
-            "loan_date": last_loan.date,
-            "loan_paid": last_loan.total_paid,
-            "installment_paid": last_loan.installment_paid,
+            "loan_date": last_loan.date if last_loan else None,
+            "loan_paid": last_loan.total_paid if last_loan else 0,
+            "installment_paid": last_loan.installment_paid if last_loan else 0,
             "total_loan_count": total_loan
         }
         serializer = self.serializer_class(data)
