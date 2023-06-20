@@ -1,5 +1,6 @@
 import CustomTextInput from '@/components/CustomInput';
 import { DisbursementSchema, DisbursementType } from '@/schema/AllModalSchema';
+import { getFormattedCurrentDatetime } from '@/utils/datetime';
 import http from '@/utils/http';
 import { showNotification } from '@/utils/messages';
 import {
@@ -89,7 +90,13 @@ const DisbursementModal: React.FC<ICreateDisbursementModal> = ({ isOpen, onClose
                             error={errors.loan_amount?.message}
                             {...register('loan_amount')}
                         />
-                        <CustomTextInput className="mb-2" label="Date" type="date" {...register('date')} />
+                        <CustomTextInput
+                            className="mb-2"
+                            label="Date"
+                            type="date"
+                            {...register('date')}
+                            defaultValue={getFormattedCurrentDatetime().split('T')[0].trim()}
+                        />
                         <CustomTextInput
                             label="Installment Count"
                             error={errors.installment_count?.message}
