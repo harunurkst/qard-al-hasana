@@ -48,11 +48,12 @@ const DisbursementModal: React.FC<ICreateDisbursementModal> = ({ isOpen, onClose
 
     const { mutate } = useMutation(postRequest, {
         onSuccess: () => {
-            showNotification('Loan Disbursement has been done successfully');
+            showNotification('Loan Disbursement has been done successfully', 'Sucess', 'success');
             queryClient.invalidateQueries('member');
         },
         onError: (error) => {
-            alert(error);
+            // alert(error);
+            showNotification(`${error}`, 'Not Sucess', 'error');
         },
     });
 
