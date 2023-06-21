@@ -2,21 +2,13 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 import MemberInstallmentsTable from '@/modules/team/components/MemberInstallmentsTable';
 import MemberSavingsTable from '@/modules/team/components/MemberSavingsTable';
 
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    Button,
-    ButtonGroup,
-    Input,
-    InputGroup,
-    InputLeftElement,
-} from '@chakra-ui/react';
+import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { ReactNode, useState } from 'react';
 // Modals are imported here
 import AddMemberModal from '@/modules/member/components/CreateMemberModal';
 import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
 
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import { useRouter } from 'next/router';
 
 const TeamPage = () => {
@@ -40,23 +32,27 @@ const TeamPage = () => {
             </svg>
         );
     };
+    const breadcrumbItems: SingleBreadCrumbItemType[] = [
+        {
+            label: 'Dashboard',
+            href: '/dashboard',
+        },
+        {
+            label: 'Team',
+            href: '/team',
+        },
+        {
+            label: 'Beli',
+
+            isCurrentPage: true,
+        },
+    ];
 
     return (
         <>
             <section className="container mx-auto pb-8 pt-4">
-                <Breadcrumb>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                    </BreadcrumbItem>
+                <CommonBreadCrumb items={breadcrumbItems} />
 
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/branch">Branch</BreadcrumbLink>
-                    </BreadcrumbItem>
-
-                    <BreadcrumbItem isCurrentPage>
-                        <BreadcrumbLink>Beli</BreadcrumbLink>
-                    </BreadcrumbItem>
-                </Breadcrumb>
                 {isOpenAddMemberModal && (
                     <AddMemberModal isOpen={isOpenAddMemberModal} onClose={() => setIsOpenAddMemberModal(false)} />
                 )}
