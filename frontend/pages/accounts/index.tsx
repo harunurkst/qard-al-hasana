@@ -1,18 +1,10 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    Button,
-    ButtonGroup,
-    Input,
-    InputGroup,
-    InputLeftElement,
-} from '@chakra-ui/react';
+import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { ReactNode, useState } from 'react';
 // Modals are imported here
 
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import { PlusIcon, SearchIcon } from '@/icons';
 import AccountsExpenseList from '@/modules/accounts/components/AccountExpenseList';
 import AccountIncomeList from '@/modules/accounts/components/AccountIncomeList';
@@ -25,29 +17,27 @@ const AccountsPage = () => {
     const { teamId } = router.query;
     const [tab, setTab] = useState<'INCOME' | 'EXPENSE'>('INCOME');
 
-    // const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
-    // const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
-
     const [isOpenIncomeModal, setIsOpenIncomeModal] = useState(false);
     const [isOpenExpenseModal, setIsOpenExpenseModal] = useState(false);
+    const breadcrumbItems: SingleBreadCrumbItemType[] = [
+        {
+            label: 'Dashboard',
+            href: '/dashboard',
+        },
+        {
+            label: 'Branch',
+            href: '/branch',
+        },
+        {
+            label: 'Beli',
+            isCurrentPage: true,
+        },
+    ];
 
     return (
         <>
             <section className="container mx-auto pb-8 pt-4">
-                <Breadcrumb>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                    </BreadcrumbItem>
-
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/branch">Branch</BreadcrumbLink>
-                    </BreadcrumbItem>
-
-                    <BreadcrumbItem isCurrentPage>
-                        <BreadcrumbLink>Accounts Page</BreadcrumbLink>
-                    </BreadcrumbItem>
-                </Breadcrumb>
-
+                <CommonBreadCrumb items={breadcrumbItems} />
                 <ExpenseModal isOpen={isOpenExpenseModal} onClose={() => setIsOpenExpenseModal(false)} />
                 <IncomeModal isOpen={isOpenIncomeModal} onClose={() => setIsOpenIncomeModal(false)} />
 
