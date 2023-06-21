@@ -47,22 +47,37 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
     const { data } = useQuery(['memberSaving'], async () =>
         zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
     );
-    // console.log('data', data?.result, isFetching, error);
-    // useEffect(() => {
-    // console.log('memberTransactions', memberTransactions);
-    // }, [memberTransactions]);
+
     setTransactions(data?.result);
 
     if (!data) {
         return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
     }
 
+    // const executeThis = () => {
+    //     const pdfContent = (
+    //         <Document>
+    //             <Page size={'A4'}>
+    //                 <Text>
+    //                     <h1>My Text</h1>
+    //                 </Text>
+    //             </Page>
+    //         </Document>
+    //     );
+    //     const blob = new Blob([pdfContent], { type: 'application/pdf' });
+    //     const url = URL.createObjectURL(blob);
+    //     const a = document.createElement('a');
+    //     a.href = url;
+    //     a.download = 'my_pdf_document.pdf';
+    //     a.click();
+    //     URL.revokeObjectURL(url);
+    // };
+
     return (
         <>
             {isOpenDepositModal && (
                 <DepositModal isOpen={isOpenDepositModal} onClose={() => setOpenDepositModal(false)} />
             )}
-
             <TableContainer>
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
@@ -90,19 +105,6 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                     >
                                         {data.member_name}
                                     </Td>
-                                    {/* <Td className="capitalize">
-                                        <div>
-                                            <span
-                                                className={`rounded-2xl  px-2.5 py-1 text-xs font-medium ${
-                                                    data.member_id % 2 === 0
-                                                        ? ' bg-brand-100 text-brand-600 '
-                                                        : 'bg-error-200 text-error-600'
-                                                }`}
-                                            >
-                                                {data.member_id % 2 === 0 ? 'deposit' : 'loan'}
-                                            </span>
-                                        </div>
-                                    </Td> */}
                                     <Td>{data.guardian_name}</Td>
                                     <TrasectionTD amount={data.week1} weekNo={1} />
                                     <TrasectionTD amount={data.week2} weekNo={2} />
@@ -129,7 +131,6 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        console.log('data', data);
                                                         setSelectedMember(data);
                                                         setOpenDepositModal(true);
                                                     }}
@@ -145,6 +146,8 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                     </Tbody>
                 </Table>
             </TableContainer>
+
+            <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">pdf Download</button>
         </>
     );
 };
