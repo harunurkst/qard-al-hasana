@@ -25,6 +25,11 @@ const navItems = [
         href: '/withdraw',
         exact: false,
     },
+    {
+        name: 'Accounts',
+        href: '/accounts',
+        exact: false,
+    },
 ];
 
 const DashboardNavbar = () => {

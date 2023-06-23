@@ -21,8 +21,8 @@ class DepositView(CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
         return serializer.save(
-            branch=user.staff.branch,
-            organization=user.staff.branch.organization,
+            branch=user.branch,
+            organization=user.branch.organization,
             created_by=user,
             transaction_type='deposit'
         )
@@ -35,8 +35,8 @@ class WithdrawView(CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
         return serializer.save(
-            branch=user.staff.branch,
-            organization=user.staff.branch.organization,
+            branch=user.branch,
+            organization=user.branch.organization,
             created_by=user,
             transaction_type='withdraw'
         )

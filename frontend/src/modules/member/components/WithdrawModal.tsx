@@ -1,4 +1,5 @@
 import CustomTextInput from '@/components/CustomInput';
+import { getFormattedCurrentDatetime } from '@/utils/datetime';
 import http from '@/utils/http';
 import { showNotification } from '@/utils/messages';
 import {
@@ -88,15 +89,21 @@ const WithdrawModal: React.FC<ICreateWithdrawModal> = ({ isOpen, onClose, member
                             className="read-only: mb-2"
                             label="Member Name"
                             {...register('member')}
-                            defaultValue={member.id}
-                            value={member.name}
+                            defaultValue={member?.id}
+                            value={member?.name}
                         />
                         <CustomTextInput
                             label="Amount"
                             {...register('amount', { required: 'You must insert amount' })}
                         />
                         <p className=" text-red-700">{errors?.amount?.message}</p>
-                        <CustomTextInput className="mb-2" label="Date" type="date" {...register('date')} />
+                        <CustomTextInput
+                            className="mb-2"
+                            label="Date"
+                            type="date"
+                            {...register('date')}
+                            defaultValue={getFormattedCurrentDatetime().split('T')[0].trim()}
+                        />
                     </ModalBody>
                     <ModalFooter gap={4}>
                         <Button onClick={onClose}>Close</Button>
