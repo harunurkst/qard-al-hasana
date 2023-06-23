@@ -53,7 +53,7 @@ const CreateMemberModal: React.FC<ICreateMemberModal> = ({ isOpen, onClose }) =>
             nid_number: values.nid_number,
             guardian_name: values.guardian_name,
             gender: values.gender,
-            serial_number: values.serial_number,
+            serial_number: parseInt(values.serial_number),
             // team: values.team,
             team: teamId,
         };
@@ -65,11 +65,11 @@ const CreateMemberModal: React.FC<ICreateMemberModal> = ({ isOpen, onClose }) =>
     //useMuation here to create a member
     const { mutate, status } = useMutation(memberCreatingMethod, {
         onSuccess: (data) => {
-            showNotification('Members has created successfully');
+            showNotification('Members has created successfully', 'Success', 'success');
             queryClient.invalidateQueries('members');
         },
-        onError: () => {
-            showNotification('There is something wrong');
+        onError: (error) => {
+            showNotification(`${error}`, 'Error', 'error');
         },
     });
 

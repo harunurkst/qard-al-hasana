@@ -1,19 +1,11 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
 import MembersTable from '@/modules/team/components/MemberSavingsTable';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    Button,
-    ButtonGroup,
-    Input,
-    InputGroup,
-    InputLeftElement,
-} from '@chakra-ui/react';
+import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import React, { ReactNode, useState } from 'react';
 
 // modal imported
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
@@ -40,22 +32,24 @@ const BranchDetailsPage = (session) => {
             setOpenAddMemberModal(true);
         }
     };
+    const breadcrumbItems: SingleBreadCrumbItemType[] = [
+        {
+            label: 'Dashboard',
+            href: '/dashboard',
+        },
+        {
+            label: 'Branch',
+            href: '/branch',
+        },
+        {
+            label: 'Chandra Bazar Branch',
+            isCurrentPage: true,
+        },
+    ];
 
     return (
         <section className="container mx-auto pb-8 pt-4">
-            <Breadcrumb>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/branch">Branch</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink>Chandra Bazar Branch</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
+            <CommonBreadCrumb items={breadcrumbItems} />
 
             {/* creating new group and new member modal */}
             {isOpenCreateModal && (

@@ -1,6 +1,7 @@
 import CustomDatePicker from '@/components/CustomDatePicker/CustomDatePicker';
 import CustomTextInput from '@/components/CustomInput';
 import http from '@/utils/http';
+import { showAlert } from '@/utils/sweatalert';
 import {
     Button,
     Modal,
@@ -15,7 +16,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
-import { showAlert } from '@/utils/sweatalert';
 
 interface IDepositModal {
     isOpen: boolean;
@@ -44,6 +44,7 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
+        reset,
     } = useForm<DepositFormType>({ mode: 'onChange' });
 
     const postRequest = async (payload: DepositSubmitDataType) => {
@@ -53,24 +54,31 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
     const queryClient = useQueryClient();
     const { mutate, isLoading, error } = useMutation(postRequest, {
         onSuccess: () => {
+            showAlert({
+                title: 'Deposit Successful!',
+                text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় ${tempSubmittingData.amount} টাকা`,
+            });
             queryClient.invalidateQueries(['memberSaving']);
         },
         onError: (error) => {
-            console.error('Failed to deposit:', error);
+            // alert(error);
+            showAlert({
+                title: 'Not Successful',
+                text: `${error}`,
+                icon: 'error',
+            });
         },
     });
 
     //team creation modal handling
     const onSubmit = (values: DepositSubmitDataType) => {
-        console.log('values: ', values);
         const tempSubmittingData = {
             member: selectedMember?.member_id,
             amount: values.amount,
             date: date,
         };
-        mutate(tempSubmittingData);
+        mutate(tempSubmittingData, { onSuccess: () => reset() });
 
-        showAlert({title:"Deposit Successful!", text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় ${tempSubmittingData.amount} টাকা`})
         onClose();
     };
 
