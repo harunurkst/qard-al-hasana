@@ -191,10 +191,10 @@ const MemberDetailPage = () => {
                         Edit
                     </button>
                     <button className=" w-30 rounded bg-brand-700 p-2 text-white" onClick={disbursement}>
-                        Disbursement
+                        কর্জ প্রদান
                     </button>
                     <button className="w-24 rounded bg-brand-700 p-2 text-white" onClick={() => setWithdrawModal(true)}>
-                        Withdraw
+                        সঞ্চয় উঠানো
                     </button>
                 </div>
             </section>

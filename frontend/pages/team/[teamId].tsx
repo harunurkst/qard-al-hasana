@@ -10,31 +10,49 @@ import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
 
 import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import { CashHandIcon, DepositIcon, FilterIcon, LoanIcon, PersonPlusIcon, PlusIcon, SearchIcon } from '@/icons';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 const TeamPage = () => {
     const router = useRouter();
+    const { teamName } = router.query;
     const { teamId } = router.query;
+
+    const { data: session } = useSession();
+    const role = session?.user?.role;
+    const branch_id = session?.user?.branch;
+
     const [tab, setTab] = useState<'DEPOSIT' | 'LOAN'>('DEPOSIT');
 
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
     const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
 
-    const breadcrumbItems: SingleBreadCrumbItemType[] = [
-        {
-            label: 'Dashboard',
-            href: '/dashboard',
-        },
-        {
-            label: 'Team',
-            href: '/team',
-        },
-        {
-            label: 'Beli',
-
-            isCurrentPage: true,
-        },
-    ];
+    const breadcrumbItems: SingleBreadCrumbItemType[] =
+        role === 'BO'
+            ? [
+                  {
+                      label: 'Branch',
+                      href: `/branch/${branch_id}`,
+                  },
+                  {
+                      label: `${teamName}`,
+                      href: `/team/${teamId}`,
+                  },
+              ]
+            : [
+                  {
+                      label: 'Dashboard',
+                      href: `/dashboard`,
+                  },
+                  {
+                      label: 'Branch',
+                      href: `/branch/${branch_id}`,
+                  },
+                  {
+                      label: `${teamName}`,
+                      href: `/team/${teamId}`,
+                  },
+              ];
 
     return (
         <>
@@ -53,7 +71,7 @@ const TeamPage = () => {
                 >
                     <div className="flex justify-between border-b border-gray-200 px-5 py-5">
                         <div>
-                            <h3 className="mb-0.5 text-xl font-semibold">Beli Team</h3>
+                            <h3 className="mb-0.5 text-xl font-semibold capitalize">{teamName}</h3>
                             <p className="text-sm font-medium text-gray-500">village Name, Moshjid Name</p>
                             <div className="mt-2 flex gap-2 divide-x divide-gray-300 font-medium text-gray-500 ">
                                 <div className="flex items-center gap-2 text-sm">
