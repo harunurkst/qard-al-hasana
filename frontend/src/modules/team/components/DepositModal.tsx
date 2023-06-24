@@ -105,7 +105,16 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
                     borderBottom={1}
                     borderBottomColor="red.100"
                 >
-                    সঞ্চয় জমা
+                    <h2>সঞ্চয় জমা</h2>
+                    <dt>
+                        <dl className="flex gap-3">
+                            <dd className=" text-sm">নাম: {selectedMember?.member_name}</dd>
+                        </dl>
+                        <dl className="flex gap-3">
+                            <dd className=" text-sm">সঞ্চয় পরিমান: {selectedMember?.balance}</dd>
+                            <dd className=" text-sm">সদস্য নাম্বার: {selectedMember?.sl}</dd>
+                        </dl>
+                    </dt>
                 </ModalHeader>
                 <ModalCloseButton />
 
