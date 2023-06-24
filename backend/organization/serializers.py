@@ -104,8 +104,9 @@ class StaffListSerializer(serializers.ModelSerializer):
 
 
 # Branch Serializer
-class BranchSerializer(serializers.ModelSerializer):
+class BranchListSerializer(serializers.ModelSerializer):
     """ calculated property for annotation (non-model property) """
+
     cash_in_hand = serializers.IntegerField(default=0)
     total_deposit = serializers.IntegerField()
     total_due_loan = serializers.IntegerField()

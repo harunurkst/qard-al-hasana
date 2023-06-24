@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 class IsBranchOwner(BasePermission):
-    message = 'You muse be the Branch Owner'
+    message = 'You must be the Branch Owner'
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role=='BO'

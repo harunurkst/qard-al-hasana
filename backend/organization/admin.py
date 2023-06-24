@@ -6,7 +6,7 @@ from .models import Team, User, Branch
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ["username", "is_staff", "is_superuser", "is_active"]
+    list_display = ["id", "username", "is_staff", "is_superuser", "is_active"]
 
     def save_model(self, request, obj, form, change):
         # Hash the password only if it has been modified

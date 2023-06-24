@@ -1,13 +1,14 @@
 from django.db.models import Count, Q, Sum, Avg, Max, Min
 
-from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from peoples.models import Staff
-from transaction.models import Savings
+from transaction.models import Savings, Loan
 
 from .serializers import (
     LoginSerializer,
@@ -16,10 +17,11 @@ from .serializers import (
     MyRefreshSerializer,
     TeamSerializer,
     StaffListSerializer,
-    BranchSerializer
+    BranchListSerializer
 )
 
 from .models import Team, Branch
+from .paginations.paginations import CommonPageNumberPagination
 
 
 class LoginView(TokenObtainPairView):
@@ -49,25 +51,34 @@ class TeamCreateListApiView(ListCreateAPIView):
     filterset_fields = ["owner", "branch"]
 
 
-class StaffViewSet(viewsets.ModelViewSet):
-    """ allowed http methods: GET, PUT, PATCH, DELETE, HEAD, OPTIONS """
+class StaffReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
+    """ provides only list and retrieve actions """
+
     queryset = Staff.objects.all()
     serializer_class = StaffListSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CommonPageNumberPagination
 
     def get_queryset(self):
-        return self.queryset.filter(branch=self.request.user.branch)
+        return self.queryset.filter(user__branch=self.request.user.branch)
 
 
-class BranchViewSet(viewsets.ModelViewSet):
-    """ allowed http methods: GET, PUT, PATCH, DELETE, HEAD, OPTIONS """
+class BranchReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
+    """ provides only list and retrieve actions """
+
     queryset = Branch.objects.all()
-    serializer_class = BranchSerializer
+    serializer_class = BranchListSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CommonPageNumberPagination
 
     def get_queryset(self):
-        # self.queryset.filter(branch=self.request.user.branch)
-
+        # return self.queryset.filter(id=self.request.user.branch.id).annotate(
         return self.queryset.annotate(
-            total_deposit=Count('organization'),
-            total_due_loan=Count('thana')
+            total_deposit=Sum('basemodel__savings__amount', default=0),
+            total_due_loan=Sum(
+                'basemodel__loan__amount',
+                filter=Q(basemodel__loan__is_paid=True),
+                default=0
+            )
         )
 
