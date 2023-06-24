@@ -47,6 +47,7 @@ LOCAL_APPS = [
     "accounts.apps.AccountsConfig",
     "transaction.apps.TransactionConfig",
     "api.apps.ApiConfig",
+    "report"
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
