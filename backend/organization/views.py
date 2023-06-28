@@ -74,10 +74,14 @@ class BranchReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         # return self.queryset.filter(id=self.request.user.branch.id).annotate(
         return self.queryset.annotate(
-            total_deposit=Sum('basemodel__savings__amount', default=0),
+            total_deposit=Sum('basemodel__savings__amount',
+                              filter=Q(basemodel__savings__transaction_type='deposit'), default=0
+                              ) - Sum('basemodel__savings__amount',
+                              filter=Q(basemodel__savings__transaction_type='withdraw'), default=0
+                              ),
             total_due_loan=Sum(
-                'basemodel__loan__amount',
-                filter=Q(basemodel__loan__is_paid=True),
+                'basemodel__loan__total_due',
+                filter=Q(basemodel__loan__is_paid=False),
                 default=0
             )
         )
