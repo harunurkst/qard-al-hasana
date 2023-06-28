@@ -1,5 +1,6 @@
 import CustomTextInput from '@/components/CustomInput';
 import { DisbursementSchema, DisbursementType } from '@/schema/AllModalSchema';
+import { getFormattedCurrentDatetime } from '@/utils/datetime';
 import http from '@/utils/http';
 import { showNotification } from '@/utils/messages';
 import {
@@ -14,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface ICreateDisbursementModal {
@@ -24,6 +26,7 @@ interface ICreateDisbursementModal {
 
 const DisbursementModal: React.FC<ICreateDisbursementModal> = ({ isOpen, onClose, member }) => {
     const queryClient = useQueryClient();
+    const [disbursementAmount, setDisbursementAmount] = useState('');
     //handle form submission with react-hook-form
     const {
         register,
@@ -41,17 +44,23 @@ const DisbursementModal: React.FC<ICreateDisbursementModal> = ({ isOpen, onClose
             member: member.id,
             total_installment: values.installment_count,
         };
+        setDisbursementAmount(values.loan_amount);
         const res = http.post(`/api/v1/transaction/loan-disbursment/`, data);
         return res;
     };
 
     const { mutate } = useMutation(postRequest, {
         onSuccess: () => {
-            showNotification('Loan Disbursement has been done successfully');
+            showNotification(
+                `কর্জ প্রদান করা হয়েছে ${member?.name}। কর্জ ${disbursementAmount} টাকা`,
+                'Sucess',
+                'success'
+            );
             queryClient.invalidateQueries('member');
         },
         onError: (error) => {
-            alert(error);
+            // alert(error);
+            showNotification(`${error}`, 'Not Sucess', 'error');
         },
     });
 
@@ -68,15 +77,15 @@ const DisbursementModal: React.FC<ICreateDisbursementModal> = ({ isOpen, onClose
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader borderBottom={1} borderBottomColor="red.100">
-                    <h1>Loan/Debt Disbursement To</h1>
+                    <h1>কর্জ প্রদান</h1>
                     <dt>
                         <dl className="flex gap-3">
-                            <dd className=" text-sm">Name: {member?.name},</dd>
-                            <dd className=" text-sm">Guardian Name: {member?.guardian_name}</dd>
+                            <dd className=" text-sm">নাম: {member?.name},</dd>
+                            <dd className=" text-sm">অভিভাবকের নাম: {member?.guardian_name}</dd>
                         </dl>
                         <dl className="flex gap-3">
-                            <dd className=" text-sm">Team Name: {member?.team},</dd>
-                            <dd className=" text-sm">Serial Number: {member?.serial_number}</dd>
+                            <dd className=" text-sm">দলের নাম: {member?.team},</dd>
+                            <dd className=" text-sm">ক্রমিক নাম্বার: {member?.serial_number}</dd>
                         </dl>
                     </dt>
                 </ModalHeader>
@@ -89,7 +98,13 @@ const DisbursementModal: React.FC<ICreateDisbursementModal> = ({ isOpen, onClose
                             error={errors.loan_amount?.message}
                             {...register('loan_amount')}
                         />
-                        <CustomTextInput className="mb-2" label="Date" type="date" {...register('date')} />
+                        <CustomTextInput
+                            className="mb-2"
+                            label="Date"
+                            type="date"
+                            {...register('date')}
+                            defaultValue={getFormattedCurrentDatetime().split('T')[0].trim()}
+                        />
                         <CustomTextInput
                             label="Installment Count"
                             error={errors.installment_count?.message}
@@ -97,9 +112,9 @@ const DisbursementModal: React.FC<ICreateDisbursementModal> = ({ isOpen, onClose
                         />
                     </ModalBody>
                     <ModalFooter gap={4}>
-                        <Button onClick={onClose}>Close</Button>
+                        <Button onClick={onClose}>বন্ধ করুন</Button>
                         <Button colorScheme={'brand'} type="submit">
-                            Submit
+                            কর্জ প্রদান করুন
                         </Button>
                     </ModalFooter>
                 </form>

@@ -1,8 +1,6 @@
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import {
     Badge,
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
     Button,
     Input,
     InputGroup,
@@ -59,20 +57,25 @@ const MemberPage = () => {
         setOpenEditModal(true);
         setEditData(data);
     };
+    const breadcrumbItems: SingleBreadCrumbItemType[] = [
+        {
+            label: 'Dashboard',
+            href: '/dashboard',
+        },
+        {
+            label: 'Team',
+            href: '/team',
+        },
+        {
+            label: 'Member',
+            href: '/member',
+            isCurrentPage: true,
+        },
+    ];
 
     return (
         <section className="container mx-auto pb-8 pt-4">
-            <Breadcrumb>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/team">Team</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink href="/member">Member</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
+            <CommonBreadCrumb items={breadcrumbItems} />
 
             <CreateMemberModal isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
             {editData && (

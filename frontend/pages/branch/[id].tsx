@@ -1,29 +1,24 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
+import BranchMembersList from '@/modules/branch/components/MemberTableOfBranch';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
-import MembersTable from '@/modules/team/components/MemberSavingsTable';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    Button,
-    ButtonGroup,
-    Input,
-    InputGroup,
-    InputLeftElement,
-} from '@chakra-ui/react';
+import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import React, { ReactNode, useState } from 'react';
 
 // modal imported
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
-const BranchDetailsPage = (session) => {
-    // const { data: session } = useSession();
+const BranchDetailsPage = () => {
+    const { data: session } = useSession();
     const router = useRouter();
-    const branchId = router.query.id;
+    // const branchId = router.query.id;
+    const role = session?.user?.role;
+    const branch_id = session?.user?.branch;
 
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
@@ -40,22 +35,28 @@ const BranchDetailsPage = (session) => {
             setOpenAddMemberModal(true);
         }
     };
+    const breadcrumbItems: SingleBreadCrumbItemType[] =
+        role == 'BO'
+            ? [
+                  {
+                      label: 'Chandra Bazar Branch',
+                      href: `/branch/${branch_id}`,
+                  },
+              ]
+            : [
+                  {
+                      label: 'Dashboard',
+                      href: '/dashboard',
+                  },
+                  {
+                      label: 'Chandra Bazar Branch',
+                      href: `/branch/${branch_id}`,
+                  },
+              ];
 
     return (
         <section className="container mx-auto pb-8 pt-4">
-            <Breadcrumb>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/branch">Branch</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink>Chandra Bazar Branch</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
+            <CommonBreadCrumb items={breadcrumbItems} />
 
             {/* creating new group and new member modal */}
             {isOpenCreateModal && (
@@ -240,7 +241,7 @@ const BranchDetailsPage = (session) => {
                     </div>
                 </div>
                 {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
-                {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
+                {tab === 'TEAM' ? <TeamsTable /> : <BranchMembersList />}
             </div>
         </section>
     );

@@ -74,7 +74,6 @@ Login.getLayout = (page: ReactNode) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const res = await getCsrfToken(context);
-
     return {
         props: {
             // csrfToken: await getCsrfToken(context),

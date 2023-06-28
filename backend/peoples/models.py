@@ -9,7 +9,7 @@ STAFF_ROLES = (("cl", "Collector"), ("bw", "Branch Owner"))
 class Staff(models.Model):
     """Like as profile of a Staff user"""
     name = models.CharField(max_length=150)
-    mobile_number = models.CharField(max_length=11)
+    mobile_number = models.CharField(max_length=11, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     user = models.OneToOneField(
         "organization.User", on_delete=models.SET_NULL, blank=True, null=True
@@ -27,7 +27,7 @@ GENDER_CHOICES = (
 
 class Member(models.Model):
     name = models.CharField(max_length=150)
-    mobile_number = models.CharField(max_length=11)
+    mobile_number = models.CharField(max_length=11, blank=True, null=True)
     nid_number = models.CharField(max_length=25, blank=True, null=True)
     guardian_name = models.CharField(max_length=150, blank=True, null=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, default="male")
