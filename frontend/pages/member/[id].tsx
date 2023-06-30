@@ -8,6 +8,7 @@ import DepositBarChart from './depositeChart';
 import InstallMentGraph from './installmentGraph';
 
 //Modals are imported here
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import DisbursementModal from '@/modules/member/components/DisbursementModal';
 import EditMemberModal from '@/modules/member/components/EditMemberModal';
 import WithdrawModal from '@/modules/member/components/WithdrawModal';
@@ -27,7 +28,10 @@ const TriangleBar = (props) => {
 const MemberDetailPage = () => {
     const router = useRouter();
     const { data: session, status } = useSession();
-    console.log('session : ', session);
+    const role = session?.user?.role;
+    const branch_id = session?.user?.branch;
+    const { teamId } = router.query;
+    console.log('team team id in memeber detail: ', teamId);
 
     const [openDisbursementModal, setDisbursementModal] = useState(false);
     const [openWithdrawModal, setWithdrawModal] = useState(false);
@@ -50,6 +54,38 @@ const MemberDetailPage = () => {
     const disbursement = () => {
         setDisbursementModal(true);
     };
+
+    //handle bredcrumb
+    const breadcrumbItems: SingleBreadCrumbItemType[] =
+        role === 'BO'
+            ? [
+                  {
+                      label: 'Branch',
+                      href: `/branch/${branch_id}`,
+                  },
+                  {
+                      label: `Team`,
+                      href: `/team/${teamId}`,
+                  },
+                  {
+                      label: `${member?.name}`,
+                      href: `/member/${memberId}`,
+                  },
+              ]
+            : [
+                  {
+                      label: 'Dashboard',
+                      href: `/dashboard`,
+                  },
+                  //   {
+                  //       label: 'Branch',
+                  //       href: `/branch/${branch_id}`,
+                  //   },
+                  //   {
+                  //       label: `${teamName}`,
+                  //       href: `/team/${teamId}`,
+                  //   },
+              ];
 
     return (
         <>
@@ -74,9 +110,13 @@ const MemberDetailPage = () => {
                         member={member}
                     />
                 )}
+                {/* =========breadcrumb =============*/}
+                <div className="mb-5 mt-10">
+                    <CommonBreadCrumb items={breadcrumbItems} />
+                </div>
                 {/*=============== basic info section =====================*/}
 
-                <div className="user-basic-info my-10 flex space-x-20">
+                <div className="user-basic-info mb-10 flex space-x-20">
                     <div className="user-info w-full rounded-md bg-gray-200 p-10">
                         <dt className="space-y-3">
                             <dl className="flex">
