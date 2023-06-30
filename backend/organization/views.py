@@ -1,21 +1,27 @@
-from rest_framework import viewsets
+from django.db.models import Count, Q, Sum, Avg, Max, Min
 
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.views import APIView
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from peoples.models import Staff
+from transaction.models import Savings, Loan
 
-from organization.serializers import (
+from .serializers import (
     LoginSerializer,
     UserSerializer,
     UserSerilizerWithToken,
     MyRefreshSerializer,
     TeamSerializer,
     StaffListSerializer,
+    BranchListSerializer
 )
-from organization.models import Team
-from peoples.models import Staff
+
+from .models import Team, Branch
+from .paginations.paginations import CommonPageNumberPagination
 
 
 class LoginView(TokenObtainPairView):
@@ -45,19 +51,38 @@ class TeamCreateListApiView(ListCreateAPIView):
     filterset_fields = ["owner", "branch"]
 
 
-class StaffViewSet(viewsets.ModelViewSet):
-    """
-    accepts all these http requests with simple codes:
-
-    Create (POST): {host}/api/v1/organization/staffs/
-    List (GET): {host}/api/v1/organization/staffs/
-    Retrieve (GET): {host}/api/v1/organization/staffs/{id}/
-    Update (PUT): {host}/api/v1/organization/staffs/{id}/
-    Delete (DELETE): {host}/api/v1/organization/staffs/{id}/
-    """
+class StaffReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
+    """ provides only list and retrieve actions """
 
     queryset = Staff.objects.all()
     serializer_class = StaffListSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CommonPageNumberPagination
 
     def get_queryset(self):
-        return self.queryset.filter(branch=self.request.user.branch)
+        return self.queryset.filter(user__branch=self.request.user.branch)
+
+
+class BranchReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
+    """ provides only list and retrieve actions """
+
+    queryset = Branch.objects.all()
+    serializer_class = BranchListSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CommonPageNumberPagination
+
+    def get_queryset(self):
+        # return self.queryset.filter(id=self.request.user.branch.id).annotate(
+        return self.queryset.annotate(
+            total_deposit=Sum('basemodel__savings__amount',
+                              filter=Q(basemodel__savings__transaction_type='deposit'), default=0
+                              ) - Sum('basemodel__savings__amount',
+                              filter=Q(basemodel__savings__transaction_type='withdraw'), default=0
+                              ),
+            total_due_loan=Sum(
+                'basemodel__loan__total_due',
+                filter=Q(basemodel__loan__is_paid=False),
+                default=0
+            )
+        )
+

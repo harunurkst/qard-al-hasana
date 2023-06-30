@@ -3,8 +3,9 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from organization.models import User, Team
 from peoples.models import Staff
+
+from .models import User, Team, Branch
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -100,3 +101,17 @@ class StaffListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Staff
         fields = '__all__'
+
+
+# Branch Serializer
+class BranchListSerializer(serializers.ModelSerializer):
+    """ calculated property for annotation (non-model property) """
+
+    cash_in_hand = serializers.IntegerField(default=0)
+    total_deposit = serializers.IntegerField()
+    total_due_loan = serializers.IntegerField()
+
+    class Meta:
+        model = Branch
+        fields = ('id', 'name', 'address', 'cash_in_hand', 'total_deposit', 'total_due_loan')
+

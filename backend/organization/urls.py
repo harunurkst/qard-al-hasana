@@ -1,15 +1,25 @@
 from django.urls import path
-
-from organization.views import TeamCreateListApiView, StaffViewSet
-
 from rest_framework.routers import DefaultRouter
 
-router = DefaultRouter()
-router.register(r'staffs', StaffViewSet, basename='staffs')
+from organization.views import (
+    TeamCreateListApiView,
+    BranchReadOnlyModelViewSet,
+    StaffReadOnlyModelViewSet
+)
 
+
+# router config
+router = DefaultRouter()
+
+# router api verbs
+router.register(r'staffs', StaffReadOnlyModelViewSet, basename='staffs')
+router.register(r'branches', BranchReadOnlyModelViewSet, basename='branches')
 
 urlpatterns = [
-    path("teams/", TeamCreateListApiView.as_view(), name="teams"),
+
+    path("teams/", TeamCreateListApiView.as_view(), name="teams")
+
 ]
 
 urlpatterns += router.urls
+

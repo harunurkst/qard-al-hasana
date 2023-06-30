@@ -2,11 +2,11 @@ from django.contrib.admin.sites import AlreadyRegistered
 from django.contrib import admin
 from django.apps import apps
 
-from organization.models import Team, User
+from .models import Team, User, Branch
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ["username", "is_staff", "is_superuser", "is_active"]
+    list_display = ["id", "username", "is_staff", "is_superuser", "is_active"]
 
     def save_model(self, request, obj, form, change):
         # Hash the password only if it has been modified
@@ -25,6 +25,13 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "branch", "owner"]
     list_display_links = ["name"]
     ordering = ["id"]
+
+
+@admin.register(Branch)
+class BranchAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'code', 'organization', 'thana', 'address', 'bank_account']
+    list_display_links = ['name']
+    ordering = ['id']
 
 
 # register all the models from this app
