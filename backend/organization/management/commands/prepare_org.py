@@ -59,12 +59,11 @@ class Command(BaseCommand):
             name="Staff User",
             mobile_number="01111111111",
             email="staff@mail.com",
-            branch=branch,
             user=user,
         )
 
         team, created = Team.objects.get_or_create(
-            name="Demo Team", branch=branch, defaults={"owner": staff}
+            name="Demo Team", branch=branch, defaults={"owner": user}
         )
 
         self.stdout.write(

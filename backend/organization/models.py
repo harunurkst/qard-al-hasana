@@ -5,8 +5,9 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.db.models import Sum
 
-from organization.managers import UserManager
 from peoples.models import Staff
+
+from .managers import UserManager
 
 
 class BaseModel(models.Model):

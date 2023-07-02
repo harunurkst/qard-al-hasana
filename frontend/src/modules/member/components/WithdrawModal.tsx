@@ -44,11 +44,12 @@ const WithdrawModal: React.FC<ICreateWithdrawModal> = ({ isOpen, onClose, member
 
     const { mutate } = useMutation(postRequest, {
         onSuccess: () => {
-            showNotification('Your withdrawal has been done successfully');
+            showNotification('Your withdrawal has been done successfully', 'Success', 'success');
             queryClient.invalidateQueries('member');
         },
         onError: (error) => {
-            alert(error);
+            // alert(error);
+            showNotification(`${error}`, 'Error', 'error');
         },
     });
 
@@ -57,9 +58,9 @@ const WithdrawModal: React.FC<ICreateWithdrawModal> = ({ isOpen, onClose, member
         //     ...values,
         // };
         const data = {
-            member: member.id,
-            amount: values.amount,
-            date: values.date,
+            member: member?.id,
+            amount: parseInt(values?.amount),
+            date: values?.date,
         };
         mutate(data, { onSuccess: () => reset() });
         onClose();
@@ -70,15 +71,15 @@ const WithdrawModal: React.FC<ICreateWithdrawModal> = ({ isOpen, onClose, member
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader borderBottom={1} borderBottomColor="red.100">
-                    <h1>Loan/Debt Disbursement To</h1>
+                    <h1>সঞ্চয় উঠানো</h1>
                     <dt>
                         <dl className="flex gap-3">
-                            <dd className=" text-sm">Name: {member?.name},</dd>
-                            <dd className=" text-sm">Guardian Name: {member?.guardian_name}</dd>
+                            <dd className=" text-sm">নাম: {member?.name},</dd>
+                            <dd className=" text-sm">অভিভাবকের নাম: {member?.guardian_name}</dd>
                         </dl>
                         <dl className="flex gap-3">
-                            <dd className=" text-sm">Team Name: {member?.team},</dd>
-                            <dd className=" text-sm">Serial Number: {member?.serial_number}</dd>
+                            <dd className=" text-sm">দলের নাম: {member?.team},</dd>
+                            <dd className=" text-sm">ক্রমিক নাম্বার: {member?.serial_number}</dd>
                         </dl>
                     </dt>
                 </ModalHeader>
@@ -106,9 +107,9 @@ const WithdrawModal: React.FC<ICreateWithdrawModal> = ({ isOpen, onClose, member
                         />
                     </ModalBody>
                     <ModalFooter gap={4}>
-                        <Button onClick={onClose}>Close</Button>
+                        <Button onClick={onClose}>বন্ধ করুন</Button>
                         <Button colorScheme={'brand'} type="submit">
-                            Submit
+                            সঞ্চয় উঠান
                         </Button>
                     </ModalFooter>
                 </form>

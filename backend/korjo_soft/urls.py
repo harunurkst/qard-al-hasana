@@ -11,9 +11,6 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 from organization.views import LoginView, RegisterView
 
-# peoples router
-from peoples.urls import peoples_router
-
 
 # schema_view = get_schema_view(
 #     openapi.Info(
@@ -53,10 +50,10 @@ urlpatterns = [
     # organization
     path("api/v1/organization/", include("organization.urls")),
 
-    # peoples router
+    # peoples
     path("api/v1/peoples/", include("peoples.urls")),
 
-    # transaction router
+    # transaction
     path("api/v1/transaction/", include("transaction.urls")),
 
 ]

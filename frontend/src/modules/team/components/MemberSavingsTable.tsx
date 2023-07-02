@@ -232,7 +232,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                         {data.result?.map((data: MemberSavingsType) => {
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
-                                    <Td>{data.member_id}</Td>
+                                    <Td>{data.sl}</Td>
                                     <Td
                                         onClick={() => router.push(`/member/${data.member_id}`)}
                                         className="cursor-pointer"
