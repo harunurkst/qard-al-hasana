@@ -1,15 +1,13 @@
 from django.shortcuts import get_object_or_404
-from django.db.models import Count, Q, Sum, Avg, Max, Min
-
-from rest_framework.views import APIView
-from rest_framework import viewsets, status, RetrieveUpdateDestroyAPIView
+from django.db.models import Q, Sum
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from peoples.models import Staff
-from transaction.models import Savings, Loan
+# from transaction.models import Savings, Loan
 
 from .serializers import (
     LoginSerializer,
