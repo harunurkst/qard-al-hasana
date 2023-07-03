@@ -101,39 +101,63 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomWidth: 1,
         borderBottomColor: '#000',
+        borderBottomStyle: 'solid',
         alignItems: 'center',
-        height: 20,
+        // height: 20,
         textAlign: 'center',
         fontStyle: 'bold',
         fontSize: 10,
+        lineHeight: 2,
     },
     serialNumber: {
         flex: 1,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     guardianName: {
         flex: 3,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     savings: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     week: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     withdrawalAmount: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     total: {
         flex: 2,
+    },
+
+    //right border in populated pdf
+    borderInPopulated: {
+        borderRightWidth: 1,
+        borderRightColor: '#000',
+    },
+
+    // cell border for blank pdf
+    tableCell: {
+        flex: 1,
+        borderRightWidth: 1,
+        borderRightColor: 'black',
+        borderRightStyle: 'solid',
+    },
+    lastTableCell: {
+        borderRightWidth: 0,
+    },
+    tableCellBorder: {
+        borderRightWidth: 1,
+        flex: 2,
+        minHeight: 20,
+    },
+    tableCellBorder1: {
+        borderRightWidth: 1,
+        flex: 1,
+        minHeight: 20,
+    },
+    tableCellBorder3: {
+        borderRightWidth: 1,
+        flex: 3,
+        minHeight: 20,
     },
 });
 
@@ -190,15 +214,84 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                         {data &&
                             data.result?.map((element) => (
                                 <View style={styles.tableRow} key={element.member_id}>
-                                    <Text style={styles.serialNumber}>{element.sl}</Text>
-                                    <Text style={styles.guardianName}>{element.guardian_name}</Text>
-                                    <Text style={styles.savings}>{element.balance}</Text>
-                                    <Text style={styles.week}>{element.week1}</Text>
-                                    <Text style={styles.week}>{element.week2}</Text>
-                                    <Text style={styles.week}>{element.week3}</Text>
-                                    <Text style={styles.week}>{element.week4}</Text>
-                                    <Text style={styles.withdrawalAmount}>50</Text>
+                                    <Text style={[styles.borderInPopulated, styles.serialNumber]}>{element.sl}</Text>
+                                    <Text style={[styles.borderInPopulated, styles.guardianName]}>
+                                        {element.guardian_name}
+                                    </Text>
+                                    <Text style={[styles.borderInPopulated, styles.savings]}>{element.balance}</Text>
+                                    <Text style={[styles.borderInPopulated, styles.week]}>{element.week1}</Text>
+                                    <Text style={[styles.borderInPopulated, styles.week]}>{element.week2}</Text>
+                                    <Text style={[styles.borderInPopulated, styles.week]}>{element.week3}</Text>
+                                    <Text style={[styles.borderInPopulated, styles.week]}>{element.week4}</Text>
+                                    <Text style={[styles.borderInPopulated, styles.withdrawalAmount]}>50</Text>
                                     <Text style={styles.total}>550</Text>
+                                </View>
+                            ))}
+                    </View>
+                </View>
+            </Page>
+        </Document>
+    ); //pdf ended here
+    const blankpdf = (
+        <Document>
+            <Page size={'A4'}>
+                <View style={styles.mypdf}>
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Sample Organization</Text>
+                        <View style={styles.organizationContainer}>
+                            <Text style={styles.branchText}>Branch Name,</Text>
+                            <Text style={styles.teamText}>Team Name</Text>
+                        </View>
+
+                        <Text style={styles.address}>123 Main Street, City, Country</Text>
+                    </View>
+                    {/* Table */}
+                    <View style={styles.tableContainer}>
+                        {/* Table Header */}
+                        <View style={styles.tableHeader}>
+                            <Text style={[styles.tableHeaderColumn, { flex: 1 }]}>SL</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 3 }]}>Guardian Name</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Savings</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 1</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 2</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 3</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 4</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Withdrawal Amount</Text>
+                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Total</Text>
+                        </View>
+
+                        {/* Sample Rows */}
+                        {Array(25)
+                            .fill()
+                            .map((_, index) => (
+                                <View style={styles.tableRow} key={index}>
+                                    <View style={styles.tableCellBorder1}>
+                                        <Text style={[styles.serialNumber]}>{index + 1}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder3}>
+                                        <Text style={[styles.guardianName]}></Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={[styles.savings]}></Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={[styles.week]}></Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={[styles.week]}></Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={[styles.week]}></Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={[styles.week]}></Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={[styles.withdrawalAmount]}></Text>
+                                    </View>
+                                    <View style={[styles.tableCellBorder, styles.lastTableCell]}>
+                                        <Text style={[styles.total]}></Text>
+                                    </View>
                                 </View>
                             ))}
                     </View>
@@ -234,7 +327,12 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
                                     <Td>{data.sl}</Td>
                                     <Td
-                                        onClick={() => router.push(`/member/${data.member_id}`)}
+                                        onClick={() =>
+                                            router.push({
+                                                pathname: `/member/${data.member_id}`,
+                                                query: { teamId: teamId },
+                                            })
+                                        }
                                         className="cursor-pointer"
                                     >
                                         {data.member_name}
@@ -258,7 +356,10 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                             <MenuList>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        router.push(`/member/${data.member_id}`);
+                                                        router.push({
+                                                            pathname: `/member/${data.member_id}`,
+                                                            query: { teamId: teamId },
+                                                        });
                                                     }}
                                                 >
                                                     View
@@ -281,6 +382,11 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                 </Table>
             </TableContainer>
 
+            <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
+                <PDFDownloadLink document={blankpdf} fileName="topsheet.pdf">
+                    {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Blank Pdf')}
+                </PDFDownloadLink>
+            </button>
             <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
                 <PDFDownloadLink document={mycontent} fileName="topsheet.pdf">
                     {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Download Pdf')}
