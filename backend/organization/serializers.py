@@ -99,6 +99,8 @@ class TeamDetailSerializer(TeamSerializerBase):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data.update({
+            'org_name': instance.branch.organization.name,
+            'branch_name': instance.branch.name,
             'total_unpaid_loan': instance.total_unpaid_loan(),
             'total_deposit': instance.total_deposit(),
             'active_loan': instance.active_loan()
