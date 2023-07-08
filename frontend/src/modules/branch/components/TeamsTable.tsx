@@ -17,9 +17,10 @@ interface TeamObject {
     totalIncome: number;
 }
 
-const TeamsTable = () => {
+const TeamsTable = (props) => {
     const router = useRouter();
     const { data: session } = useSession();
+    console.log('props inside team Table: ', props);
 
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
     // const [isTeamName, setIsTeamName] = useState('');

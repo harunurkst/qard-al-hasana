@@ -9,16 +9,19 @@ import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonB
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
-import { useSession } from 'next-auth/react';
+import zodSafeQuery from '@/utils/zodSafeQuery';
+import { useQuery } from '@tanstack/react-query';
+import { getSession, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
-const BranchDetailsPage = () => {
+const BranchDetailsPage = (props) => {
     const { data: session } = useSession();
     const router = useRouter();
     // const branchId = router.query.id;
-    const role = session?.user?.role;
-    const branch_id = session?.user?.branch;
+    const sessionDetails = props.sessionData.user;
+    const role = sessionDetails?.role;
+    const branch_id = sessionDetails?.branch;
 
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
@@ -35,11 +38,18 @@ const BranchDetailsPage = () => {
             setOpenAddMemberModal(true);
         }
     };
+
+    //get branch details
+    const { data } = useQuery(['branch'], async () => zodSafeQuery(`/api/v1/organization/branches/${branch_id}/`)());
+    const branch = data?.result;
+    console.log('branch details: ', branch);
+
+    //breadcrumb
     const breadcrumbItems: SingleBreadCrumbItemType[] =
         role == 'BO'
             ? [
                   {
-                      label: 'Chandra Bazar Branch',
+                      label: branch?.name,
                       href: `/branch/${branch_id}`,
                   },
               ]
@@ -49,10 +59,15 @@ const BranchDetailsPage = () => {
                       href: '/dashboard',
                   },
                   {
-                      label: 'Chandra Bazar Branch',
+                      label: branch?.name,
                       href: `/branch/${branch_id}`,
                   },
               ];
+
+    //get total team
+    const totalTeam = (teamCounting) => {
+        console.log('working');
+    };
 
     return (
         <section className="container mx-auto pb-8 pt-4">
@@ -75,8 +90,8 @@ const BranchDetailsPage = () => {
             >
                 <div className="flex justify-between border-b border-gray-200 px-5 py-5">
                     <div>
-                        <h3 className="mb-0.5 text-xl font-semibold">Chandra Bazar Branch</h3>
-                        <p className="text-sm font-medium text-gray-500">Chandra Bazar, Faridgonj, Chandpur</p>
+                        <h3 className="mb-0.5 text-xl font-semibold">{branch?.name}</h3>
+                        <p className="text-sm font-medium text-gray-500">{branch?.address}</p>
                         <div className="mt-2 flex gap-2 divide-x divide-gray-300 font-medium text-gray-500 ">
                             <div className="flex items-center gap-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -96,7 +111,7 @@ const BranchDetailsPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                Cash in hand : 200
+                                Cash in hand : {branch?.cash_in_hand}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -116,7 +131,7 @@ const BranchDetailsPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                Total Loans : 22323
+                                Total Loans : {branch?.total_due_loan}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -136,7 +151,7 @@ const BranchDetailsPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                Total Deposit : 200
+                                Total Deposit : {branch?.total_deposit}
                             </div>
                         </div>
                     </div>
@@ -241,7 +256,7 @@ const BranchDetailsPage = () => {
                     </div>
                 </div>
                 {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
-                {tab === 'TEAM' ? <TeamsTable /> : <BranchMembersList />}
+                {tab === 'TEAM' ? <TeamsTable toalTeam={totalTeam} /> : <BranchMembersList />}
             </div>
         </section>
     );
@@ -269,8 +284,16 @@ BranchDetailsPage.getLayout = (page: ReactNode) => {
 //     console.log('session response:....................................................... ', session);
 //     return {
 //         props: {
-//             session: JSON.stringify(session),
+//             sessionData: JSON.stringify(session),
 //         },
 //     };
 // };
+export const getServerSideProps = async ({ req }) => {
+    const session = await getSession({ req });
+    return {
+        props: {
+            sessionData: session,
+        },
+    };
+};
 export default BranchDetailsPage;

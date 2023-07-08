@@ -19,7 +19,7 @@ import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { MemberInstallmentType } from '../../../types/memberInstallment.type';
 // import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
-import { Document, PDFDownloadLink, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Font, PDFDownloadLink, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { useMemberInstallmentsStore } from '../stores/useMemberInstallmentsStore';
 import InstallmentModal from './InstallmentModal';
 
@@ -77,6 +77,8 @@ const styles = StyleSheet.create({
     address: {
         fontSize: 14,
         textAlign: 'center',
+        flex: 1,
+        marginLeft: 20,
     },
     // table section
     tableContainer: {
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
     },
     tableHeader: {
         flexDirection: 'row',
-        height: 40,
+        // height: 40,
         backgroundColor: '#f2f2f2',
         alignItems: 'center',
         textAlign: 'center',
@@ -101,40 +103,84 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomWidth: 1,
         borderBottomColor: '#000',
+        borderBottomStyle: 'solid',
         alignItems: 'center',
-        height: 20,
         textAlign: 'center',
         fontStyle: 'bold',
         fontSize: 10,
+        lineHeight: 2,
     },
     serialNumber: {
         flex: 1,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
+    },
+    name: {
+        flex: 3,
     },
     guardianName: {
         flex: 3,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     savings: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     week: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     withdrawalAmount: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     total: {
         flex: 2,
     },
+
+    // right border in populated pdf
+    borderInPopulated: {
+        borderRightWidth: 1,
+        borderRightColor: '#000',
+        height: 30,
+        borderBottomWidth: 1,
+    },
+
+    // cell border for blank pdf
+    tableCell: {
+        flex: 1,
+        borderRightWidth: 1,
+        borderRightColor: 'black',
+        borderRightStyle: 'solid',
+    },
+    lastTableCell: {
+        borderRightWidth: 0,
+    },
+    tableCellBorder: {
+        borderRightWidth: 1,
+        flex: 2,
+        minHeight: 20,
+    },
+    tableCellBorder1: {
+        borderRightWidth: 1,
+        flex: 1,
+        minHeight: 20,
+    },
+    tableCellBorder3: {
+        borderRightWidth: 1,
+        flex: 3,
+        minHeight: 20,
+    },
+    headerMonthRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    month: {
+        textAlign: 'right',
+        fontSize: 10,
+        marginRight: 50,
+    },
+});
+
+//get bangla fonts Nikosh
+Font.register({
+    family: 'Nikosh',
+    src: '/fonts/Nikosh.ttf',
 });
 
 const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId }) => {
@@ -168,7 +214,10 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                             <Text style={styles.teamText}>Team Name</Text>
                         </View>
 
-                        <Text style={styles.address}>123 Main Street, City, Country</Text>
+                        <View style={styles.headerMonthRow}>
+                            <Text style={styles.address}>123 Main Street, City, Country</Text>
+                            <Text style={styles.month}>Month: </Text>
+                        </View>
                     </View>
                     {/* Table */}
                     {/* <View>
@@ -177,30 +226,121 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                     <View style={styles.tableContainer}>
                         {/* Table Header */}
                         <View style={styles.tableHeader}>
-                            <Text style={[styles.tableHeaderColumn, { flex: 1 }]}>SL</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 3 }]}>Name</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Guardian Name</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 1</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 2</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 3</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 4</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Loan Amount</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Loan Balance</Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 1, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ক্রমিক
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 3, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                নাম
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 3, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                অভিভাবক
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ১ম
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ২য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৩য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৪র্থ
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                উত্তলন
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    styles.lastTableCell,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                Loan Balance
+                            </Text>
                         </View>
 
                         {/* Sample Rows */}
                         {data &&
                             data.result?.map((element) => (
                                 <View style={styles.tableRow} key={element.member_id}>
-                                    <Text style={styles.serialNumber}>{element.sl}</Text>
-                                    <Text style={styles.guardianName}>{element.member_name}</Text>
-                                    <Text style={styles.guardianName}>{element.guardian_name}</Text>
-                                    <Text style={styles.week}>{element.week1}</Text>
-                                    <Text style={styles.week}>{element.week2}</Text>
-                                    <Text style={styles.week}>{element.week3}</Text>
-                                    <Text style={styles.week}>{element.week4}</Text>
-                                    <Text style={styles.savings}>{element.loan_amount}</Text>
-                                    <Text style={styles.total}>{element.loan_balance}</Text>
+                                    <View style={styles.tableCellBorder1}>
+                                        <Text style={styles.serialNumber}>{element.sl}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder3}>
+                                        <Text style={styles.guardianName}>{element.member_name}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder3}>
+                                        <Text style={styles.guardianName}>{element.guardian_name}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={styles.week}>{element.week1}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={styles.week}>{element.week2}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={styles.week}>{element.week3}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={styles.week}>{element.week4}</Text>
+                                    </View>
+                                    <View style={styles.tableCellBorder}>
+                                        <Text style={styles.savings}>{element.loan_amount}</Text>
+                                    </View>
+                                    <View style={[styles.tableCellBorder, styles.lastTableCell]}>
+                                        <Text style={styles.total}>{element.loan_balance}</Text>
+                                    </View>
                                 </View>
                             ))}
                     </View>
