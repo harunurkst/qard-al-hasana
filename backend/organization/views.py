@@ -1,17 +1,17 @@
-from django.db.models import Count, Q, Sum, Avg, Max, Min
-
-from rest_framework.views import APIView
-from rest_framework import viewsets, status
+from django.shortcuts import get_object_or_404
+from django.db.models import Q, Sum
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from peoples.models import Staff
-from transaction.models import Savings, Loan
+# from transaction.models import Savings, Loan
 
 from .serializers import (
     LoginSerializer,
+    TeamDetailSerializer,
     UserSerializer,
     UserSerilizerWithToken,
     MyRefreshSerializer,
@@ -45,10 +45,21 @@ class RegisterView(CreateAPIView):
 
 
 class TeamCreateListApiView(ListCreateAPIView):
-    queryset = Team.objects.all()
+    queryset = Team.objects.all().order_by('-id')
     permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
     filterset_fields = ["owner", "branch"]
+
+    def perform_create(self, serializer):
+        serializer.save(branch=serializer.validated_data["owner"].branch)
+
+
+class TeamRetriveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamDetailSerializer
+
+    def get_object(self):
+        return get_object_or_404(Team, id=self.kwargs['pk'])
 
 
 class StaffReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):

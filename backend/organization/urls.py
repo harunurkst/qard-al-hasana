@@ -1,8 +1,10 @@
 from django.urls import path
+
 from rest_framework.routers import DefaultRouter
 
 from organization.views import (
     TeamCreateListApiView,
+    TeamRetriveUpdateDestroyView,
     BranchReadOnlyModelViewSet,
     StaffReadOnlyModelViewSet
 )
@@ -17,9 +19,12 @@ router.register(r'branches', BranchReadOnlyModelViewSet, basename='branches')
 
 urlpatterns = [
 
-    path("teams/", TeamCreateListApiView.as_view(), name="teams")
+    path("teams/", TeamCreateListApiView.as_view(), name="teams"),
 
+    path("teams/<int:pk>/", TeamRetriveUpdateDestroyView.as_view(),
+         name="team_re_up_delete"),
 ]
 
 urlpatterns += router.urls
+
 
