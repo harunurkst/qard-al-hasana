@@ -23,8 +23,8 @@ from peoples.serializers import (
 class MemberListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ["team", "branch__name", "is_active", "gender", "name", "mobile_number"]
-    search_fields = ["=nid_number", "=mobile_number"]
+    filterset_fields = ["team", "branch", "is_active", "gender"]
+    search_fields = ["name", "mobile_number"]
 
     def get_queryset(self):
         return Member.objects.filter(branch=self.request.user.branch)
