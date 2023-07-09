@@ -1,4 +1,5 @@
 import { VerticalDotIcon } from '@/icons';
+import { MemberInstallmentType } from '@/types/memberInstallment.type';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
@@ -17,7 +18,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import { MemberInstallmentType } from '../../../types/memberInstallment.type';
 // import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
 import { Document, Font, PDFDownloadLink, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { useMemberInstallmentsStore } from '../stores/useMemberInstallmentsStore';
@@ -38,6 +38,7 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 }
 interface IMemberInstallmentsTable {
     teamId: string | string[] | undefined;
+    teamName: string;
 }
 
 //pdf styling
@@ -183,7 +184,7 @@ Font.register({
     src: '/fonts/Nikosh.ttf',
 });
 
-const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId }) => {
+const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId, teamName }) => {
     const router = useRouter();
     const [isOpenInstallmentModal, setOpenInstallmentModal] = useState(false);
 
@@ -348,6 +349,176 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
             </Page>
         </Document>
     ); //pdf ended here
+    const blankpdf = (
+        <Document>
+            <Page size={'A4'}>
+                <View style={styles.mypdf}>
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Sample Organization</Text>
+                        <View style={styles.organizationContainer}>
+                            <Text style={styles.branchText}>Branch Name,</Text>
+                            <Text style={styles.teamText}>{teamName}</Text>
+                        </View>
+                        <View style={styles.headerMonthRow}>
+                            <Text style={styles.address}>123 Main Street, City, Country</Text>
+                            <Text style={styles.month}>Month: </Text>
+                        </View>
+                    </View>
+                    {/* Table */}
+                    <View style={styles.tableContainer}>
+                        {/* Table Header */}
+                        <View style={styles.tableHeader}>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 1, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ক্রমিক
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 3, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                নাম
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                স্থিতি
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                কর্জ
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ১ম
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ২য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৩য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৪র্থ
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                মোট হ
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                স্থিতি
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    styles.lastTableCell,
+                                    { flex: 1, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ক্রমিক
+                            </Text>
+                        </View>
+
+                        {/* Sample Rows */}
+                        {Array(25)
+                            .fill()
+                            .map((_, index) => {
+                                const matchingData = data?.result.find((item) => item.sl === index + 1);
+                                return (
+                                    <View style={styles.tableRow} key={index}>
+                                        <View style={styles.tableCellBorder1}>
+                                            <Text style={[styles.serialNumber]}>{index + 1}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder3}>
+                                            <Text style={[styles.name]}>{matchingData?.member_name}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.savings]}>{matchingData?.loan_balance}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.withdrawalAmount]}>{matchingData?.loan_amount}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+
+                                        <View style={[styles.tableCellBorder]}>
+                                            <Text style={[styles.total]}></Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder]}>
+                                            <Text style={[styles.savings]}></Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder1, styles.lastTableCell]}>
+                                            <Text style={[styles.serialNumber]}>{index + 1}</Text>
+                                        </View>
+                                    </View>
+                                );
+                            })}
+                    </View>
+                </View>
+            </Page>
+        </Document>
+    ); //pdf ended here
 
     return (
         <>
@@ -360,16 +531,15 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
                         <Tr>
-                            <Th>ID</Th>
-                            <Th>Name</Th>
-                            <Th>Guardian Name</Th>
-
-                            <Th>Week 1</Th>
-                            <Th>Week 2</Th>
-                            <Th>Week 3</Th>
-                            <Th>Week 4</Th>
-                            <Th isNumeric>Installment</Th>
-                            <Th isNumeric>Action</Th>
+                            <Th>ক্রমিক</Th>
+                            <Th>নাম</Th>
+                            <Th>অভিভাবক</Th>
+                            <Th>১ম সপ্তাহ</Th>
+                            <Th>২য় সপ্তাহ</Th>
+                            <Th>৩য় সপ্তাহ</Th>
+                            <Th>৪র্থ সপ্তাহ</Th>
+                            <Th isNumeric>কর্জ</Th>
+                            <Th isNumeric>ক্রিয়া</Th>
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
@@ -406,7 +576,7 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                                     <TrasectionTD amount={data.week2} weekNo={2} />
                                     <TrasectionTD amount={data.week3} weekNo={3} />
                                     <TrasectionTD amount={data.week4} weekNo={4} />
-                                    <Td isNumeric> {data.loan_balance}</Td>
+                                    <Td isNumeric> {data.loan_amount}</Td>
                                     <Td isNumeric>
                                         <Menu>
                                             <MenuButton
@@ -443,6 +613,11 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId })
                     </Tbody>
                 </Table>
             </TableContainer>
+            <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
+                <PDFDownloadLink document={blankpdf} fileName="Installmentsheet_blank.pdf">
+                    {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Blank Pdf')}
+                </PDFDownloadLink>
+            </button>
 
             <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
                 <PDFDownloadLink document={mycontent} fileName="Installmentsheet.pdf">

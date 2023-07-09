@@ -38,6 +38,7 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 }
 interface IMemberSavingsTable {
     teamId: string | string[] | undefined;
+    teamName: string;
 }
 
 //pdf styling
@@ -142,10 +143,11 @@ const styles = StyleSheet.create({
 
     // cell border for blank pdf
     tableCell: {
-        flex: 1,
-        borderRightWidth: 1,
-        borderRightColor: 'black',
-        borderRightStyle: 'solid',
+        // flex: 1,
+        // borderRightWidth: 1,
+        // borderRightColor: 'black',
+        // borderRightStyle: 'solid',
+        overflow: 'hidden',
     },
     lastTableCell: {
         borderRightWidth: 0,
@@ -175,6 +177,11 @@ const styles = StyleSheet.create({
         fontSize: 10,
         marginRight: 50,
     },
+    //
+    tableCellText: {
+        fontSize: 10,
+        wordWrap: 'break-word',
+    },
 });
 
 //get bangla font here Nokosh.ttf
@@ -183,7 +190,7 @@ Font.register({
     src: '/fonts/Nikosh.ttf',
 });
 
-const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
+const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
@@ -217,7 +224,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                         <Text style={styles.title}>Sample Organization</Text>
                         <View style={styles.organizationContainer}>
                             <Text style={styles.branchText}>Branch Name,</Text>
-                            <Text style={styles.teamText}>Team Name</Text>
+                            <Text style={styles.teamText}>{teamName}</Text>
                         </View>
 
                         <View style={styles.headerMonthRow}>
@@ -365,7 +372,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                         <Text style={styles.title}>Sample Organization</Text>
                         <View style={styles.organizationContainer}>
                             <Text style={styles.branchText}>Branch Name,</Text>
-                            <Text style={styles.teamText}>Team Name</Text>
+                            <Text style={styles.teamText}>{teamName}</Text>
                         </View>
                         <View style={styles.headerMonthRow}>
                             <Text style={styles.address}>123 Main Street, City, Country</Text>
@@ -470,11 +477,20 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                 style={[
                                     styles.tableHeaderColumn,
                                     styles.borderInPopulated,
-                                    styles.lastTableCell,
                                     { flex: 2, fontFamily: 'Nikosh' },
                                 ]}
                             >
                                 স্থিতি
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    styles.lastTableCell,
+                                    { flex: 1, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ক্রমিক
                             </Text>
                         </View>
 
@@ -492,7 +508,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                         <View style={styles.tableCellBorder3}>
                                             <Text style={[styles.name]}>{matchingData?.member_name}</Text>
                                         </View>
-                                        <View style={styles.tableCellBorder3}>
+                                        <View style={[styles.tableCellBorder3, styles.tableCell]}>
                                             <Text style={[styles.guardianName]}>{matchingData?.guardian_name}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
@@ -512,14 +528,17 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                         </View>
                                         <View style={styles.tableCellBorder}>
                                             <Text style={[styles.withdrawalAmount]}>
-                                                {matchingInstallment?.loan_balance}
+                                                {/* {matchingInstallment?.loan_balance} */}
                                             </Text>
                                         </View>
                                         <View style={[styles.tableCellBorder]}>
                                             <Text style={[styles.total]}></Text>
                                         </View>
-                                        <View style={[styles.tableCellBorder, styles.lastTableCell]}>
-                                            <Text style={[styles.savings]}>{matchingData?.balance}</Text>
+                                        <View style={[styles.tableCellBorder]}>
+                                            <Text style={[styles.savings]}></Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder1, styles.lastTableCell]}>
+                                            <Text style={[styles.serialNumber]}>{index + 1}</Text>
                                         </View>
                                     </View>
                                 );
@@ -539,16 +558,15 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
                         <Tr>
-                            <Th>ID</Th>
-                            <Th>Name</Th>
-                            <Th>Guardian Name</Th>
-
-                            <Th>Week 1</Th>
-                            <Th>Week 2</Th>
-                            <Th>Week 3</Th>
-                            <Th>Week 4</Th>
-                            <Th isNumeric>Deposit / Credit</Th>
-                            <Th isNumeric>Action</Th>
+                            <Th>ক্রমিক</Th>
+                            <Th>নাম</Th>
+                            <Th>অভিভাবক</Th>
+                            <Th>১ম সপ্তাহ</Th>
+                            <Th>২য় সপ্তাহ</Th>
+                            <Th>৩য় সপ্তাহ</Th>
+                            <Th>৪র্থ সপ্তাহ</Th>
+                            <Th isNumeric>সঞ্চয়</Th>
+                            <Th isNumeric>ক্রিয়া</Th>
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">

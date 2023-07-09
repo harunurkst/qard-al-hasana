@@ -20,7 +20,6 @@ interface TeamObject {
 const TeamsTable = (props) => {
     const router = useRouter();
     const { data: session } = useSession();
-    console.log('props inside team Table: ', props);
 
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
     // const [isTeamName, setIsTeamName] = useState('');
@@ -38,6 +37,10 @@ const TeamsTable = (props) => {
     const { data, isFetching } = useQuery(['teams'], async () =>
         zodSafeQuery(`/api/v1/organization/teams?branch=${branchId}`)()
     );
+
+    //total team counting taken from here
+    const teamCounting = data?.result?.count;
+    props.totalTeam(teamCounting);
 
     return (
         <>

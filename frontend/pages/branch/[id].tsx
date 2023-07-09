@@ -29,6 +29,7 @@ const BranchDetailsPage = (props) => {
     const [isOpenAddMemberModal, setOpenAddMemberModal] = useState(false); //handling member add modal
     const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
     // const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
+    const [branchTotalTeam, setBranchTotalTeam] = useState();
 
     const modalHandling = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -42,7 +43,7 @@ const BranchDetailsPage = (props) => {
     //get branch details
     const { data } = useQuery(['branch'], async () => zodSafeQuery(`/api/v1/organization/branches/${branch_id}/`)());
     const branch = data?.result;
-    console.log('branch details: ', branch);
+    // console.log('branch details: ', branch);
 
     //breadcrumb
     const breadcrumbItems: SingleBreadCrumbItemType[] =
@@ -66,7 +67,7 @@ const BranchDetailsPage = (props) => {
 
     //get total team
     const totalTeam = (teamCounting) => {
-        console.log('working');
+        setBranchTotalTeam(teamCounting);
     };
 
     return (
@@ -190,7 +191,7 @@ const BranchDetailsPage = (props) => {
                                 onClick={() => setTab('TEAM')}
                                 backgroundColor={tab === 'TEAM' ? 'gray.100' : 'white'}
                             >
-                                Team - (100)
+                                Team - ({branchTotalTeam})
                             </Button>
                             <Button
                                 onClick={() => setTab('MEMBER')}
@@ -256,7 +257,7 @@ const BranchDetailsPage = (props) => {
                     </div>
                 </div>
                 {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
-                {tab === 'TEAM' ? <TeamsTable toalTeam={totalTeam} /> : <BranchMembersList />}
+                {tab === 'TEAM' ? <TeamsTable totalTeam={totalTeam} /> : <BranchMembersList />}
             </div>
         </section>
     );

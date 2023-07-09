@@ -142,9 +142,9 @@ const TeamPage = () => {
                     </div>
 
                     {tab == 'LOAN' ? (
-                        <MemberInstallmentsTable teamId={teamId} />
+                        <MemberInstallmentsTable teamId={teamId} teamName={teamName} />
                     ) : (
-                        <MemberSavingsTable teamId={teamId} />
+                        <MemberSavingsTable teamId={teamId} teamName={teamName} />
                     )}
                 </div>
             </section>
