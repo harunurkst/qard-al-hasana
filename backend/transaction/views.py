@@ -18,14 +18,32 @@ class DepositView(CreateAPIView):
     serializer_class = SavingsSerializer
     permission_classes = [IsAuthenticated, IsSameBranch]
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        return serializer.save(
+    # def perform_create(self, serializer):
+    #     user = self.request.user
+    #     return serializer.save(
+    #         branch=user.branch,
+    #         organization=user.branch.organization,
+    #         created_by=user,
+    #         transaction_type='deposit'
+    #     )
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        member = serializer.validated_data['member']
+        date = serializer.validated_data['date']
+        # check member already have deposit
+        already_deposit = Savings.objects.filter(member=member, date=date,transaction_type='deposit').exists()
+        if already_deposit:
+            return Response({"detail": "Member already have deposit with this date"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer.save(
             branch=user.branch,
             organization=user.branch.organization,
             created_by=user,
             transaction_type='deposit'
         )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class WithdrawView(CreateAPIView):
