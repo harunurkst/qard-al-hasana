@@ -1,7 +1,7 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { MemberInstallmentType } from '../../../types/memberInstallment.type';
 
-interface IMemberInstallmentsStore  {
+interface IMemberInstallmentsStore {
     memberTransactions: MemberInstallmentType[];
     selectedMember: MemberInstallmentType | null;
     actions: {
@@ -15,6 +15,6 @@ export const useMemberInstallmentsStore = create<IMemberInstallmentsStore>((set)
     selectedMember: null,
     actions: {
         setTransactions: (transactions) => set({ memberTransactions: transactions }),
-        setSelectedMember: (data:MemberInstallmentType) => set({ selectedMember: data }),
+        setSelectedMember: (data: MemberInstallmentType) => set({ selectedMember: data }),
     },
 }));
