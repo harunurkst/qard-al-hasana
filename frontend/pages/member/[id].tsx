@@ -31,7 +31,6 @@ const MemberDetailPage = () => {
     const role = session?.user?.role;
     const branch_id = session?.user?.branch;
     const { teamId } = router.query;
-    console.log('team team id in memeber detail: ', teamId);
 
     const [openDisbursementModal, setDisbursementModal] = useState(false);
     const [openWithdrawModal, setWithdrawModal] = useState(false);
@@ -45,10 +44,17 @@ const MemberDetailPage = () => {
     const memberId = id.id;
 
     //get member details
-    const { data, isLoading } = useQuery(['member'], async () =>
+    const { data: data1, isLoading } = useQuery(['member'], async () =>
         zodSafeQuery(`/api/v1/peoples/members/${memberId}/`)()
     );
-    const member = data?.result;
+    const member = data1?.result;
+
+    //get members finance details
+    const { data: data2 } = useQuery(['memberfinance'], async () =>
+        zodSafeQuery(`/api/v1/peoples/members/${memberId}/saving-loan-info/`)()
+    );
+    const memberFinanceDetail = data2?.result;
+    console.log('finance: ', memberFinanceDetail);
 
     //handle disbursement
     const disbursement = () => {
@@ -156,32 +162,32 @@ const MemberDetailPage = () => {
                             <dl className="flex">
                                 <dd className="w-3/12">Total Savings</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>2000 TK</dd>
+                                <dd>{memberFinanceDetail?.total_savings} TK</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Last Loan</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>1000 TK</dd>
+                                <dd>{memberFinanceDetail?.last_loan} TK</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Loan Date</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>12-03-2023</dd>
+                                <dd>{memberFinanceDetail?.loan_date}</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Loan Paid</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>500 TK</dd>
+                                <dd>{memberFinanceDetail?.loan_paid} TK</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">InstallMent Paid</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>10/12</dd>
+                                <dd>{memberFinanceDetail?.installment_paid}</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Total Loan Count</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>2</dd>
+                                <dd>{memberFinanceDetail?.total_loan_count}</dd>
                             </dl>
                         </dt>
                     </div>
@@ -193,7 +199,7 @@ const MemberDetailPage = () => {
                             <dl className="flex gap-3 font-bold">
                                 <dd>Total Savings</dd>
                                 <dd>:</dd>
-                                <dd>2000 Tk</dd>
+                                <dd>{memberFinanceDetail?.total_savings} Tk</dd>
                             </dl>
                         </dt>
                     </div>
@@ -208,12 +214,16 @@ const MemberDetailPage = () => {
                             <dl className="flex gap-3 font-bold">
                                 <dd>Loan</dd>
                                 <dd>:</dd>
-                                <dd>2500 Tk,</dd>
+                                <dd>{memberFinanceDetail?.last_loan} Tk,</dd>
                             </dl>
                             <dl className="flex gap-3 font-bold">
                                 <dd>Status</dd>
                                 <dd>:</dd>
-                                <dd>Unpaid</dd>
+                                {`${memberFinanceDetail?.loan_paid}` < `${memberFinanceDetail?.last_loan}` ? (
+                                    <dd>Unpaid</dd>
+                                ) : (
+                                    <dd>Paid</dd>
+                                )}
                             </dl>
                         </dt>
                     </div>

@@ -3,6 +3,7 @@ export type MemberInstallmentType = {
     member_id: number;
     loan_id: number;
     loan_balance: number;
+    loan_amount: number;
     member_name: string;
     guardian_name: string;
     balance: number;
