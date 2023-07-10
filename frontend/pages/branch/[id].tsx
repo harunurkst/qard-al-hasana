@@ -30,6 +30,7 @@ const BranchDetailsPage = (props) => {
     const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
     // const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
     const [branchTotalTeam, setBranchTotalTeam] = useState();
+    const [totalBranchMembers, setTotalBranchMembers] = useState();
 
     const modalHandling = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -68,6 +69,11 @@ const BranchDetailsPage = (props) => {
     //get total team
     const totalTeam = (teamCounting) => {
         setBranchTotalTeam(teamCounting);
+    };
+
+    //get total members of the branch
+    const totalMembers = (members) => {
+        setTotalBranchMembers(members);
     };
 
     return (
@@ -197,7 +203,7 @@ const BranchDetailsPage = (props) => {
                                 onClick={() => setTab('MEMBER')}
                                 backgroundColor={tab === 'MEMBER' ? 'gray.100' : 'white'}
                             >
-                                Members - (2333){' '}
+                                Members - ({totalBranchMembers}){' '}
                             </Button>
                         </ButtonGroup>
                     </div>
@@ -257,7 +263,11 @@ const BranchDetailsPage = (props) => {
                     </div>
                 </div>
                 {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
-                {tab === 'TEAM' ? <TeamsTable totalTeam={totalTeam} /> : <BranchMembersList />}
+                {tab === 'TEAM' ? (
+                    <TeamsTable totalTeam={totalTeam} />
+                ) : (
+                    <BranchMembersList total_members={totalMembers} />
+                )}
             </div>
         </section>
     );

@@ -1,6 +1,22 @@
+import VerticalDotIcon from '@/icons/VerticalDotIcon';
 import { useMemberSavingsStore } from '@/modules/team/stores/useMemberSavingsStore';
+import { MemberSavingsType } from '@/types/memberSaving.type';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
-import { Table, TableContainer, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import zodSafeQuery from '@/utils/zodSafeQuery';
+import {
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Th,
+    Thead,
+    Tr,
+} from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
@@ -24,7 +40,7 @@ interface IMemberTableOfBranch {
 
 //pdf styling
 
-const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId }) => {
+const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId, total_members }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
@@ -34,15 +50,16 @@ const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId }) => {
     // use the hook to fetch member savings
     // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
     const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
-    // const { data } = useQuery(['memberSaving'], async () =>
-    //     zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
-    // );
+    const { data } = useQuery(['memberSaving'], async () => zodSafeQuery(`/api/v1/peoples/members/`)());
 
-    // setTransactions(data?.result);
+    setTransactions(data?.result);
+    //get total members of a branch
+    const totalMembers = data?.result.count;
+    total_members(totalMembers);
 
-    // if (!data) {
-    //     return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
-    // }
+    if (!data) {
+        return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
+    }
 
     return (
         <>
@@ -50,67 +67,66 @@ const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId }) => {
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
                         <Tr>
-                            <Th>SL</Th>
-                            <Th>Name</Th>
-                            <Th>Guardian Name</Th>
-                            <Th>Phone</Th>
-                            <Th>Address</Th>
-                            <Th>Team</Th>
-                            <Th>Balance</Th>
-                            <Th>Loan</Th>
-                            <Th isNumeric>Action</Th>
+                            <Th>ক্রমিক</Th>
+                            <Th>নাম</Th>
+                            <Th>অভিভাবক</Th>
+                            <Th>মোবাইল</Th>
+                            {/* <Th>ঠিকানা</Th> */}
+                            <Th>দল</Th>
+                            <Th>সঞ্চয়</Th>
+                            <Th>কর্জ</Th>
+                            <Th isNumeric>কর্ম</Th>
                         </Tr>
                     </Thead>
-                    {/* <Tbody className="text-gray-600">
-                        {data.result?.map((data: MemberSavingsType) => {
-                            return (
-                                <Tr key={data.member_id} className="hover:bg-gray-50">
-                                    <Td>{data.sl}</Td>
-                                    <Td
-                                        onClick={() => router.push(`/member/${data.member_id}`)}
-                                        className="cursor-pointer"
-                                    >
-                                        {data.member_name}
-                                    </Td>
-                                    <Td>{data.guardian_name}</Td>
-                                    <TrasectionTD amount={data.week1} weekNo={1} />
-                                    <TrasectionTD amount={data.week2} weekNo={2} />
-                                    <TrasectionTD amount={data.week3} weekNo={3} />
-                                    <TrasectionTD amount={data.week4} weekNo={4} />
-                                    <Td isNumeric> {data.balance}</Td>
-                                    <Td isNumeric>
-                                        <Menu>
-                                            <MenuButton
-                                                className=" inline-flex h-8 w-8  items-center justify-center rounded-full bg-white text-gray-900 hover:border hover:border-gray-200 hover:text-brand-600"
-                                                as={'button'}
-                                            >
-                                                <div className="flex h-full w-full items-center justify-center bg-transparent">
-                                                    <VerticalDotIcon height={16} width={16} stroke="currentColor" />
-                                                </div>
-                                            </MenuButton>
-                                            <MenuList>
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        router.push(`/member/${data.member_id}`);
-                                                    }}
+                    <Tbody className="text-gray-600">
+                        {data &&
+                            data.result?.results.map((singleData: MemberSavingsType, index) => {
+                                return (
+                                    <Tr key={singleData?.id} className="hover:bg-gray-50">
+                                        <Td>{index + 1}</Td>
+                                        <Td
+                                            onClick={() => router.push(`/member/${singleData.member_id}`)}
+                                            className="cursor-pointer"
+                                        >
+                                            {singleData?.name}
+                                        </Td>
+                                        <Td>{singleData?.guardian_name}</Td>
+                                        <Td>{singleData?.mobile_number}</Td>
+                                        <Td>{singleData?.team}</Td>
+                                        <Td isNumeric> {singleData.balance}</Td>
+                                        <Td isNumeric>
+                                            <Menu>
+                                                <MenuButton
+                                                    className=" inline-flex h-8 w-8  items-center justify-center rounded-full bg-white text-gray-900 hover:border hover:border-gray-200 hover:text-brand-600"
+                                                    as={'button'}
                                                 >
-                                                    View
-                                                </MenuItem>
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        setSelectedMember(data);
-                                                        setOpenDepositModal(true);
-                                                    }}
-                                                >
-                                                    সঞ্চয় জমা
-                                                </MenuItem>
-                                            </MenuList>
-                                        </Menu>
-                                    </Td>
-                                </Tr>
-                            );
-                        })}
-                    </Tbody> */}
+                                                    <div className="flex h-full w-full items-center justify-center bg-transparent">
+                                                        <VerticalDotIcon height={16} width={16} stroke="currentColor" />
+                                                    </div>
+                                                </MenuButton>
+                                                <MenuList>
+                                                    <MenuItem
+                                                        onClick={() => {
+                                                            router.push(`/member/${singleData.member_id}`);
+                                                        }}
+                                                    >
+                                                        View
+                                                    </MenuItem>
+                                                    <MenuItem
+                                                        onClick={() => {
+                                                            setSelectedMember(singleData);
+                                                            setOpenDepositModal(true);
+                                                        }}
+                                                    >
+                                                        সঞ্চয় জমা
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </Menu>
+                                        </Td>
+                                    </Tr>
+                                );
+                            })}
+                    </Tbody>
                 </Table>
             </TableContainer>
         </>

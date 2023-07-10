@@ -190,13 +190,12 @@ Font.register({
     src: '/fonts/Nikosh.ttf',
 });
 
-const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName }) => {
+const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, branchName, orgName, teamAddress }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
 
     const { data: session, status } = useSession();
-
     // use the hook to fetch member savings
     // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
     const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
@@ -223,7 +222,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName })
                     <View style={styles.header}>
                         <Text style={styles.title}>Sample Organization</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>Branch Name,</Text>
+                            <Text style={styles.branchText}>{branchName},</Text>
                             <Text style={styles.teamText}>{teamName}</Text>
                         </View>
 
@@ -369,13 +368,13 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName })
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>Sample Organization</Text>
+                        <Text style={styles.title}>{orgName}</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>Branch Name,</Text>
+                            <Text style={styles.branchText}>{branchName},</Text>
                             <Text style={styles.teamText}>{teamName}</Text>
                         </View>
                         <View style={styles.headerMonthRow}>
-                            <Text style={styles.address}>123 Main Street, City, Country</Text>
+                            <Text style={styles.address}>{teamAddress}</Text>
                             <Text style={styles.month}>Month: </Text>
                         </View>
                     </View>

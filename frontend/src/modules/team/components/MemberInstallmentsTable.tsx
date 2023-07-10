@@ -184,14 +184,21 @@ Font.register({
     src: '/fonts/Nikosh.ttf',
 });
 
-const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId, teamName }) => {
+const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({
+    teamId,
+    teamName,
+    branchName,
+    orgName,
+    teamAddress,
+}) => {
+    console.log('team id: ', teamId);
     const router = useRouter();
     const [isOpenInstallmentModal, setOpenInstallmentModal] = useState(false);
 
     // use the hook to fetch member savings
     const { setTransactions, setSelectedMember } = useMemberInstallmentsStore((state) => state.actions);
     const { data } = useQuery(['memberInstallments'], async () =>
-        zodSafeQuery(`/api/v1/transaction/member-installment-list?teamId=${teamId}`)()
+        zodSafeQuery(`/api/v1/transaction/member-installment-list?team=${teamId}`)()
     );
     // console.log('data', data?.result, isFetching, error);
     // useEffect(() => {
@@ -209,14 +216,14 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId, t
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>Sample Organization</Text>
+                        <Text style={styles.title}>{orgName}</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>Branch Name,</Text>
-                            <Text style={styles.teamText}>Team Name</Text>
+                            <Text style={styles.branchText}>{branchName},</Text>
+                            <Text style={styles.teamText}>{teamName}</Text>
                         </View>
 
                         <View style={styles.headerMonthRow}>
-                            <Text style={styles.address}>123 Main Street, City, Country</Text>
+                            <Text style={styles.address}>{teamAddress}</Text>
                             <Text style={styles.month}>Month: </Text>
                         </View>
                     </View>
@@ -354,13 +361,13 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({ teamId, t
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>Sample Organization</Text>
+                        <Text style={styles.title}>{orgName}</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>Branch Name,</Text>
+                            <Text style={styles.branchText}>{branchName},</Text>
                             <Text style={styles.teamText}>{teamName}</Text>
                         </View>
                         <View style={styles.headerMonthRow}>
-                            <Text style={styles.address}>123 Main Street, City, Country</Text>
+                            <Text style={styles.address}>{teamAddress}</Text>
                             <Text style={styles.month}>Month: </Text>
                         </View>
                     </View>
