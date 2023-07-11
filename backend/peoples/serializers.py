@@ -12,8 +12,8 @@ class MemberDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data.update({
-            "team": instance.team.name,
-            "branch": instance.branch.name,
+            "team": instance.team.name if instance.team else "",
+            "branch": instance.branch.name if instance.branch else "",
             "joined_date": instance.created_at
         })
         return data

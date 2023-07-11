@@ -24,7 +24,7 @@ class MemberListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["team", "branch", "is_active", "gender"]
-    search_fields = ["=nid_number", "=mobile_number"]
+    search_fields = ["name", "mobile_number"]
 
     def get_queryset(self):
         return Member.objects.filter(branch=self.request.user.branch)
@@ -41,9 +41,13 @@ class MemberListCreateView(ListCreateAPIView):
 class MemberDetailsView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsSameBranch]
     serializer_class = MemberDetailSerializer
+    
 
-    def get_queryset(self):
-        return Member.objects.filter(branch=self.request.user.branch)
+    # def get_queryset(self):
+    #     return Member.objects.filter(branch=self.request.user.branch)
+
+    def get_object(self):
+        return get_object_or_404(Member, id=self.kwargs.get("id"))
 
 
 
