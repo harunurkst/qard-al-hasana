@@ -123,9 +123,14 @@ class BranchListSerializer(serializers.ModelSerializer):
     cash_in_hand = serializers.IntegerField(default=0)
     total_deposit = serializers.IntegerField()
     total_due_loan = serializers.IntegerField()
+    total_income = serializers.IntegerField()
+    total_expense = serializers.IntegerField()
 
     class Meta:
         model = Branch
-        fields = ('id', 'name', 'address', 'cash_in_hand', 'total_deposit', 'total_due_loan')
+        fields = (
+            'id', 'name', 'address', 'cash_in_hand',
+            'total_deposit', 'total_due_loan', 'total_income', 'total_expense'
+        )
 
 
