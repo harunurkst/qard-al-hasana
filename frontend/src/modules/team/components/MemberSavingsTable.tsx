@@ -210,6 +210,8 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
         zodSafeQuery(`/api/v1/transaction/member-installment-list?teamId=${teamId}`)()
     );
 
+    // console.log('data2: ', data2);
+
     if (!data1) {
         return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
     }
@@ -220,14 +222,16 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>Sample Organization</Text>
+                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>Sample Organization</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>{branchName},</Text>
-                            <Text style={styles.teamText}>{teamName}</Text>
+                            <Text style={[styles.branchText, { fontFamily: 'Nikosh' }]}>{branchName},</Text>
+                            <Text style={[styles.teamText, { fontFamily: 'Nikosh' }]}>{teamName}</Text>
                         </View>
 
                         <View style={styles.headerMonthRow}>
-                            <Text style={styles.address}>123 Main Street, City, Country</Text>
+                            <Text style={[styles.address, { fontFamily: 'Nikosh' }]}>
+                                123 Main Street, City, Country
+                            </Text>
                             <Text style={styles.month}>Month: </Text>
                         </View>
                     </View>
@@ -368,13 +372,13 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>{orgName}</Text>
+                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>{orgName}</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>{branchName},</Text>
-                            <Text style={styles.teamText}>{teamName}</Text>
+                            <Text style={[styles.branchText, { fontFamily: 'Nikosh' }]}>{branchName},</Text>
+                            <Text style={[styles.teamText, { fontFamily: 'Nikosh' }]}>{teamName}</Text>
                         </View>
                         <View style={styles.headerMonthRow}>
-                            <Text style={styles.address}>{teamAddress}</Text>
+                            <Text style={[styles.address, { fontFamily: 'Nikosh' }]}>{teamAddress}</Text>
                             <Text style={styles.month}>Month: </Text>
                         </View>
                     </View>

@@ -216,14 +216,14 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>{orgName}</Text>
+                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>{orgName}</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>{branchName},</Text>
-                            <Text style={styles.teamText}>{teamName}</Text>
+                            <Text style={[styles.branchText, { fontFamily: 'Nikosh' }]}>{branchName},</Text>
+                            <Text style={[styles.teamText, { fontFamily: 'Nikosh' }]}>{teamName}</Text>
                         </View>
 
                         <View style={styles.headerMonthRow}>
-                            <Text style={styles.address}>{teamAddress}</Text>
+                            <Text style={[styles.address, { fontFamily: 'Nikosh' }]}>{teamAddress}</Text>
                             <Text style={styles.month}>Month: </Text>
                         </View>
                     </View>
@@ -361,13 +361,13 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>{orgName}</Text>
+                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>{orgName}</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>{branchName},</Text>
-                            <Text style={styles.teamText}>{teamName}</Text>
+                            <Text style={[styles.branchText, { fontFamily: 'Nikosh' }]}>{branchName},</Text>
+                            <Text style={[styles.teamText, { fontFamily: 'Nikosh' }]}>{teamName}</Text>
                         </View>
                         <View style={styles.headerMonthRow}>
-                            <Text style={styles.address}>{teamAddress}</Text>
+                            <Text style={[styles.address, { fontFamily: 'Nikosh' }]}>{teamAddress}</Text>
                             <Text style={styles.month}>Month: </Text>
                         </View>
                     </View>
@@ -583,7 +583,7 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({
                                     <TrasectionTD amount={data.week2} weekNo={2} />
                                     <TrasectionTD amount={data.week3} weekNo={3} />
                                     <TrasectionTD amount={data.week4} weekNo={4} />
-                                    <Td isNumeric> {data.loan_amount}</Td>
+                                    <Td isNumeric> {data.loan_balance}</Td>
                                     <Td isNumeric>
                                         <Menu>
                                             <MenuButton
