@@ -9,7 +9,7 @@ const CommonBreadCrumb: React.FC<ICommonBreadCrumbProps> = ({ items }) => {
     return (
         <Breadcrumb>
             {items.map((item: SingleBreadCrumbItemType) => (
-                <BreadcrumbItem isCurrentPage={item?.isCurrentPage} key={item.label} className="font-semibold">
+                <BreadcrumbItem isCurrentPage={item?.isCurrentPage} key={item?.label} className="font-semibold">
                     <BreadcrumbLink href={item?.href} className="capitalize">
                         {item?.label}
                     </BreadcrumbLink>
