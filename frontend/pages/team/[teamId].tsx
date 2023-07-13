@@ -44,7 +44,7 @@ const TeamPage = (sessionData) => {
                       href: `/branch/${branch_id}`,
                   },
                   {
-                      label: `${teamdetail?.name}`,
+                      label: `${teamName}`,
                       href: `/team/${teamId}`,
                   },
               ]
@@ -58,7 +58,7 @@ const TeamPage = (sessionData) => {
                       href: `/branch/${branch_id}`,
                   },
                   {
-                      label: `${teamdetail?.name}`,
+                      label: `${teamName}`,
                       href: `/team/${teamId}`,
                   },
               ];
