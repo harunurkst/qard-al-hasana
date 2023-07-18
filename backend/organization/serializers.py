@@ -124,6 +124,8 @@ class BranchListSerializer(serializers.ModelSerializer):
     cash_in_hand = serializers.IntegerField(default=0)
     total_deposit = serializers.IntegerField()
     total_due_loan = serializers.IntegerField()
+    total_income = serializers.IntegerField()
+    total_expense = serializers.IntegerField()
 
     class Meta:
         model = Branch
@@ -140,3 +142,4 @@ class BranchListSerializer(serializers.ModelSerializer):
 # Logout Serializer
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+

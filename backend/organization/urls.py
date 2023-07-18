@@ -15,7 +15,7 @@ router = DefaultRouter()
 
 # router api verbs
 router.register(r'staffs', StaffReadOnlyModelViewSet, basename='staffs')
-router.register(r'branches', BranchReadOnlyModelViewSet, basename='branches')
+router.register(r'branches', BranchReadOnlyModelViewSet, basename='branches')  # basename used for unit testing
 
 urlpatterns = [
 

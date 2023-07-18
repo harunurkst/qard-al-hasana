@@ -127,6 +127,16 @@ class BranchReadOnlyModelViewSet(viewsets.ReadOnlyModelViewSet):
             total_due_loan=Sum(
                 "basemodel__loan__total_due",
                 filter=Q(basemodel__loan__is_paid=False),
-                default=0,
+                default=0
+            ),
+            total_income=Sum(
+                'basemodel__generaltransaction__amount',
+                filter=Q(basemodel__generaltransaction__transaction_type='income'),
+                default=0
+            ),
+            total_expense=Sum(
+                'basemodel__generaltransaction__amount',
+                filter=Q(basemodel__generaltransaction__transaction_type='expense'),
+                default=0
             ),
         )
