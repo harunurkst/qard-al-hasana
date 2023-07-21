@@ -136,10 +136,11 @@ class BranchListSerializer(serializers.ModelSerializer):
             "cash_in_hand",
             "total_deposit",
             "total_due_loan",
+            "total_income",
+            "total_expense",
         )
 
 
 # Logout Serializer
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
-
