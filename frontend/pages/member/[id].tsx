@@ -8,6 +8,7 @@ import DepositBarChart from './depositeChart';
 import InstallMentGraph from './installmentGraph';
 
 //Modals are imported here
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import DisbursementModal from '@/modules/member/components/DisbursementModal';
 import EditMemberModal from '@/modules/member/components/EditMemberModal';
 import WithdrawModal from '@/modules/member/components/WithdrawModal';
@@ -27,7 +28,9 @@ const TriangleBar = (props) => {
 const MemberDetailPage = () => {
     const router = useRouter();
     const { data: session, status } = useSession();
-    console.log('session : ', session);
+    const role = session?.user?.role;
+    const branch_id = session?.user?.branch;
+    const { teamId } = router.query;
 
     const [openDisbursementModal, setDisbursementModal] = useState(false);
     const [openWithdrawModal, setWithdrawModal] = useState(false);
@@ -41,15 +44,54 @@ const MemberDetailPage = () => {
     const memberId = id.id;
 
     //get member details
-    const { data, isLoading } = useQuery(['member'], async () =>
+    const { data: data1, isLoading } = useQuery(['member'], async () =>
         zodSafeQuery(`/api/v1/peoples/members/${memberId}/`)()
     );
-    const member = data?.result;
+    const member = data1?.result;
+
+    //get members finance details
+    const { data: data2 } = useQuery(['memberfinance'], async () =>
+        zodSafeQuery(`/api/v1/peoples/members/${memberId}/saving-loan-info/`)()
+    );
+    const memberFinanceDetail = data2?.result;
+    console.log('finance: ', memberFinanceDetail);
 
     //handle disbursement
     const disbursement = () => {
         setDisbursementModal(true);
     };
+
+    //handle bredcrumb
+    const breadcrumbItems: SingleBreadCrumbItemType[] =
+        role === 'BO'
+            ? [
+                  {
+                      label: 'Branch',
+                      href: `/branch/${branch_id}`,
+                  },
+                  {
+                      label: `Team`,
+                      href: `/team/${teamId}`,
+                  },
+                  {
+                      label: `${member?.name}`,
+                      href: `/member/${memberId}`,
+                  },
+              ]
+            : [
+                  {
+                      label: 'Dashboard',
+                      href: `/dashboard`,
+                  },
+                  //   {
+                  //       label: 'Branch',
+                  //       href: `/branch/${branch_id}`,
+                  //   },
+                  //   {
+                  //       label: `${teamName}`,
+                  //       href: `/team/${teamId}`,
+                  //   },
+              ];
 
     return (
         <>
@@ -74,9 +116,13 @@ const MemberDetailPage = () => {
                         member={member}
                     />
                 )}
+                {/* =========breadcrumb =============*/}
+                <div className="mb-5 mt-10">
+                    <CommonBreadCrumb items={breadcrumbItems} />
+                </div>
                 {/*=============== basic info section =====================*/}
 
-                <div className="user-basic-info my-10 flex space-x-20">
+                <div className="user-basic-info mb-10 flex space-x-20">
                     <div className="user-info w-full rounded-md bg-gray-200 p-10">
                         <dt className="space-y-3">
                             <dl className="flex">
@@ -116,32 +162,32 @@ const MemberDetailPage = () => {
                             <dl className="flex">
                                 <dd className="w-3/12">Total Savings</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>2000 TK</dd>
+                                <dd>{memberFinanceDetail?.total_savings} TK</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Last Loan</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>1000 TK</dd>
+                                <dd>{memberFinanceDetail?.last_loan} TK</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Loan Date</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>12-03-2023</dd>
+                                <dd>{memberFinanceDetail?.loan_date}</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Loan Paid</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>500 TK</dd>
+                                <dd>{memberFinanceDetail?.loan_paid} TK</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">InstallMent Paid</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>10/12</dd>
+                                <dd>{memberFinanceDetail?.installment_paid}</dd>
                             </dl>
                             <dl className="flex">
                                 <dd className="w-3/12">Total Loan Count</dd>
                                 <dd className="mr-5">:</dd>
-                                <dd>2</dd>
+                                <dd>{memberFinanceDetail?.total_loan_count}</dd>
                             </dl>
                         </dt>
                     </div>
@@ -153,7 +199,7 @@ const MemberDetailPage = () => {
                             <dl className="flex gap-3 font-bold">
                                 <dd>Total Savings</dd>
                                 <dd>:</dd>
-                                <dd>2000 Tk</dd>
+                                <dd>{memberFinanceDetail?.total_savings} Tk</dd>
                             </dl>
                         </dt>
                     </div>
@@ -168,12 +214,16 @@ const MemberDetailPage = () => {
                             <dl className="flex gap-3 font-bold">
                                 <dd>Loan</dd>
                                 <dd>:</dd>
-                                <dd>2500 Tk,</dd>
+                                <dd>{memberFinanceDetail?.last_loan} Tk,</dd>
                             </dl>
                             <dl className="flex gap-3 font-bold">
                                 <dd>Status</dd>
                                 <dd>:</dd>
-                                <dd>Unpaid</dd>
+                                {`${memberFinanceDetail?.loan_paid}` < `${memberFinanceDetail?.last_loan}` ? (
+                                    <dd>Unpaid</dd>
+                                ) : (
+                                    <dd>Paid</dd>
+                                )}
                             </dl>
                         </dt>
                     </div>
@@ -191,10 +241,10 @@ const MemberDetailPage = () => {
                         Edit
                     </button>
                     <button className=" w-30 rounded bg-brand-700 p-2 text-white" onClick={disbursement}>
-                        Disbursement
+                        কর্জ প্রদান
                     </button>
                     <button className="w-24 rounded bg-brand-700 p-2 text-white" onClick={() => setWithdrawModal(true)}>
-                        Withdraw
+                        সঞ্চয় উঠানো
                     </button>
                 </div>
             </section>

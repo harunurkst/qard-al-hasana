@@ -1,10 +1,10 @@
-from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from organization.models import User, Team
 from peoples.models import Staff
+
+from .models import User, Team, Branch
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,7 +30,6 @@ class UserSerilizerWithToken(UserSerializer):
 
         user_data = {
             "username": obj.username,
-
         }
         access["user"] = user_data
 
@@ -49,7 +48,7 @@ class LoginSerializer(TokenObtainPairSerializer):
         user_data = {
             "username": user.username,
             "branch": user.branch.id,
-            "role": user.role
+            "role": user.role,
         }
         token["user"] = user_data
 
@@ -75,28 +74,73 @@ class MyRefreshSerializer(serializers.Serializer):
                 new_token = RefreshToken.for_user(user)
                 new_token["user"] = user_data
                 return {"access": str(new_token)}
-            except Exception as e:
+            except Exception:
                 raise serializers.ValidationError("Invalid token")
         else:
             raise serializers.ValidationError("Refresh token is required")
 
 
-class TeamSerializer(serializers.ModelSerializer):
-
+class TeamSerializerBase(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('id', 'name', 'owner', 'branch')
+        fields = (
+            "id",
+            "name",
+            "address",
+        )
 
-    # def create(self, validated_data):
-    #     team = Team(**validated_data)
-    #     team.branch = validated_data['owner'].branch
-    #     team.save()
-    #     return team
+
+class TeamSerializer(TeamSerializerBase):
+    class Meta(TeamSerializerBase.Meta):
+        fields = TeamSerializerBase.Meta.fields + ("owner",)
+
+
+class TeamDetailSerializer(TeamSerializerBase):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.update(
+            {
+                "org_name": instance.branch.organization.name,
+                "branch_name": instance.branch.name,
+                "total_unpaid_loan": instance.total_unpaid_loan(),
+                "total_deposit": instance.total_deposit(),
+                "active_loan": instance.active_loan(),
+            }
+        )
+        return data
 
 
 # Staff List Serializer
 class StaffListSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Staff
-        fields = '__all__'
+        fields = "__all__"
+
+
+# Branch Serializer
+class BranchListSerializer(serializers.ModelSerializer):
+    """calculated property for annotation (non-model property)"""
+
+    cash_in_hand = serializers.IntegerField(default=0)
+    total_deposit = serializers.IntegerField()
+    total_due_loan = serializers.IntegerField()
+    total_income = serializers.IntegerField()
+    total_expense = serializers.IntegerField()
+
+    class Meta:
+        model = Branch
+        fields = (
+            "id",
+            "name",
+            "address",
+            "cash_in_hand",
+            "total_deposit",
+            "total_due_loan",
+            "total_income",
+            "total_expense",
+        )
+
+
+# Logout Serializer
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()

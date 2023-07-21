@@ -14,7 +14,7 @@ import {
     Thead,
     Tr,
 } from '@chakra-ui/react';
-import { Document, PDFDownloadLink, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Font, PDFDownloadLink, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -38,6 +38,7 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 }
 interface IMemberSavingsTable {
     teamId: string | string[] | undefined;
+    teamName: string;
 }
 
 //pdf styling
@@ -77,6 +78,8 @@ const styles = StyleSheet.create({
     address: {
         fontSize: 14,
         textAlign: 'center',
+        flex: 1,
+        marginLeft: 20,
     },
     // table section
     tableContainer: {
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
     },
     tableHeader: {
         flexDirection: 'row',
-        height: 40,
+        // height: 40,
         backgroundColor: '#f2f2f2',
         alignItems: 'center',
         textAlign: 'center',
@@ -101,59 +104,115 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomWidth: 1,
         borderBottomColor: '#000',
+        borderBottomStyle: 'solid',
         alignItems: 'center',
-        height: 20,
         textAlign: 'center',
         fontStyle: 'bold',
         fontSize: 10,
+        lineHeight: 2,
     },
     serialNumber: {
         flex: 1,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
+    },
+    name: {
+        flex: 3,
     },
     guardianName: {
         flex: 3,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     savings: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     week: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     withdrawalAmount: {
         flex: 2,
-        borderRightWidth: 1,
-        borderRightColor: '#000',
     },
     total: {
         flex: 2,
     },
+
+    // right border in populated pdf
+    borderInPopulated: {
+        borderRightWidth: 1,
+        borderRightColor: '#000',
+        height: 30,
+        borderBottomWidth: 1,
+    },
+
+    // cell border for blank pdf
+    tableCell: {
+        // flex: 1,
+        // borderRightWidth: 1,
+        // borderRightColor: 'black',
+        // borderRightStyle: 'solid',
+        overflow: 'hidden',
+    },
+    lastTableCell: {
+        borderRightWidth: 0,
+    },
+    tableCellBorder: {
+        borderRightWidth: 1,
+        flex: 2,
+        minHeight: 20,
+    },
+    tableCellBorder1: {
+        borderRightWidth: 1,
+        flex: 1,
+        minHeight: 20,
+    },
+    tableCellBorder3: {
+        borderRightWidth: 1,
+        flex: 3,
+        minHeight: 20,
+    },
+    headerMonthRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    month: {
+        textAlign: 'right',
+        fontSize: 10,
+        marginRight: 50,
+    },
+    //
+    tableCellText: {
+        fontSize: 10,
+        wordWrap: 'break-word',
+    },
 });
 
-const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
+//get bangla font here Nokosh.ttf
+Font.register({
+    family: 'Nikosh',
+    src: '/fonts/Nikosh.ttf',
+});
+
+const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, branchName, orgName, teamAddress }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
 
     const { data: session, status } = useSession();
-
     // use the hook to fetch member savings
     // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
     const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
-    const { data } = useQuery(['memberSaving'], async () =>
+    const { data: data1 } = useQuery(['memberSaving'], async () =>
         zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
     );
 
-    setTransactions(data?.result);
+    // console.log('loan: ', data1)
 
-    if (!data) {
+    //getting loan_balance
+    const { data: data2 } = useQuery(['installedList'], async () =>
+        zodSafeQuery(`/api/v1/transaction/member-installment-list?teamId=${teamId}`)()
+    );
+
+    // console.log('data2: ', data2);
+
+    if (!data1) {
         return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
     }
 
@@ -163,44 +222,330 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={styles.title}>Sample Organization</Text>
+                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>Sample Organization</Text>
                         <View style={styles.organizationContainer}>
-                            <Text style={styles.branchText}>Branch Name,</Text>
-                            <Text style={styles.teamText}>Team Name</Text>
+                            <Text style={[styles.branchText, { fontFamily: 'Nikosh' }]}>{branchName},</Text>
+                            <Text style={[styles.teamText, { fontFamily: 'Nikosh' }]}>{teamName}</Text>
                         </View>
 
-                        <Text style={styles.address}>123 Main Street, City, Country</Text>
+                        <View style={styles.headerMonthRow}>
+                            <Text style={[styles.address, { fontFamily: 'Nikosh' }]}>
+                                123 Main Street, City, Country
+                            </Text>
+                            <Text style={styles.month}>Month: </Text>
+                        </View>
                     </View>
                     {/* Table */}
                     <View style={styles.tableContainer}>
                         {/* Table Header */}
                         <View style={styles.tableHeader}>
-                            <Text style={[styles.tableHeaderColumn, { flex: 1 }]}>SL</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 3 }]}>Guardian Name</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Savings</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 1</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 2</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 3</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Week 4</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Withdrawal Amount</Text>
-                            <Text style={[styles.tableHeaderColumn, { flex: 2 }]}>Total</Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 1, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ক্রমিক
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 3, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                অভিভাবক
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                স্থিতি
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ১ম
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ২য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৩য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৪র্থ
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                উত্তলন
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+
+                                    styles.borderInPopulated,
+                                    styles.lastTableCell,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                মোট হ
+                            </Text>
                         </View>
 
                         {/* Sample Rows */}
-                        {data &&
-                            data.result?.map((element) => (
-                                <View style={styles.tableRow} key={element.member_id}>
-                                    <Text style={styles.serialNumber}>{element.sl}</Text>
-                                    <Text style={styles.guardianName}>{element.guardian_name}</Text>
-                                    <Text style={styles.savings}>{element.balance}</Text>
-                                    <Text style={styles.week}>{element.week1}</Text>
-                                    <Text style={styles.week}>{element.week2}</Text>
-                                    <Text style={styles.week}>{element.week3}</Text>
-                                    <Text style={styles.week}>{element.week4}</Text>
-                                    <Text style={styles.withdrawalAmount}>50</Text>
-                                    <Text style={styles.total}>550</Text>
-                                </View>
-                            ))}
+                        {data1 &&
+                            data1.result?.map((element, index) => {
+                                const matchingInstallment = data2?.result.find((item) => item.sl === index + 1);
+                                return (
+                                    <View style={styles.tableRow} key={element.member_id}>
+                                        <View style={styles.tableCellBorder1}>
+                                            <Text style={[styles.serialNumber]}>{element?.sl}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder3}>
+                                            <Text style={[styles.guardianName]}>{element?.guardian_name}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.savings]}>{element?.balance}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}>{element?.week1}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}>{element?.week2}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}>{element?.week3}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}>{element?.week4}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.withdrawalAmount]}>
+                                                {matchingInstallment?.loan_balance}
+                                            </Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder, styles.lastTableCell]}>
+                                            <Text style={styles.total}>550</Text>
+                                        </View>
+                                    </View>
+                                );
+                            })}
+                    </View>
+                </View>
+            </Page>
+        </Document>
+    ); //pdf ended here
+    const blankpdf = (
+        <Document>
+            <Page size={'A4'}>
+                <View style={styles.mypdf}>
+                    <View style={styles.header}>
+                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>{orgName}</Text>
+                        <View style={styles.organizationContainer}>
+                            <Text style={[styles.branchText, { fontFamily: 'Nikosh' }]}>{branchName},</Text>
+                            <Text style={[styles.teamText, { fontFamily: 'Nikosh' }]}>{teamName}</Text>
+                        </View>
+                        <View style={styles.headerMonthRow}>
+                            <Text style={[styles.address, { fontFamily: 'Nikosh' }]}>{teamAddress}</Text>
+                            <Text style={styles.month}>Month: </Text>
+                        </View>
+                    </View>
+                    {/* Table */}
+                    <View style={styles.tableContainer}>
+                        {/* Table Header */}
+                        <View style={styles.tableHeader}>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 1, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ক্রমিক
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 3, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                নাম
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 3, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                অভিভাবক
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                স্থিতি
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ১ম
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ২য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৩য়
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ৪র্থ
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                উত্তলন
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                মোট হ
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    { flex: 2, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                স্থিতি
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tableHeaderColumn,
+                                    styles.borderInPopulated,
+                                    styles.lastTableCell,
+                                    { flex: 1, fontFamily: 'Nikosh' },
+                                ]}
+                            >
+                                ক্রমিক
+                            </Text>
+                        </View>
+
+                        {/* Sample Rows */}
+                        {Array(25)
+                            .fill()
+                            .map((_, index) => {
+                                const matchingData = data1?.result.find((item) => item.sl === index + 1);
+                                const matchingInstallment = data2?.result.find((item) => item.sl === index + 1);
+                                return (
+                                    <View style={styles.tableRow} key={index}>
+                                        <View style={styles.tableCellBorder1}>
+                                            <Text style={[styles.serialNumber]}>{index + 1}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder3}>
+                                            <Text style={[styles.name]}>{matchingData?.member_name}</Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder3, styles.tableCell]}>
+                                            <Text style={[styles.guardianName]}>{matchingData?.guardian_name}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.savings]}>{matchingData?.balance}</Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.week]}></Text>
+                                        </View>
+                                        <View style={styles.tableCellBorder}>
+                                            <Text style={[styles.withdrawalAmount]}>
+                                                {/* {matchingInstallment?.loan_balance} */}
+                                            </Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder]}>
+                                            <Text style={[styles.total]}></Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder]}>
+                                            <Text style={[styles.savings]}></Text>
+                                        </View>
+                                        <View style={[styles.tableCellBorder1, styles.lastTableCell]}>
+                                            <Text style={[styles.serialNumber]}>{index + 1}</Text>
+                                        </View>
+                                    </View>
+                                );
+                            })}
                     </View>
                 </View>
             </Page>
@@ -216,25 +561,29 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                 <Table fontSize={14} variant="simple" colorScheme={'gray'}>
                     <Thead background={'#f2f4f5'}>
                         <Tr>
-                            <Th>ID</Th>
-                            <Th>Name</Th>
-                            <Th>Guardian Name</Th>
-
-                            <Th>Week 1</Th>
-                            <Th>Week 2</Th>
-                            <Th>Week 3</Th>
-                            <Th>Week 4</Th>
-                            <Th isNumeric>Deposit / Credit</Th>
-                            <Th isNumeric>Action</Th>
+                            <Th>ক্রমিক</Th>
+                            <Th>নাম</Th>
+                            <Th>অভিভাবক</Th>
+                            <Th>১ম সপ্তাহ</Th>
+                            <Th>২য় সপ্তাহ</Th>
+                            <Th>৩য় সপ্তাহ</Th>
+                            <Th>৪র্থ সপ্তাহ</Th>
+                            <Th isNumeric>সঞ্চয়</Th>
+                            <Th isNumeric>ক্রিয়া</Th>
                         </Tr>
                     </Thead>
                     <Tbody className="text-gray-600">
-                        {data.result?.map((data: MemberSavingsType) => {
+                        {data1.result?.map((data: MemberSavingsType) => {
                             return (
                                 <Tr key={data.member_id} className="hover:bg-gray-50">
-                                    <Td>{data.member_id}</Td>
+                                    <Td>{data.sl}</Td>
                                     <Td
-                                        onClick={() => router.push(`/member/${data.member_id}`)}
+                                        onClick={() =>
+                                            router.push({
+                                                pathname: `/member/${data.member_id}`,
+                                                query: { teamId: teamId },
+                                            })
+                                        }
                                         className="cursor-pointer"
                                     >
                                         {data.member_name}
@@ -258,7 +607,10 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                                             <MenuList>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        router.push(`/member/${data.member_id}`);
+                                                        router.push({
+                                                            pathname: `/member/${data.member_id}`,
+                                                            query: { teamId: teamId },
+                                                        });
                                                     }}
                                                 >
                                                     View
@@ -281,6 +633,11 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId }) => {
                 </Table>
             </TableContainer>
 
+            <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
+                <PDFDownloadLink document={blankpdf} fileName="topsheet_blank.pdf">
+                    {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Blank Pdf')}
+                </PDFDownloadLink>
+            </button>
             <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
                 <PDFDownloadLink document={mycontent} fileName="topsheet.pdf">
                     {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Download Pdf')}

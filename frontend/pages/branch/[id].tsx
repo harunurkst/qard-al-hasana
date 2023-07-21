@@ -1,6 +1,6 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
+import BranchMembersList from '@/modules/branch/components/MemberTableOfBranch';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
-import MembersTable from '@/modules/team/components/MemberSavingsTable';
 import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import React, { ReactNode, useState } from 'react';
 
@@ -9,13 +9,19 @@ import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonB
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
 import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
+import zodSafeQuery from '@/utils/zodSafeQuery';
+import { useQuery } from '@tanstack/react-query';
+import { getSession, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
-const BranchDetailsPage = (session) => {
-    // const { data: session } = useSession();
+const BranchDetailsPage = (props) => {
+    const { data: session } = useSession();
     const router = useRouter();
-    const branchId = router.query.id;
+    // const branchId = router.query.id;
+    const sessionDetails = props.sessionData.user;
+    const role = sessionDetails?.role;
+    const branch_id = sessionDetails?.branch;
 
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
@@ -23,6 +29,8 @@ const BranchDetailsPage = (session) => {
     const [isOpenAddMemberModal, setOpenAddMemberModal] = useState(false); //handling member add modal
     const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
     // const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
+    const [branchTotalTeam, setBranchTotalTeam] = useState();
+    const [totalBranchMembers, setTotalBranchMembers] = useState();
 
     const modalHandling = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -32,20 +40,41 @@ const BranchDetailsPage = (session) => {
             setOpenAddMemberModal(true);
         }
     };
-    const breadcrumbItems: SingleBreadCrumbItemType[] = [
-        {
-            label: 'Dashboard',
-            href: '/dashboard',
-        },
-        {
-            label: 'Branch',
-            href: '/branch',
-        },
-        {
-            label: 'Chandra Bazar Branch',
-            isCurrentPage: true,
-        },
-    ];
+
+    //get branch details
+    const { data } = useQuery(['branch'], async () => zodSafeQuery(`/api/v1/organization/branches/${branch_id}/`)());
+    const branch = data?.result;
+    // console.log('branch details: ', branch);
+
+    //breadcrumb
+    const breadcrumbItems: SingleBreadCrumbItemType[] =
+        role == 'BO'
+            ? [
+                  {
+                      label: branch?.name,
+                      href: `/branch/${branch_id}`,
+                  },
+              ]
+            : [
+                  {
+                      label: 'Dashboard',
+                      href: '/dashboard',
+                  },
+                  {
+                      label: branch?.name,
+                      href: `/branch/${branch_id}`,
+                  },
+              ];
+
+    //get total team
+    const totalTeam = (teamCounting) => {
+        setBranchTotalTeam(teamCounting);
+    };
+
+    //get total members of the branch
+    const totalMembers = (members) => {
+        setTotalBranchMembers(members);
+    };
 
     return (
         <section className="container mx-auto pb-8 pt-4">
@@ -68,8 +97,8 @@ const BranchDetailsPage = (session) => {
             >
                 <div className="flex justify-between border-b border-gray-200 px-5 py-5">
                     <div>
-                        <h3 className="mb-0.5 text-xl font-semibold">Chandra Bazar Branch</h3>
-                        <p className="text-sm font-medium text-gray-500">Chandra Bazar, Faridgonj, Chandpur</p>
+                        <h3 className="mb-0.5 text-xl font-semibold">{branch?.name}</h3>
+                        <p className="text-sm font-medium text-gray-500">{branch?.address}</p>
                         <div className="mt-2 flex gap-2 divide-x divide-gray-300 font-medium text-gray-500 ">
                             <div className="flex items-center gap-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -89,7 +118,7 @@ const BranchDetailsPage = (session) => {
                                         />
                                     </svg>
                                 </div>
-                                Cash in hand : 200
+                                Cash in hand : {branch?.cash_in_hand}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -109,7 +138,7 @@ const BranchDetailsPage = (session) => {
                                         />
                                     </svg>
                                 </div>
-                                Total Loans : 22323
+                                Total Loans : {branch?.total_due_loan}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -129,7 +158,7 @@ const BranchDetailsPage = (session) => {
                                         />
                                     </svg>
                                 </div>
-                                Total Deposit : 200
+                                Total Deposit : {branch?.total_deposit}
                             </div>
                         </div>
                     </div>
@@ -168,13 +197,13 @@ const BranchDetailsPage = (session) => {
                                 onClick={() => setTab('TEAM')}
                                 backgroundColor={tab === 'TEAM' ? 'gray.100' : 'white'}
                             >
-                                Team - (100)
+                                Team - ({branchTotalTeam})
                             </Button>
                             <Button
                                 onClick={() => setTab('MEMBER')}
                                 backgroundColor={tab === 'MEMBER' ? 'gray.100' : 'white'}
                             >
-                                Members - (2333){' '}
+                                Members - ({totalBranchMembers}){' '}
                             </Button>
                         </ButtonGroup>
                     </div>
@@ -234,7 +263,11 @@ const BranchDetailsPage = (session) => {
                     </div>
                 </div>
                 {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
-                {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
+                {tab === 'TEAM' ? (
+                    <TeamsTable totalTeam={totalTeam} />
+                ) : (
+                    <BranchMembersList total_members={totalMembers} />
+                )}
             </div>
         </section>
     );
@@ -262,8 +295,16 @@ BranchDetailsPage.getLayout = (page: ReactNode) => {
 //     console.log('session response:....................................................... ', session);
 //     return {
 //         props: {
-//             session: JSON.stringify(session),
+//             sessionData: JSON.stringify(session),
 //         },
 //     };
 // };
+export const getServerSideProps = async ({ req }) => {
+    const session = await getSession({ req });
+    return {
+        props: {
+            sessionData: session,
+        },
+    };
+};
 export default BranchDetailsPage;

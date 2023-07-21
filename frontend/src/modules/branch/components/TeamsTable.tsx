@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+// /* eslint-disable no-console */
 import EditGroup from '@/modules/team/components/EditGroupModal';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
@@ -17,21 +17,30 @@ interface TeamObject {
     totalIncome: number;
 }
 
-const TeamsTable = () => {
+const TeamsTable = (props) => {
     const router = useRouter();
     const { data: session } = useSession();
 
     const [isOpenGroupEditModal, setIsOpenGroupEditModal] = useState(false);
+    // const [isTeamName, setIsTeamName] = useState('');
     const branchId = router.query.id;
 
-    const redirectToDetail = (teamId: number) => {
-        return router.push(`/team/${teamId}`);
+    const redirectToDetail = (teamId: number, teamName: string) => {
+        // setIsTeamName(teamName);
+        return router.push({
+            pathname: `/team/${teamId}`,
+            query: { teamName: teamName },
+        });
     };
 
     //greating team list using transtak query
     const { data, isFetching } = useQuery(['teams'], async () =>
         zodSafeQuery(`/api/v1/organization/teams?branch=${branchId}`)()
     );
+
+    //total team counting taken from here
+    const teamCounting = data?.result?.count;
+    props.totalTeam(teamCounting);
 
     return (
         <>
@@ -54,11 +63,14 @@ const TeamsTable = () => {
                     </Thead>
                     <Tbody className="text-gray-600">
                         {data &&
-                            data?.result.results.map((team: TeamObject) => {
+                            data?.result.results.map((team: TeamObject, index: number) => {
                                 return (
                                     <Tr key={team.id} className=" hover:bg-gray-50">
-                                        <Td>{team.id}</Td>
-                                        <Td onClick={() => redirectToDetail(team.id)} className="cursor-pointer">
+                                        <Td>{index + 1}</Td>
+                                        <Td
+                                            onClick={() => redirectToDetail(team.id, team.name)}
+                                            className="cursor-pointer"
+                                        >
                                             {team.name}
                                         </Td>
                                         <Td isNumeric> {team.totalMember}</Td>
