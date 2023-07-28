@@ -1,12 +1,10 @@
 from django.urls import path
-
 from rest_framework.routers import DefaultRouter
-
 from organization.views import (
     TeamCreateListApiView,
     TeamRetriveUpdateDestroyView,
-    BranchReadOnlyModelViewSet,
-    StaffReadOnlyModelViewSet
+    StaffReadOnlyModelViewSet,
+    BranchDetailView,
 )
 
 
@@ -14,17 +12,16 @@ from organization.views import (
 router = DefaultRouter()
 
 # router api verbs
-router.register(r'staffs', StaffReadOnlyModelViewSet, basename='staffs')
-router.register(r'branches', BranchReadOnlyModelViewSet, basename='branches')  # basename used for unit testing
+router.register(r"staffs", StaffReadOnlyModelViewSet, basename="staffs")
 
 urlpatterns = [
-
     path("teams/", TeamCreateListApiView.as_view(), name="teams"),
-
-    path("teams/<int:pk>/", TeamRetriveUpdateDestroyView.as_view(),
-         name="team_re_up_delete"),
+    path(
+        "teams/<int:pk>/",
+        TeamRetriveUpdateDestroyView.as_view(),
+        name="team_re_up_delete",
+    ),
+    path("branches/<int:pk>/", BranchDetailView.as_view(), name="branch_detail"),
 ]
 
 urlpatterns += router.urls
-
-

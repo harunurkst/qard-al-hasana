@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import CIHCalculation
 
-# Register your models here.
+
+class CacheInHandAdmin(admin.ModelAdmin):
+    list_display = ("id", "branch", "date", "cash_in_hand")
+
+
+admin.site.register(CIHCalculation, CacheInHandAdmin)

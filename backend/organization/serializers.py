@@ -118,27 +118,12 @@ class StaffListSerializer(serializers.ModelSerializer):
 
 
 # Branch Serializer
-class BranchListSerializer(serializers.ModelSerializer):
-    """calculated property for annotation (non-model property)"""
-
-    cash_in_hand = serializers.IntegerField(default=0)
-    total_deposit = serializers.IntegerField()
-    total_due_loan = serializers.IntegerField()
-    total_income = serializers.IntegerField()
-    total_expense = serializers.IntegerField()
+class BranchSerializer(serializers.ModelSerializer):
+    organization = serializers.CharField(source="organization.name")
 
     class Meta:
         model = Branch
-        fields = (
-            "id",
-            "name",
-            "address",
-            "cash_in_hand",
-            "total_deposit",
-            "total_due_loan",
-            "total_income",
-            "total_expense",
-        )
+        fields = ("id", "name", "address", "organization")
 
 
 # Logout Serializer
