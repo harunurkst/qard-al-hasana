@@ -1,3 +1,4 @@
+from typing import Iterable, Optional
 from django.db import models
 from organization.models import BaseModel
 from report.models import CIHCalculation
@@ -26,6 +27,17 @@ class GeneralTransaction(BaseModel):
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=10)
     category = models.ForeignKey(TransactionCategory, models.PROTECT)
     summary = models.TextField(blank=True, max_length=150)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.transaction_type == "income":
+            CIHCalculation.objects.add_cash_in_hand(
+                branch=self.branch, date=self.date, amount=self.amount
+            )
+        else:
+            CIHCalculation.objects.deduct_cash_in_hand(
+                branch=self.branch, date=self.date, amount=self.amount
+            )
 
 
 class Savings(BaseModel):

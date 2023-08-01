@@ -51,8 +51,6 @@ class LoginSerializer(TokenObtainPairSerializer):
             "role": user.role,
         }
         token["user"] = user_data
-        print(token["user"])
-
         return token
 
 
