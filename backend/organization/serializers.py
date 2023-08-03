@@ -47,11 +47,10 @@ class LoginSerializer(TokenObtainPairSerializer):
         # Add custom claims
         user_data = {
             "username": user.username,
-            "branch": user.branch.id,
+            "branch": user.branch.id if user.branch else None,
             "role": user.role,
         }
         token["user"] = user_data
-
         return token
 
 

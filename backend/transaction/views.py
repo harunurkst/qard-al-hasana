@@ -23,7 +23,7 @@ from .serializers import (
 )
 from .utils import format_savings_date, format_loan_data
 from korjo_soft.permissions import IsBranchOwner
-
+from report.models import CIHCalculation
 
 class DepositView(CreateAPIView):
     serializer_class = SavingsSerializer
@@ -232,6 +232,7 @@ class ExpenseTransactionListCreate(ListCreateAPIView):
             branch=user.branch,
             organization=user.branch.organization,
         )
+        
 
     def get_queryset(self):
         return GeneralTransaction.objects.filter(

@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 from organization.models import (
     Organization,
-    Staff,
     User,
     Branch,
     Division,
@@ -12,7 +11,7 @@ from organization.models import (
     Team,
 )
 from transaction.models import TransactionCategory
-
+from peoples.models import Staff
 
 class Command(BaseCommand):
     help = "Create a new user, category, and post"
@@ -42,7 +41,7 @@ class Command(BaseCommand):
             name="Test Branch",
             code=111,
             organization=org,
-            thana=thana,
+            # thana=thana,
         )
 
         # Create new user
