@@ -5,7 +5,8 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "next/core-web-vitals",
-        "next"
+        "next",
+        "plugin:react/recommended"
     ],
     "rules": {
         "no-console": "error",
