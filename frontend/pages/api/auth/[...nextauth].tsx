@@ -70,13 +70,13 @@ export const authOptions: AuthOptions = {
 
     callbacks: {
         jwt: async ({ token, user }) => {
-            const jwtKen = token.accessToken;
+            const jwtKen = String(token.accessToken);
             const decodedToken = decoderFunction(jwtKen);
             if (user) {
                 token.refreshToken = user.refresh;
                 token.accessToken = user.access;
             }
-           
+
             // implement refresh here
 
             if (isDateExpired(decodedToken && decodedToken.exp) && token) {
