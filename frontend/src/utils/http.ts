@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { getSession } from 'next-auth/react';
-import { env } from '../env.mjs';
+
+// eslint-disable-next-line no-console
+console.log('baseUrl =>', process.env.NEXT_PUBLIC_BACKEND_API_URL);
 
 const http = axios.create({
-    baseURL: env.NEXT_PUBLIC_BACKEND_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
 
     headers: {
         Accept: 'application/json',
