@@ -118,7 +118,7 @@ const BranchDetailsPage = (props) => {
                                         />
                                     </svg>
                                 </div>
-                                Cash in hand : {branch?.cash_in_hand}
+                                হাতে নগদ : {branch?.cash_in_hand}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -138,7 +138,7 @@ const BranchDetailsPage = (props) => {
                                         />
                                     </svg>
                                 </div>
-                                Total Loans : {branch?.total_due_loan}
+                                কর্জ স্থিতি : {branch?.total_due_loan}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -158,7 +158,7 @@ const BranchDetailsPage = (props) => {
                                         />
                                     </svg>
                                 </div>
-                                Total Deposit : {branch?.total_deposit}
+                                সঞ্চয় স্থিতি : {branch?.total_deposit}
                             </div>
                         </div>
                     </div>

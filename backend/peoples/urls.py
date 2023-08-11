@@ -13,7 +13,7 @@ peoples_router = routers.DefaultRouter()
 
 urlpatterns = [
     path("members/", MemberListCreateView.as_view(), name="list_create"),
-    path("members/<pk>/", MemberDetailsView.as_view(), name="details"),
+    path("members/<int:id>/", MemberDetailsView.as_view(), name="details"),
     path("members/<int:id>/saving-loan-info/", MemberSavingLoanInfo.as_view(), name="saving_loan_info"),
 ]
 

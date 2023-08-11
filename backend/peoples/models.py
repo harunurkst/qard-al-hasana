@@ -8,6 +8,7 @@ STAFF_ROLES = (("cl", "Collector"), ("bw", "Branch Owner"))
 
 class Staff(models.Model):
     """Like as profile of a Staff user"""
+
     name = models.CharField(max_length=150)
     mobile_number = models.CharField(max_length=11, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -33,10 +34,8 @@ class Member(models.Model):
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, default="male")
     serial_number = models.IntegerField(default=1)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    team = models.ForeignKey(
-        "organization.Team", on_delete=models.SET_NULL, blank=True, null=True
-    )
-    branch = models.ForeignKey("organization.Branch", on_delete=models.CASCADE)
+    team = models.ForeignKey("organization.Team", on_delete=models.RESTRICT)
+    branch = models.ForeignKey("organization.Branch", on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

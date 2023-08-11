@@ -29,9 +29,9 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'code', 'organization', 'thana', 'address', 'bank_account']
-    list_display_links = ['name']
-    ordering = ['id']
+    list_display = ["id", "name", "code", "organization", "address", "bank_account"]
+    list_display_links = ["name"]
+    ordering = ["id"]
 
 
 # register all the models from this app
