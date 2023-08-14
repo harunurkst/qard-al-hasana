@@ -25,6 +25,7 @@ from .utils import format_savings_date, format_loan_data
 from korjo_soft.permissions import IsBranchOwner
 from report.models import CIHCalculation
 
+
 class DepositView(CreateAPIView):
     serializer_class = SavingsSerializer
     permission_classes = [IsAuthenticated, IsSameBranch]
@@ -151,8 +152,7 @@ class MemberSavingsData(APIView):
         if team:
             members = members.filter(team=team)
         for member in members:
-            member_savings = Savings.objects.filter(member=member, date__month=month)
-            savings_data = format_savings_date(member_savings, member)
+            savings_data = format_savings_date(member, month)
             data.append(savings_data)
         return Response(data)
 
@@ -188,8 +188,7 @@ class MemberLoanData(APIView):
         if team:
             active_loans = active_loans.filter(team=team)
         for loan in active_loans:
-            installments = Installment.objects.filter(loan=loan, date__month=month)
-            installment_data = format_loan_data(loan, installments)
+            installment_data = format_loan_data(loan, month)
             data.append(installment_data)
         return Response(data)
 
@@ -232,7 +231,6 @@ class ExpenseTransactionListCreate(ListCreateAPIView):
             branch=user.branch,
             organization=user.branch.organization,
         )
-        
 
     def get_queryset(self):
         return GeneralTransaction.objects.filter(
