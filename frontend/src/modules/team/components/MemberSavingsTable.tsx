@@ -2,6 +2,7 @@ import { VerticalDotIcon } from '@/icons';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
+    Button,
     Menu,
     MenuButton,
     MenuItem,
@@ -595,36 +596,14 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
                                     <TrasectionTD amount={data.week4} weekNo={4} />
                                     <Td isNumeric> {data.balance}</Td>
                                     <Td isNumeric>
-                                        <Menu>
-                                            <MenuButton
-                                                className=" inline-flex h-8 w-8  items-center justify-center rounded-full bg-white text-gray-900 hover:border hover:border-gray-200 hover:text-brand-600"
-                                                as={'button'}
-                                            >
-                                                <div className="flex h-full w-full items-center justify-center bg-transparent">
-                                                    <VerticalDotIcon height={16} width={16} stroke="currentColor" />
-                                                </div>
-                                            </MenuButton>
-                                            <MenuList>
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        router.push({
-                                                            pathname: `/member/${data.member_id}`,
-                                                            query: { teamId: teamId },
-                                                        });
-                                                    }}
-                                                >
-                                                    View
-                                                </MenuItem>
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        setSelectedMember(data);
-                                                        setOpenDepositModal(true);
-                                                    }}
-                                                >
-                                                    সঞ্চয় জমা
-                                                </MenuItem>
-                                            </MenuList>
-                                        </Menu>
+                                        <Button
+                                            onClick={() => {
+                                                setSelectedMember(data);
+                                                setOpenDepositModal(true);
+                                            }}
+                                        >
+                                            সঞ্চয় জমা
+                                        </Button>
                                     </Td>
                                 </Tr>
                             );
