@@ -30,6 +30,7 @@ from .serializers import (
     StaffListSerializer,
     BranchSerializer,
     LogoutSerializer,
+    ChangePasswordSerializer,
 )
 
 
@@ -74,6 +75,20 @@ class RegisterView(CreateAPIView):
         user = serializer.save()
         return Response(UserSerilizerWithToken(user, many=False).data)
 
+
+
+class ChangePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if not request.user.check_password(serializer.validated_data["old_password"]):
+            return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.set_password(serializer.validated_data["new_password"])
+        request.user.save()
+        return Response({"detail": "Successfully changed password."}, status=status.HTTP_200_OK)
 
 class TeamCreateListApiView(ListCreateAPIView):
     queryset = Team.objects.all().order_by("-id")
