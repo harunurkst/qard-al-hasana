@@ -2,6 +2,7 @@ import { VerticalDotIcon } from '@/icons';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
+    Button,
     Menu,
     MenuButton,
     MenuItem,
@@ -222,7 +223,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
             <Page size={'A4'}>
                 <View style={styles.mypdf}>
                     <View style={styles.header}>
-                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>Sample Organization</Text>
+                        <Text style={[styles.title, { fontFamily: 'Nikosh' }]}>{orgName}</Text>
                         <View style={styles.organizationContainer}>
                             <Text style={[styles.branchText, { fontFamily: 'Nikosh' }]}>{branchName},</Text>
                             <Text style={[styles.teamText, { fontFamily: 'Nikosh' }]}>{teamName}</Text>
@@ -331,33 +332,33 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
                                 return (
                                     <View style={styles.tableRow} key={element.member_id}>
                                         <View style={styles.tableCellBorder1}>
-                                            <Text style={[styles.serialNumber]}>{element?.sl}</Text>
+                                            <Text style={[styles.serialNumber, { fontFamily: 'Nikosh' }]}>{element?.sl}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder3}>
-                                            <Text style={[styles.guardianName]}>{element?.guardian_name}</Text>
+                                            <Text style={[styles.guardianName, { fontFamily: 'Nikosh' }]}>{element?.guardian_name}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.savings]}>{element?.balance}</Text>
+                                            <Text style={[styles.savings, { fontFamily: 'Nikosh' }]}>{element?.balance}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week]}>{element?.week1}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week1}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week]}>{element?.week2}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week2}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week]}>{element?.week3}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week3}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week]}>{element?.week4}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week4}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.withdrawalAmount]}>
+                                            <Text style={[styles.withdrawalAmount, { fontFamily: 'Nikosh' }]}>
                                                 {matchingInstallment?.loan_balance}
                                             </Text>
                                         </View>
                                         <View style={[styles.tableCellBorder, styles.lastTableCell]}>
-                                            <Text style={styles.total}>550</Text>
+                                            <Text style={[styles.total, { fontFamily: 'Nikosh' }]}>550</Text>
                                         </View>
                                     </View>
                                 );
@@ -595,36 +596,14 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
                                     <TrasectionTD amount={data.week4} weekNo={4} />
                                     <Td isNumeric> {data.balance}</Td>
                                     <Td isNumeric>
-                                        <Menu>
-                                            <MenuButton
-                                                className=" inline-flex h-8 w-8  items-center justify-center rounded-full bg-white text-gray-900 hover:border hover:border-gray-200 hover:text-brand-600"
-                                                as={'button'}
-                                            >
-                                                <div className="flex h-full w-full items-center justify-center bg-transparent">
-                                                    <VerticalDotIcon height={16} width={16} stroke="currentColor" />
-                                                </div>
-                                            </MenuButton>
-                                            <MenuList>
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        router.push({
-                                                            pathname: `/member/${data.member_id}`,
-                                                            query: { teamId: teamId },
-                                                        });
-                                                    }}
-                                                >
-                                                    View
-                                                </MenuItem>
-                                                <MenuItem
-                                                    onClick={() => {
-                                                        setSelectedMember(data);
-                                                        setOpenDepositModal(true);
-                                                    }}
-                                                >
-                                                    সঞ্চয় জমা
-                                                </MenuItem>
-                                            </MenuList>
-                                        </Menu>
+                                        <Button
+                                            onClick={() => {
+                                                setSelectedMember(data);
+                                                setOpenDepositModal(true);
+                                            }}
+                                        >
+                                            সঞ্চয় জমা
+                                        </Button>
                                     </Td>
                                 </Tr>
                             );
@@ -653,13 +632,12 @@ const TrasectionTD = ({ amount, weekNo }: { amount: number; weekNo: number }) =>
 
     return (
         <Td
-            className={`${
-                status === 'MISS_DATE'
-                    ? 'font-semibold text-red-500'
-                    : status === 'DONE'
+            className={`${status === 'MISS_DATE'
+                ? 'font-semibold text-red-500'
+                : status === 'DONE'
                     ? 'text-brand-500'
                     : 'text-warning-400'
-            }`}
+                }`}
         >
             {' '}
             {status === 'DONE' ? amount : status === 'MISS_DATE' ? 'DUE' : 'PENDING'}{' '}
