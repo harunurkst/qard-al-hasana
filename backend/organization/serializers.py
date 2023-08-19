@@ -128,3 +128,7 @@ class BranchSerializer(serializers.ModelSerializer):
 # Logout Serializer
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

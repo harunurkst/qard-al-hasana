@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
+import { showNotification } from '@/utils/messages';
 
 interface IDepositModal {
     isOpen: boolean;
@@ -33,6 +34,7 @@ interface DepositSubmitDataType {
 const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<string | null>(null);
     const selectedMember = useMemberSavingsStore((state) => state.selectedMember);
+
     // const queryClient = useQueryClient();
     // useEffect(()=>{
     //     console.log('selectedMember',selectedMember)
@@ -54,10 +56,16 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
     const queryClient = useQueryClient();
     const { mutate, isLoading, error } = useMutation(postRequest, {
         onSuccess: () => {
-            showAlert({
-                title: 'Deposit Successful!',
-                text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় -- টাকা`,
-            });
+
+            showNotification(
+                `সঞ্চয় জমা হয়েছে ${selectedMember?.member_name}`,
+                'Sucess',
+                'success'
+            );
+            // showAlert({
+            //     title: 'Deposit Successful!',
+            //     text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় ${tempSubmittingData.amount} টাকা`,
+            // });
             queryClient.invalidateQueries(['memberSaving']);
         },
         onError: (error) => {
@@ -72,6 +80,8 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
 
     //team creation modal handling
     const onSubmit = (values: DepositSubmitDataType) => {
+
+
         const tempSubmittingData = {
             member: selectedMember?.member_id,
             amount: values.amount,

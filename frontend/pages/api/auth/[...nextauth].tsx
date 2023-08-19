@@ -35,6 +35,7 @@ async function refreshAccessToken(tokenObject: any) {
         return tokenObject;
     }
 }
+// dspshine Wave(18000)/13000/lum hpd/200
 
 export const authOptions: AuthOptions = {
     session: {
@@ -76,7 +77,7 @@ export const authOptions: AuthOptions = {
                 token.refreshToken = user.refresh;
                 token.accessToken = user.access;
             }
-           
+
             // implement refresh here
 
             if (isDateExpired(decodedToken && decodedToken.exp) && token) {

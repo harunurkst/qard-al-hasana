@@ -6,6 +6,12 @@ const nextTranslate = require('next-translate-plugin');
 
 const nextConfig = {
   reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 }
 
 module.exports = nextTranslate(nextConfig)

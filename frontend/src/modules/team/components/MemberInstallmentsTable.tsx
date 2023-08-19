@@ -36,6 +36,16 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 
     return 'PENDING';
 }
+
+function getYear() {
+    const date = new Date()
+    return date.getFullYear()
+}
+function getMonth() {
+    const date = new Date()
+    return date.getMonth()
+}
+
 interface IMemberInstallmentsTable {
     teamId: string | string[] | undefined;
     teamName: string;
@@ -526,6 +536,10 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({
             </Page>
         </Document>
     ); //pdf ended here
+    const currentYear = getYear()
+    console.log(currentYear)
+    const currentMonth = getMonth()
+    const blankPdfName = "deposit_" + teamName + "_" + currentMonth + "_" + currentYear + "." + "pdf"
 
     return (
         <>
@@ -621,10 +635,10 @@ const MemberInstallmentsTable: React.FC<IMemberInstallmentsTable> = ({
                 </Table>
             </TableContainer>
             <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
-                <PDFDownloadLink document={blankpdf} fileName="Installmentsheet_blank.pdf">
+                <PDFDownloadLink document={blankpdf} fileName={blankPdfName}>
                     {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Blank Pdf')}
                 </PDFDownloadLink>
-            </button>
+            </button >
 
             <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
                 <PDFDownloadLink document={mycontent} fileName="Installmentsheet.pdf">
@@ -640,13 +654,12 @@ const TrasectionTD = ({ amount, weekNo }: { amount: number; weekNo: number }) =>
 
     return (
         <Td
-            className={`${
-                status === 'MISS_DATE'
-                    ? 'font-semibold text-red-500'
-                    : status === 'DONE'
+            className={`${status === 'MISS_DATE'
+                ? 'font-semibold text-red-500'
+                : status === 'DONE'
                     ? 'text-brand-500'
                     : 'text-warning-400'
-            }`}
+                }`}
         >
             {' '}
             {status === 'DONE' ? amount : status === 'MISS_DATE' ? 'DUE' : 'PENDING'}{' '}

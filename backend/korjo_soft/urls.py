@@ -10,7 +10,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-from organization.views import LoginView, RegisterView, LogoutView
+from organization.views import ChangePasswordAPIView, LoginView, RegisterView, LogoutView
 
 
 urlpatterns = [
@@ -24,6 +24,7 @@ urlpatterns = [
     path("api/v1/auth/login/", LoginView.as_view(), name="login"),
     path("api/v1/auth/logout/", LogoutView.as_view(), name="logout"),
     path("api/v1/auth/registration/", RegisterView.as_view(), name="register"),
+    path("api/v1/auth/password/change/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("api/v1/auth/refresh/", TokenRefreshView.as_view(), name="refresh"),
     # organization
     path("api/v1/organization/", include("organization.urls")),

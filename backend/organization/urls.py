@@ -22,6 +22,7 @@ urlpatterns = [
         name="team_re_up_delete",
     ),
     path("branches/<int:pk>/", BranchDetailView.as_view(), name="branch_detail"),
+    
 ]
 
 urlpatterns += router.urls
