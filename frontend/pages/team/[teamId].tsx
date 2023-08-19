@@ -93,13 +93,13 @@ const TeamPage = (sessionData) => {
                                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
                                         <LoanIcon />
                                     </div>
-                                    Total Loans : {teamdetail?.total_unpaid_loan}
+                                    কর্জ স্থিতি : {teamdetail?.total_unpaid_loan}
                                 </div>
                                 <div className="flex items-center gap-2 pl-2 text-sm">
                                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
                                         <DepositIcon />
                                     </div>
-                                    Total Deposit : {teamdetail?.total_deposit}
+                                    সঞ্চয় স্থিতি : {teamdetail?.total_deposit}
                                 </div>
                             </div>
                         </div>
@@ -121,13 +121,13 @@ const TeamPage = (sessionData) => {
                                 onClick={() => setTab('DEPOSIT')}
                                 backgroundColor={tab === 'DEPOSIT' ? 'gray.100' : 'white'}
                             >
-                                Deposit - ('nai')
+                                সঞ্চয় - ('nai')
                             </Button>
                             <Button
                                 onClick={() => setTab('LOAN')}
                                 backgroundColor={tab === 'LOAN' ? 'gray.100' : 'white'}
                             >
-                                Installment - ({teamdetail?.active_loan})
+                                কর্জ - ({teamdetail?.active_loan})
                             </Button>
                         </ButtonGroup>
                         <div className="flex flex-col gap-3 md:flex-row">
@@ -145,7 +145,7 @@ const TeamPage = (sessionData) => {
                                 leftIcon={<PersonPlusIcon />}
                                 colorScheme={'brand'}
                             >
-                                Add Member
+                                সদস্য ভর্তি
                             </Button>
                         </div>
                     </div>

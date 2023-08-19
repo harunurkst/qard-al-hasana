@@ -56,7 +56,7 @@ const DepositModal: React.FC<IDepositModal> = ({ isOpen, onClose }) => {
         onSuccess: () => {
             showAlert({
                 title: 'Deposit Successful!',
-                text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় ${tempSubmittingData.amount} টাকা`,
+                text: ` সঞ্চয় জমা হয়েছে, ${selectedMember?.member_name}, মোট সঞ্চয় -- টাকা`,
             });
             queryClient.invalidateQueries(['memberSaving']);
         },

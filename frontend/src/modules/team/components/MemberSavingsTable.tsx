@@ -568,7 +568,7 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
                             <Th>২য় সপ্তাহ</Th>
                             <Th>৩য় সপ্তাহ</Th>
                             <Th>৪র্থ সপ্তাহ</Th>
-                            <Th isNumeric>সঞ্চয়</Th>
+                            <Th isNumeric>স্থিতি</Th>
                             <Th isNumeric>ক্রিয়া</Th>
                         </Tr>
                     </Thead>
