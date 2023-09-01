@@ -36,13 +36,12 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
     return 'PENDING';
 }
 interface IMemberTableOfBranch {
-    total_members: string | string[] | undefined;
     searchKeyword: string | string[] | undefined;
 }
 
 //pdf styling
 
-const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({  total_members,searchKeyword }) => {
+const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({  searchKeyword }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
@@ -52,24 +51,12 @@ const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({  total_members,s
             console.log('changed')
             setIsKeywordChanged(!isKeywordChanged)}
     },[searchKeyword])
-    const { data: session, status } = useSession();
 
-    // use the hook to fetch member savings
-    // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
     const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
     const { data } = useQuery(['memberSaving'], async () => zodSafeQuery(`/api/v1/peoples/members?search=${searchKeyword}`)(),{
         enabled: isKeywordChanged
       });
-    //   const { data } = useQuery(
-    //     ["memberSaving"],
-    //     () => getQuery(`/api/v1/peoples/members?search=${searchKeyword}`),
-    //     { enabled: true }
-    //   );
-// console.log('searchKeyword',searchKeyword)
     setTransactions(data?.result);
-    //get total members of a branch
-    // const totalMembers = data?.result.count;
-    // total_members(totalMembers);
 
     if (!data) {
         return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
