@@ -2,7 +2,7 @@ import VerticalDotIcon from '@/icons/VerticalDotIcon';
 import { useMemberSavingsStore } from '@/modules/team/stores/useMemberSavingsStore';
 import { MemberSavingsType } from '@/types/memberSaving.type';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
-import zodSafeQuery from '@/utils/zodSafeQuery';
+import { getQuery } from "@/utils/getQuery";
 import {
     Menu,
     MenuButton,
@@ -19,7 +19,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import zodSafeQuery from '@/utils/zodSafeQuery';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -35,27 +36,40 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
     return 'PENDING';
 }
 interface IMemberTableOfBranch {
-    teamId: string | string[] | undefined;
+    total_members: string | string[] | undefined;
+    searchKeyword: string | string[] | undefined;
 }
 
 //pdf styling
 
-const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId, total_members }) => {
+const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({  total_members,searchKeyword }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
-
+    const [isKeywordChanged, setIsKeywordChanged] = useState(true);
+    useEffect(()=>{
+        if(searchKeyword) {
+            console.log('changed')
+            setIsKeywordChanged(!isKeywordChanged)}
+    },[searchKeyword])
     const { data: session, status } = useSession();
 
     // use the hook to fetch member savings
     // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
     const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
-    const { data } = useQuery(['memberSaving'], async () => zodSafeQuery(`/api/v1/peoples/members/`)());
-
+    const { data } = useQuery(['memberSaving'], async () => zodSafeQuery(`/api/v1/peoples/members?search=${searchKeyword}`)(),{
+        enabled: isKeywordChanged
+      });
+    //   const { data } = useQuery(
+    //     ["memberSaving"],
+    //     () => getQuery(`/api/v1/peoples/members?search=${searchKeyword}`),
+    //     { enabled: true }
+    //   );
+// console.log('searchKeyword',searchKeyword)
     setTransactions(data?.result);
     //get total members of a branch
-    const totalMembers = data?.result.count;
-    total_members(totalMembers);
+    // const totalMembers = data?.result.count;
+    // total_members(totalMembers);
 
     if (!data) {
         return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
@@ -80,7 +94,7 @@ const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId, total_me
                     </Thead>
                     <Tbody className="text-gray-600">
                         {data &&
-                            data.result?.results.map((singleData: MemberSavingsType, index) => {
+                            data.result?.results?.map((singleData: MemberSavingsType, index) => {
                                 return (
                                     <Tr key={singleData?.id} className="hover:bg-gray-50">
                                         <Td>{index + 1}</Td>

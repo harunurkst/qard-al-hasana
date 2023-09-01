@@ -2,7 +2,7 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 import BranchMembersList from '@/modules/branch/components/MemberTableOfBranch';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
 import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
 // modal imported
 import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
@@ -31,6 +31,8 @@ const BranchDetailsPage = (props) => {
     // const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
     const [branchTotalTeam, setBranchTotalTeam] = useState();
     const [totalBranchMembers, setTotalBranchMembers] = useState();
+    const [breadcrumbItems, setBreadcrumbItems] = useState([]);
+    const [searchKeyword, setSearchKeyword] = useState('');
 
     const modalHandling = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -47,25 +49,46 @@ const BranchDetailsPage = (props) => {
     // console.log('branch details: ', branch);
 
     //breadcrumb
-    const breadcrumbItems: SingleBreadCrumbItemType[] =
-        role == 'BO'
-            ? [
-                  {
-                      label: branch?.name,
-                      href: `/branch/${branch_id}`,
-                  },
-              ]
-            : [
-                  {
-                      label: 'Dashboard',
-                      href: '/dashboard',
-                  },
-                  {
-                      label: branch?.name,
-                      href: `/branch/${branch_id}`,
-                  },
-              ];
-
+    // const breadcrumbItems: SingleBreadCrumbItemType[] =
+    //     role == 'BO'
+    //         ? [
+    //               {
+    //                   label: branch?.name,
+    //                   href: `/branch/${branch_id}`,
+    //               },
+    //           ]
+    //         : [
+    //               {
+    //                   label: 'Dashboard',
+    //                   href: '/dashboard',
+    //               },
+    //               {
+    //                   label: branch?.name,
+    //                   href: `/branch/${branch_id}`,
+    //               },
+    //           ];
+    useEffect(() => {
+        if(role == 'BO' && branch)
+        setBreadcrumbItems(
+            role == 'BO'
+                ? [
+                      {
+                          label: branch?.name,
+                          href: `/branch/${branch_id}`,
+                      },
+                  ]
+                : [
+                      {
+                          label: 'Dashboard',
+                          href: '/dashboard',
+                      },
+                      {
+                          label: branch?.name,
+                          href: `/branch/${branch_id}`,
+                      },
+                  ]
+        );
+    }, [branch, role]);
     //get total team
     const totalTeam = (teamCounting) => {
         setBranchTotalTeam(teamCounting);
@@ -77,7 +100,7 @@ const BranchDetailsPage = (props) => {
     };
 
     return (
-        <section className="container mx-auto pb-8 pt-4">
+        <section className="container mx-auto px-8 pb-8 pt-4">
             <CommonBreadCrumb items={breadcrumbItems} />
 
             {/* creating new group and new member modal */}
@@ -212,9 +235,16 @@ const BranchDetailsPage = (props) => {
                             <InputLeftElement pointerEvents="none">
                                 <SearchIcon />
                             </InputLeftElement>
-                            <Input placeholder="Search Branch" background={'white'} focusBorderColor="brand.500" />
+                            <Input
+                                onChange={(e) => {
+                                    setSearchKeyword(e.target.value);
+                                }}
+                                placeholder="Search"
+                                background={'white'}
+                                focusBorderColor="brand.500"
+                            />
                         </InputGroup>
-                        <Button
+                        {/* <Button
                             variant={'outline'}
                             size="md"
                             leftIcon={
@@ -236,7 +266,7 @@ const BranchDetailsPage = (props) => {
                             }
                         >
                             Filters
-                        </Button>
+                        </Button> */}
                         <Button
                             onClick={modalHandling}
                             leftIcon={
@@ -266,7 +296,7 @@ const BranchDetailsPage = (props) => {
                 {tab === 'TEAM' ? (
                     <TeamsTable totalTeam={totalTeam} />
                 ) : (
-                    <BranchMembersList total_members={totalMembers} />
+                    <BranchMembersList searchKeyword={searchKeyword} total_members={totalMembers} />
                 )}
             </div>
         </section>
@@ -290,15 +320,7 @@ const SearchIcon = () => {
 BranchDetailsPage.getLayout = (page: ReactNode) => {
     return <DashboardLayout className="min-h-screen">{page}</DashboardLayout>;
 };
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//     const session = await getServerSession(context.req, context.res, authOptions);
-//     console.log('session response:....................................................... ', session);
-//     return {
-//         props: {
-//             sessionData: JSON.stringify(session),
-//         },
-//     };
-// };
+
 export const getServerSideProps = async ({ req }) => {
     const session = await getSession({ req });
     return {

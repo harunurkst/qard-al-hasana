@@ -109,7 +109,7 @@ const BranchPage = () => {
     const [isOpenEditModal, setOpenEditModal] = useState(false);
 
     return (
-        <section className="container mx-auto pb-8 pt-4">
+        <section className="container mx-auto px-8 pb-8 pt-4">
             <Breadcrumb>
                 <BreadcrumbItem>
                     <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>

@@ -3,7 +3,7 @@ import MemberInstallmentsTable from '@/modules/team/components/MemberInstallment
 import MemberSavingsTable from '@/modules/team/components/MemberSavingsTable';
 
 import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 // Modals are imported here
 import AddMemberModal from '@/modules/member/components/CreateMemberModal';
 import EditTeamInfoModal from '@/modules/team/components/EditGroupModal';
@@ -31,13 +31,42 @@ const TeamPage = (sessionData) => {
 
     const [isOpenAddMemberModal, setIsOpenAddMemberModal] = useState(false);
     const [isOpenTeamEditModal, setIsOpenTeamEditModal] = useState(false);
+    const [breadcrumbItems, setBreadcrumbItems] = useState([]);
 
     //get team details
     const { data } = useQuery(['team'], async () => zodSafeQuery(`/api/v1/organization/teams/${teamId}/`)());
     const teamdetail = data?.result;
 
-    const breadcrumbItems: SingleBreadCrumbItemType[] =
-        role === 'BO'
+    // const breadcrumbItems: SingleBreadCrumbItemType[] =
+    //     role === 'BO'
+    //         ? [
+    //               {
+    //                   label: `${teamdetail?.branch_name}`,
+    //                   href: `/branch/${branch_id}`,
+    //               },
+    //               {
+    //                   label: `${teamName}`,
+    //                   href: `/team/${teamId}`,
+    //               },
+    //           ]
+    //         : [
+    //               {
+    //                   label: 'Dashboard',
+    //                   href: `/dashboard`,
+    //               },
+    //               {
+    //                   label: `${teamdetail?.branch_name}`,
+    //                   href: `/branch/${branch_id}`,
+    //               },
+    //               {
+    //                   label: `${teamName}`,
+    //                   href: `/team/${teamId}`,
+    //               },
+    //           ];
+              useEffect(() => {
+                if(role == 'BO' && teamdetail && teamName )
+                setBreadcrumbItems(
+                    role === 'BO'
             ? [
                   {
                       label: `${teamdetail?.branch_name}`,
@@ -61,11 +90,12 @@ const TeamPage = (sessionData) => {
                       label: `${teamName}`,
                       href: `/team/${teamId}`,
                   },
-              ];
-
+              ]
+                );
+            }, [teamdetail, teamName,teamId]);
     return (
         <>
-            <section className="container mx-auto pb-8 pt-4">
+            <section className="container mx-auto px-8 pb-8 pt-4">
                 <CommonBreadCrumb items={breadcrumbItems} />
 
                 {isOpenAddMemberModal && (
