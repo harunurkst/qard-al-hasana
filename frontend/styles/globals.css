@@ -1,8 +1,29 @@
+
+/* styles/global.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali&display=swap');
+
+@font-face {
+  font-family: 'Nikosh';
+  src: url('/fonts/Nikosh.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Boisakh';
+  src: url('/fonts/LiAlinurBoisakhUnicode-Regular.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Inter','Nikosh', sans-serif;
 }
 
 html,
@@ -41,3 +62,24 @@ body {
     }
 
     /*======================= scrollbar styling done ================= */
+
+
+    .react-datepicker-wrapper {
+      width: 100%;
+  }
+  
+  .react-datepicker__input-container {
+      width: 100%;
+  }
+  
+  .react-datepicker__input-container input {
+      width: 100%;
+      border: 2px solid green;
+      border-radius: 5px;
+      padding: 5px 10px;
+  }
+  
+  .react-datepicker {
+      font-size: 32px; /* Increase this value to make the calendar larger */
+  }
+  

@@ -1,3 +1,5 @@
+import { isDateExpired } from '@/utils/datetime';
+import { decoderFunction } from '@/utils/decoder';
 import http from '@/utils/http';
 import { AuthOptions, DefaultUser } from 'next-auth';
 import NextAuth from 'next-auth/next';
@@ -11,14 +13,6 @@ type UserCredential = {
 };
 
 declare module 'next-auth' {
-    // interface Session {
-    //     user?: DefaultUser & { accessToken: string };
-    // }
-    // interface Session {
-    //     user: {
-    //         accessToken: string;
-    //     };
-    // }
     interface Session {
         accessToken: string;
     }
@@ -28,6 +22,20 @@ declare module 'next-auth' {
         user: object;
     }
 }
+
+async function refreshAccessToken(tokenObject: any) {
+    try {
+        const response = await http.post('/api/v1/auth/refresh/', { refresh: tokenObject.refreshToken });
+
+        tokenObject.accessToken = response.data.access;
+        tokenObject.refreshToken = response.data.refresh;
+
+        return tokenObject;
+    } catch (error) {
+        return tokenObject;
+    }
+}
+// dspshine Wave(18000)/13000/lum hpd/200
 
 export const authOptions: AuthOptions = {
     session: {
@@ -53,7 +61,6 @@ export const authOptions: AuthOptions = {
                 if (user && user.status == 200) {
                     return user.data;
                 } else {
-                    //   console.log("check your credentials");
                     return null;
                 }
             },
@@ -64,24 +71,30 @@ export const authOptions: AuthOptions = {
 
     callbacks: {
         jwt: async ({ token, user }) => {
+            const jwtKen = token.accessToken;
+            const decodedToken = decoderFunction(jwtKen);
             if (user) {
                 token.refreshToken = user.refresh;
                 token.accessToken = user.access;
             }
-            // else if(Date.now()<(token.exp * 1000)){
-            //     return token
-            // }else{
-            //     const refreshResponse = await api('api/v1/auth/refresh/', token.refreshToken )
-            //     const res = refreshResponse
-            //     console.log('res:.....', res)
-            // }
 
+            // implement refresh here
+
+            if (isDateExpired(decodedToken && decodedToken.exp) && token) {
+                token = await refreshAccessToken(token);
+            }
+
+            token.details = decodedToken;
             return token;
         },
 
         session: ({ session, token }) => {
             if (token) {
                 session.user.accessToken = token.accessToken;
+                session.user.username = token.details.user.username;
+                session.user.user_id = token.details.user_id;
+                session.user.branch = token.details.user.branch;
+                session.user.role = token.details.user.role;
             }
             return session;
         },

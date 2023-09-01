@@ -28,15 +28,8 @@ const Login = (response: string) => {
             // 'redirect': false,
             username: values.username,
             password: values.password,
-            callbackUrl: '/dashboard',
+            callbackUrl: `/dashboard`,
         });
-
-        // return new Promise<void>((resolve) => {
-        //     setTimeout(() => {
-        //         router.push('/dashboard');
-        //         resolve();
-        //     }, 3000);
-        // });
     };
 
     return (
@@ -81,7 +74,6 @@ Login.getLayout = (page: ReactNode) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const res = await getCsrfToken(context);
-
     return {
         props: {
             // csrfToken: await getCsrfToken(context),

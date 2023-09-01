@@ -3,14 +3,15 @@ from django.contrib.auth.models import User
 
 from organization.models import (
     Organization,
-    Staff,
     User,
     Branch,
     Division,
     District,
-    Thana, Team
+    Thana,
+    Team,
 )
-
+from transaction.models import TransactionCategory
+from peoples.models import Staff
 
 class Command(BaseCommand):
     help = "Create a new user, category, and post"
@@ -19,7 +20,8 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        print("hello ===>")
+        TransactionCategory.objects.get_or_create(name='Registration Fee')
+        TransactionCategory.objects.get_or_create(name='Office Rent')
         # Create new division
         division, _ = Division.objects.get_or_create(name="Test Division")
 
@@ -39,30 +41,28 @@ class Command(BaseCommand):
             name="Test Branch",
             code=111,
             organization=org,
-            thana=thana,
+            # thana=thana,
         )
 
         # Create new user
         user, created = User.objects.get_or_create(username="admin")
-        if created:
-            user.set_password("admin")
-            user.is_superuser = True
-            user.is_staff = True
-            user.save()
+        user.set_password("admin")
+        user.is_superuser = True
+        user.is_staff = True
+        user.branch = branch
+        user.role = 'BO'
+        user.save()
 
         # Create new staff
         staff, _ = Staff.objects.get_or_create(
             name="Staff User",
             mobile_number="01111111111",
             email="staff@mail.com",
-            branch=branch,
             user=user,
         )
 
         team, created = Team.objects.get_or_create(
-            name="Demo Team",
-            branch=branch,
-            defaults={'owner': staff}
+            name="Demo Team", branch=branch, defaults={"owner": user}
         )
 
         self.stdout.write(

@@ -7,16 +7,14 @@ STAFF_ROLES = (("cl", "Collector"), ("bw", "Branch Owner"))
 
 
 class Staff(models.Model):
+    """Like as profile of a Staff user"""
+
     name = models.CharField(max_length=150)
-    mobile_number = models.CharField(max_length=11)
+    mobile_number = models.CharField(max_length=11, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    branch = models.ForeignKey(
-        "organization.Branch", on_delete=models.CASCADE, db_index=True
-    )
     user = models.OneToOneField(
         "organization.User", on_delete=models.SET_NULL, blank=True, null=True
     )
-    role = models.CharField(max_length=5, choices=STAFF_ROLES, default="bw")
 
     def __str__(self):
         return self.name
@@ -30,17 +28,17 @@ GENDER_CHOICES = (
 
 class Member(models.Model):
     name = models.CharField(max_length=150)
-    mobile_number = models.CharField(max_length=11)
+    mobile_number = models.CharField(max_length=11, blank=True, null=True)
     nid_number = models.CharField(max_length=25, blank=True, null=True)
     guardian_name = models.CharField(max_length=150, blank=True, null=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, default="male")
     serial_number = models.IntegerField(default=1)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    team = models.ForeignKey(
-        "organization.Team", on_delete=models.SET_NULL, blank=True, null=True
-    )
-    branch = models.ForeignKey("organization.Branch", on_delete=models.CASCADE)
+    team = models.ForeignKey("organization.Team", on_delete=models.RESTRICT)
+    branch = models.ForeignKey("organization.Branch", on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("team", "serial_number")

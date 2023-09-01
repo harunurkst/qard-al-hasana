@@ -1,34 +1,36 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import MembersTable from '@/modules/branch/components/MembersTable';
+import BranchMembersList from '@/modules/branch/components/MemberTableOfBranch';
 import TeamsTable from '@/modules/branch/components/TeamsTable';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    Button,
-    ButtonGroup,
-    Input,
-    InputGroup,
-    InputLeftElement,
-} from '@chakra-ui/react';
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
+import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import React, { ReactNode, useState } from 'react';
-import { authOptions } from '../api/auth/[...nextauth]';
 
 // modal imported
+import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import EditBranchModal from '@/modules/branch/components/EditBranchModal';
-import CreateNewGroup from '@/modules/group/CreateGroupModal';
 import CreateNewMember from '@/modules/member/components/CreateMemberModal';
+import CreateNewGroup from '@/modules/team/components/CreateGroupModal';
+import zodSafeQuery from '@/utils/zodSafeQuery';
+import { useQuery } from '@tanstack/react-query';
+import { getSession, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 // import EditMemberModal from '../../src/modules/member/components/EditMemberModal'
 
-const BranchDetailsPage = () => {
+const BranchDetailsPage = (props) => {
+    const { data: session } = useSession();
+    const router = useRouter();
+    // const branchId = router.query.id;
+    const sessionDetails = props.sessionData.user;
+    const role = sessionDetails?.role;
+    const branch_id = sessionDetails?.branch;
+
     const [tab, setTab] = useState<'MEMBER' | 'TEAM'>('TEAM');
 
     const [isOpenCreateModal, setOpenCreateModal] = useState(false); //handling group add modal
     const [isOpenAddMemberModal, setOpenAddMemberModal] = useState(false); //handling member add modal
     const [isOpenEditModal, setOpenEditModal] = useState(false); // branch editing modal
     // const [isOpenMemberEditModal, setOpenMemberEditModal] = useState(false); // branch editing modal
+    const [branchTotalTeam, setBranchTotalTeam] = useState();
+    const [totalBranchMembers, setTotalBranchMembers] = useState();
 
     const modalHandling = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -39,24 +41,50 @@ const BranchDetailsPage = () => {
         }
     };
 
+    //get branch details
+    const { data } = useQuery(['branch'], async () => zodSafeQuery(`/api/v1/organization/branches/${branch_id}/`)());
+    const branch = data?.result;
+    // console.log('branch details: ', branch);
+
+    //breadcrumb
+    const breadcrumbItems: SingleBreadCrumbItemType[] =
+        role == 'BO'
+            ? [
+                  {
+                      label: branch?.name,
+                      href: `/branch/${branch_id}`,
+                  },
+              ]
+            : [
+                  {
+                      label: 'Dashboard',
+                      href: '/dashboard',
+                  },
+                  {
+                      label: branch?.name,
+                      href: `/branch/${branch_id}`,
+                  },
+              ];
+
+    //get total team
+    const totalTeam = (teamCounting) => {
+        setBranchTotalTeam(teamCounting);
+    };
+
+    //get total members of the branch
+    const totalMembers = (members) => {
+        setTotalBranchMembers(members);
+    };
+
     return (
         <section className="container mx-auto pb-8 pt-4">
-            <Breadcrumb>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/branch">Branch</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink>Chandra Bazar Branch</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
+            <CommonBreadCrumb items={breadcrumbItems} />
 
             {/* creating new group and new member modal */}
-            <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            {isOpenCreateModal && (
+                <CreateNewGroup isOpen={isOpenCreateModal} onClose={() => setOpenCreateModal(false)} />
+            )}
+
             <CreateNewMember isOpen={isOpenAddMemberModal} onClose={() => setOpenAddMemberModal(false)} />
 
             {/* editing branch and member info */}
@@ -69,8 +97,8 @@ const BranchDetailsPage = () => {
             >
                 <div className="flex justify-between border-b border-gray-200 px-5 py-5">
                     <div>
-                        <h3 className="mb-0.5 text-xl font-semibold">Chandra Bazar Branch</h3>
-                        <p className="text-sm font-medium text-gray-500">Chandra Bazar, Faridgonj, Chandpur</p>
+                        <h3 className="mb-0.5 text-xl font-semibold">{branch?.name}</h3>
+                        <p className="text-sm font-medium text-gray-500">{branch?.address}</p>
                         <div className="mt-2 flex gap-2 divide-x divide-gray-300 font-medium text-gray-500 ">
                             <div className="flex items-center gap-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -90,7 +118,7 @@ const BranchDetailsPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                Cash in hand : 200
+                                হাতে নগদ : {branch?.cash_in_hand}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -110,7 +138,7 @@ const BranchDetailsPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                Total Loans : 22323
+                                কর্জ স্থিতি : {branch?.total_due_loan}
                             </div>
                             <div className="flex items-center gap-2 pl-2 text-sm">
                                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-50">
@@ -130,7 +158,7 @@ const BranchDetailsPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                Total Deposit : 200
+                                সঞ্চয় স্থিতি : {branch?.total_deposit}
                             </div>
                         </div>
                     </div>
@@ -169,13 +197,13 @@ const BranchDetailsPage = () => {
                                 onClick={() => setTab('TEAM')}
                                 backgroundColor={tab === 'TEAM' ? 'gray.100' : 'white'}
                             >
-                                Team - (100)
+                                Team - ({branchTotalTeam})
                             </Button>
                             <Button
                                 onClick={() => setTab('MEMBER')}
                                 backgroundColor={tab === 'MEMBER' ? 'gray.100' : 'white'}
                             >
-                                Members - (2333){' '}
+                                Members - ({totalBranchMembers}){' '}
                             </Button>
                         </ButtonGroup>
                     </div>
@@ -234,7 +262,12 @@ const BranchDetailsPage = () => {
                         </Button>
                     </div>
                 </div>
-                {tab === 'TEAM' ? <TeamsTable /> : <MembersTable />}
+                {/* {tab === 'TEAM' ? <TeamsTable branchId={branchId} /> : <MembersTable />} */}
+                {tab === 'TEAM' ? (
+                    <TeamsTable totalTeam={totalTeam} />
+                ) : (
+                    <BranchMembersList total_members={totalMembers} />
+                )}
             </div>
         </section>
     );
@@ -254,26 +287,24 @@ const SearchIcon = () => {
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await getServerSession(context.req, context.res, authOptions);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: true,
-            },
-        };
-    }
-    return {
-        props: {
-            session: JSON.stringify(session),
-        },
-    };
-};
-
 BranchDetailsPage.getLayout = (page: ReactNode) => {
     return <DashboardLayout className="min-h-screen">{page}</DashboardLayout>;
 };
-
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//     const session = await getServerSession(context.req, context.res, authOptions);
+//     console.log('session response:....................................................... ', session);
+//     return {
+//         props: {
+//             sessionData: JSON.stringify(session),
+//         },
+//     };
+// };
+export const getServerSideProps = async ({ req }) => {
+    const session = await getSession({ req });
+    return {
+        props: {
+            sessionData: session,
+        },
+    };
+};
 export default BranchDetailsPage;

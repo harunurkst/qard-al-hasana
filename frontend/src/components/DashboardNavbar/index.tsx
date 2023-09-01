@@ -15,19 +15,19 @@ const navItems = [
         href: '/branch',
         exact: false,
     },
-    {
-        name: 'Team',
-        href: '/team',
-        exact: false,
-    },
-    {
-        name: 'Member',
-        href: '/member',
-        exact: false,
-    },
+    // {
+    //     name: 'Team',
+    //     href: '/team',
+    //     exact: false,
+    // },
     {
         name: 'Withdraw',
         href: '/withdraw',
+        exact: false,
+    },
+    {
+        name: 'Accounts',
+        href: '/accounts',
         exact: false,
     },
 ];
@@ -38,8 +38,7 @@ const DashboardNavbar = () => {
 
     //handling Logout
     const handleRedirectToLogin = () => {
-        signOut();
-        router.push('/login');
+        signOut({ callbackUrl: '/login' });
     };
 
     return (
@@ -69,10 +68,10 @@ const DashboardNavbar = () => {
                         })}
                     </div>
                 </div>
-                <div>
+                <div className="flex items-center">
                     <Avatar size={'md'} name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-                    <span className="text cursor-pointer" onClick={handleRedirectToLogin}>
-                        logout
+                    <span className="ml-4 cursor-pointer font-semibold" onClick={handleRedirectToLogin}>
+                        Log Out
                     </span>
                 </div>
             </div>

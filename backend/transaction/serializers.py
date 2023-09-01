@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Savings, Loan, Installment
+from .models import GeneralTransaction, Savings, Loan, Installment, TransactionCategory
 
 
 class SavingsSerializer(serializers.ModelSerializer):
@@ -22,7 +22,8 @@ class SavingsSerializer(serializers.ModelSerializer):
 class LoanDisbursementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
-        fields = ('amount', 'date', 'member','total_installment')
+        fields = ('amount', 'date', 'member', 'total_installment')
+
 
 class LoanInstallmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,3 +35,22 @@ class LoanInstallmentSerializer(serializers.ModelSerializer):
         if loan.is_paid:
             raise serializers.ValidationError("Loan is already paid")
         return attrs
+
+
+class GeneralTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GeneralTransaction
+        fields = ('id','amount', 'date', 'category', 'summary', )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.update({
+            'category': instance.category.name,
+        })
+        return data
+
+
+class TransactionCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TransactionCategory
+        fields = ('name', )

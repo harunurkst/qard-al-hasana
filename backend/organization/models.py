@@ -3,16 +3,23 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from django.db.models import Sum
 
-from organization.managers import UserManager
-from peoples.models import Staff
+from .managers import UserManager
 
 
 class BaseModel(models.Model):
     branch = models.ForeignKey("organization.Branch", on_delete=models.PROTECT)
-    organization = models.ForeignKey("organization.Organization", on_delete=models.PROTECT)
+    organization = models.ForeignKey(
+        "organization.Organization", on_delete=models.PROTECT
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey("organization.User", on_delete=models.SET_NULL, blank=True, null=True)
+    created_by = models.ForeignKey(
+        "organization.User", on_delete=models.SET_NULL, blank=True, null=True
+    )
+
+    class Meta:
+        abstract = True
 
 
 class Division(models.Model):
@@ -47,10 +54,26 @@ class Organization(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    MEMBER = "ME"
+    BRANCH_OWNER = "BO"
+    COLLECTOR = "CL"
+    ORGANIZATION_OWNER = "OO"
+    ORGANIZATION_MEMBER = "OM"
+    ROLES = [
+        (MEMBER, "Member"),
+        (BRANCH_OWNER, "Branch Owner"),
+        (COLLECTOR, "Collector"),
+        (ORGANIZATION_OWNER, "Organization Owner"),
+        (ORGANIZATION_MEMBER, "Organization Member"),
+    ]
     username = models.CharField(unique=True, max_length=45)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    branch = models.ForeignKey(
+        "organization.Branch", null=True, blank=True, on_delete=models.SET_NULL
+    )
+    role = models.CharField(max_length=10, choices=ROLES, default=MEMBER)
 
     USERNAME_FIELD = "username"
 
@@ -77,7 +100,7 @@ class Branch(models.Model):
     name = models.CharField(max_length=255)
     code = models.IntegerField(db_index=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    thana = models.ForeignKey(Thana, on_delete=models.CASCADE)
+    # thana = models.ForeignKey(Thana, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, blank=True, null=True)
     bank_account = models.TextField(blank=True, null=True)
 
@@ -96,7 +119,8 @@ class BranchMember(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=150)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-    owner = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    address = models.CharField(max_length=200, blank=True)
 
     class Meta:
         unique_together = ("name", "branch")
@@ -104,3 +128,15 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+    def total_unpaid_loan(self):
+        return self.loan_set.filter(is_paid=False).aggregate(Sum("total_due"))[
+            "total_due__sum"
+        ]
+
+    def total_deposit(self):
+        return self.savings_set.filter(transaction_type="deposit").aggregate(
+            Sum("amount")
+        )["amount__sum"]
+
+    def active_loan(self):
+        return self.loan_set.filter(is_paid=False).count()

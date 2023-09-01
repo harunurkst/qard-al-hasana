@@ -1,5 +1,18 @@
+from typing import Iterable, Optional
 from django.db import models
 from organization.models import BaseModel
+from report.models import CIHCalculation
+
+SAVINGS_TRANS_TYPE = (
+    ("deposit", "Deposit"),
+    ("withdraw", "Withdraw"),
+)
+
+TRANSACTION_TYPE = (
+    ("income", "Income"),
+    ("expense", "Expense"),
+)
+
 
 class TransactionCategory(models.Model):
     name = models.CharField(max_length=50)
@@ -8,17 +21,32 @@ class TransactionCategory(models.Model):
         return self.name
 
 
-SAVINGS_TRANS_TYPE = (
-    ('deposit', 'Deposit'),
-    ('withdraw', 'Withdraw'),
-)
+class GeneralTransaction(BaseModel):
+    amount = models.IntegerField()
+    date = models.DateField()
+    transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=10)
+    category = models.ForeignKey(TransactionCategory, models.PROTECT)
+    summary = models.TextField(blank=True, max_length=150)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.transaction_type == "income":
+            CIHCalculation.objects.add_cash_in_hand(
+                branch=self.branch, date=self.date, amount=self.amount
+            )
+        else:
+            CIHCalculation.objects.deduct_cash_in_hand(
+                branch=self.branch, date=self.date, amount=self.amount
+            )
 
 
 class Savings(BaseModel):
     amount = models.IntegerField()
     date = models.DateField()
     balance = models.IntegerField(default=0)
-    transaction_type = models.CharField(max_length=10, choices=SAVINGS_TRANS_TYPE, default='deposit')
+    transaction_type = models.CharField(
+        max_length=10, choices=SAVINGS_TRANS_TYPE, default="deposit"
+    )
     member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
     team = models.ForeignKey("organization.Team", on_delete=models.PROTECT)
 
@@ -32,8 +60,12 @@ class Savings(BaseModel):
         else:
             last_balance = 0
         self.balance = self.amount + last_balance
-        self.transaction_type = 'deposit'
+        self.transaction_type = "deposit"
         self.save()
+        # cash in hand calculation
+        CIHCalculation.objects.add_cash_in_hand(
+            branch=self.branch, date=self.date, amount=self.amount
+        )
 
     def withdraw(self):
         """
@@ -45,18 +77,22 @@ class Savings(BaseModel):
         if self.amount > latest_savings.balance:
             raise ValueError("Invalid amount")
         self.balance = latest_savings.balance - self.amount
-        self.transaction_type = 'withdraw'
+        self.transaction_type = "withdraw"
         self.save()
-
+        # Cash in hand calculation
+        CIHCalculation.objects.deduct_cash_in_hand(
+            branch=self.branch, date=self.date, amount=self.amount
+        )
 
     class Meta:
-        unique_together = ('member', 'date', 'transaction_type')
+        unique_together = ("member", "date", "transaction_type")
 
 
 class Loan(BaseModel):
     amount = models.IntegerField()
     date = models.DateField()
     member = models.ForeignKey("peoples.Member", on_delete=models.PROTECT)
+    team = models.ForeignKey("organization.Team", on_delete=models.PROTECT)
     is_paid = models.BooleanField(default=False)
     total_installment = models.IntegerField(default=0)
     installment_paid = models.IntegerField(default=0)
@@ -75,8 +111,10 @@ class Loan(BaseModel):
         if total_paid >= self.amount and total_due <= 0:
             self.is_paid = True
         self.save()
-        print("after save")
-
+        # Cash in hand calculation
+        CIHCalculation.objects.add_cash_in_hand(
+            branch=self.branch, date=self.date, amount=amount
+        )
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -85,22 +123,10 @@ class Loan(BaseModel):
         super().save(*args, **kwargs)
 
 
-
 class Installment(models.Model):
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     amount = models.IntegerField()
     date = models.DateField()
 
     class Meta:
-        unique_together = ('loan', 'date')
-
-TRANSACTION_TYPE = (
-    ('income', 'Income'),
-    ('expense', 'Expense'),
-)
-class GeneralTransaction(BaseModel):
-    amount = models.IntegerField()
-    date = models.DateField()
-    type = models.CharField(choices=TRANSACTION_TYPE, max_length=10)
-    category = models.ForeignKey(TransactionCategory, models.PROTECT)
-    summary = models.TextField(blank=True, max_length=150)
+        unique_together = ("loan", "date")
