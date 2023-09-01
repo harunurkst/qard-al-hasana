@@ -5,14 +5,14 @@ from .models import GeneralTransaction, Savings, Loan, Installment, TransactionC
 class SavingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Savings
-        fields = ('member', 'amount', 'date')
+        fields = ("member", "amount", "date")
 
     def create(self, validated_data):
-        transaction_type = validated_data['transaction_type']
-        member = validated_data['member']
+        transaction_type = validated_data["transaction_type"]
+        member = validated_data["member"]
         savings = Savings(**validated_data)
         savings.team = member.team
-        if transaction_type == 'deposit':
+        if transaction_type == "deposit":
             savings.deposit()
         else:
             savings.withdraw()
@@ -22,16 +22,16 @@ class SavingsSerializer(serializers.ModelSerializer):
 class LoanDisbursementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
-        fields = ('amount', 'date', 'member', 'total_installment')
+        fields = ("amount", "date", "member", "total_installment")
 
 
 class LoanInstallmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Installment
-        fields = ('amount', 'date', 'loan')
+        fields = ("amount", "date", "loan")
 
     def validate(self, attrs):
-        loan = attrs.get('loan')
+        loan = attrs.get("loan")
         if loan.is_paid:
             raise serializers.ValidationError("Loan is already paid")
         return attrs
@@ -40,17 +40,28 @@ class LoanInstallmentSerializer(serializers.ModelSerializer):
 class GeneralTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralTransaction
-        fields = ('id','amount', 'date', 'category', 'summary', )
+        fields = (
+            "id",
+            "amount",
+            "date",
+            "category",
+            "summary",
+        )
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data.update({
-            'category': instance.category.name,
-        })
+        data.update(
+            {
+                "category": instance.category.name,
+            }
+        )
         return data
 
 
 class TransactionCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TransactionCategory
-        fields = ('name', )
+        fields = (
+            "id",
+            "name",
+        )

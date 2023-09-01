@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,7 +15,7 @@ from rest_framework.generics import (
 
 from peoples.models import Member
 from peoples.permissions import IsSameBranch
-from .models import GeneralTransaction, Loan, Savings, Installment, TransactionCategory
+from .models import GeneralTransaction, Loan, Savings, TransactionCategory
 from .serializers import (
     GeneralTransactionSerializer,
     SavingsSerializer,
@@ -23,7 +25,6 @@ from .serializers import (
 )
 from .utils import format_savings_date, format_loan_data
 from korjo_soft.permissions import IsBranchOwner
-from report.models import CIHCalculation
 
 
 class DepositView(CreateAPIView):
@@ -249,5 +250,11 @@ class ExpenseTransactionDetailUpdateDelete(RetrieveUpdateDestroyAPIView):
 
 class TransactionCategoryList(ListAPIView):
     serializer_class = TransactionCategorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
+    authentication_classes = []
     queryset = TransactionCategory.objects.all()
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    filterset_fields = ["category_type"]
+    pagination_class = None

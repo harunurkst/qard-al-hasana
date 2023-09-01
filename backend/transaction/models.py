@@ -1,4 +1,3 @@
-from typing import Iterable, Optional
 from django.db import models
 from organization.models import BaseModel
 from report.models import CIHCalculation
@@ -13,9 +12,17 @@ TRANSACTION_TYPE = (
     ("expense", "Expense"),
 )
 
+CATEGORY_TYPES = (
+    ("income", "Income"),
+    ("expense", "Expense"),
+)
+
 
 class TransactionCategory(models.Model):
     name = models.CharField(max_length=50)
+    category_type = models.CharField(
+        max_length=10, choices=CATEGORY_TYPES, default="income"
+    )
 
     def __str__(self):
         return self.name
