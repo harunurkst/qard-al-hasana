@@ -2,7 +2,7 @@ import VerticalDotIcon from '@/icons/VerticalDotIcon';
 import { useMemberSavingsStore } from '@/modules/team/stores/useMemberSavingsStore';
 import { MemberSavingsType } from '@/types/memberSaving.type';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
-import { getQuery } from "@/utils/getQuery";
+import zodSafeQuery from '@/utils/zodSafeQuery';
 import {
     Menu,
     MenuButton,
@@ -17,10 +17,8 @@ import {
     Tr,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import zodSafeQuery from '@/utils/zodSafeQuery';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -41,21 +39,15 @@ interface IMemberTableOfBranch {
 
 //pdf styling
 
-const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({  searchKeyword }) => {
+const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ searchKeyword }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
-    const [isKeywordChanged, setIsKeywordChanged] = useState(true);
-    useEffect(()=>{
-        if(searchKeyword) {
-            console.log('changed')
-            setIsKeywordChanged(!isKeywordChanged)}
-    },[searchKeyword])
 
     const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
-    const { data } = useQuery(['memberSaving'], async () => zodSafeQuery(`/api/v1/peoples/members?search=${searchKeyword}`)(),{
-        enabled: isKeywordChanged
-      });
+    const { data } = useQuery(['memberSaving', searchKeyword], async () =>
+        zodSafeQuery(`/api/v1/peoples/members?search=${searchKeyword}`)()
+    );
     setTransactions(data?.result);
 
     if (!data) {
@@ -94,6 +86,7 @@ const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({  searchKeyword }
                                         <Td>{singleData?.guardian_name}</Td>
                                         <Td>{singleData?.mobile_number}</Td>
                                         <Td>{singleData?.team}</Td>
+                                        <Td isNumeric> {singleData.balance}</Td>
                                         <Td isNumeric> {singleData.balance}</Td>
                                         <Td isNumeric>
                                             <Menu>

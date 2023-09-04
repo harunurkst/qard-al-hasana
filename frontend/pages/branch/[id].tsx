@@ -213,8 +213,8 @@ const BranchDetailsPage = (props) => {
                         </Button>
                     </div>
                 </div>
-                <div className="flex justify-between border-b border-gray-200 px-5 py-4">
-                    <div>
+                <div className="flex flex-col md:flex-row gap-3 justify-between border-b border-gray-200 px-5 py-4">
+                    
                         <ButtonGroup isAttached variant={'outline'}>
                             <Button
                                 onClick={() => setTab('TEAM')}
@@ -229,13 +229,14 @@ const BranchDetailsPage = (props) => {
                                 Members - ({totalBranchMembers}){' '}
                             </Button>
                         </ButtonGroup>
-                    </div>
-                    <div className="flex gap-3">
-                        <InputGroup width={300}>
+                    
+                    <div className="flex flex-col md:flex-row gap-3">
+                        <InputGroup className='!w-[200px]'>
                             <InputLeftElement pointerEvents="none">
                                 <SearchIcon />
                             </InputLeftElement>
                             <Input
+                            
                                 onChange={(e) => {
                                     setSearchKeyword(e.target.value);
                                 }}

@@ -30,7 +30,7 @@ const CustomSelectInput: React.FC<ICustomSelectInput> = forwardRef<HTMLSelectEle
                     focusBorderColor="brand.500"
                     {...rest}
                 >
-                    {options.map((option) => (
+                    {options?.map((option) => (
                         <option value={option?.value}>{option?.label}</option>
                     ))}
                 </Select>
