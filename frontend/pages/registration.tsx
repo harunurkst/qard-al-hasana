@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import CustomTextInput from '@/components/CustomInput';
 import BaseLayout from '@/Layouts/BaseLayout';
 import { registrationSchema, RegistrationType } from '@/schema/AuthSchema';
@@ -6,10 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/dist/client/router';
 import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
+// import useStore from '../src/store/store'
 
 const Registration = () => {
     const router = useRouter();
-
+    // const {registerUser}=useStore()
     const {
         register,
         handleSubmit,
@@ -17,8 +19,14 @@ const Registration = () => {
     } = useForm<RegistrationType>({ resolver: zodResolver(registrationSchema) });
 
     // form submit
-    const submitRegistrationForm = async () => {
-        // api call
+    const submitRegistrationForm =  (data: RegistrationType) => {
+        console.log('data', data);
+        // const {email,password}=data
+        // registerUser({
+        //     username:email,
+        //     password
+        //   })
+        // router.push('/dashboard')
         return new Promise<void>((resolve) => {
             setTimeout(() => {
                 router.push('/dashboard');

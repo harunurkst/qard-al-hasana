@@ -1,25 +1,11 @@
-import { VerticalDotIcon } from '@/icons';
 import getWeekNumberOfCurrentMonth from '@/utils/getWeekNoOfCurrentMonth';
 import zodSafeQuery from '@/utils/zodSafeQuery';
-import {
-    Button,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Table,
-    TableContainer,
-    Tbody,
-    Td,
-    Th,
-    Thead,
-    Tr,
-} from '@chakra-ui/react';
+import { Button, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Document, Font, PDFDownloadLink, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MemberSavingsType } from '../../../types/memberSaving.type';
 import { useMemberSavingsStore } from '../stores/useMemberSavingsStore';
 import DepositModal from './DepositModal';
@@ -40,6 +26,9 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
 interface IMemberSavingsTable {
     teamId: string | string[] | undefined;
     teamName: string;
+    branchName: string;
+    orgName: string;
+    teamAddress: string;
 }
 
 //pdf styling
@@ -195,11 +184,20 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
+    const [isFontRegistered, setIsFontRegistered] = useState(false);
 
-    const { data: session, status } = useSession();
+    useEffect(() => {
+      // Register the font when the component mounts
+      Font.register({
+        family: 'Nikosh',
+        src: '/fonts/Nikosh.ttf',
+      })
+    setIsFontRegistered(true);
+    }, []);
+    // const { data: session, status } = useSession();
     // use the hook to fetch member savings
     // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
-    const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
+    const {  setSelectedMember } = useMemberSavingsStore((state) => state.actions);
     const { data: data1 } = useQuery(['memberSaving'], async () =>
         zodSafeQuery(`/api/v1/transaction/member-savings-list?teamId=${teamId}`)()
     );
@@ -327,30 +325,44 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
 
                         {/* Sample Rows */}
                         {data1 &&
-                            data1.result?.map((element, index) => {
+                            data1?.result?.map((element, index:number) => {
                                 const matchingInstallment = data2?.result.find((item) => item.sl === index + 1);
                                 return (
                                     <View style={styles.tableRow} key={element.member_id}>
                                         <View style={styles.tableCellBorder1}>
-                                            <Text style={[styles.serialNumber, { fontFamily: 'Nikosh' }]}>{element?.sl}</Text>
+                                            <Text style={[styles.serialNumber, { fontFamily: 'Nikosh' }]}>
+                                                {element?.sl}
+                                            </Text>
                                         </View>
                                         <View style={styles.tableCellBorder3}>
-                                            <Text style={[styles.guardianName, { fontFamily: 'Nikosh' }]}>{element?.guardian_name}</Text>
+                                            <Text style={[styles.guardianName, { fontFamily: 'Nikosh' }]}>
+                                                {element?.guardian_name}
+                                            </Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.savings, { fontFamily: 'Nikosh' }]}>{element?.balance}</Text>
+                                            <Text style={[styles.savings, { fontFamily: 'Nikosh' }]}>
+                                                {element?.balance}
+                                            </Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week1}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>
+                                                {element?.week1}
+                                            </Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week2}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>
+                                                {element?.week2}
+                                            </Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week3}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>
+                                                {element?.week3}
+                                            </Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
-                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>{element?.week4}</Text>
+                                            <Text style={[styles.week, { fontFamily: 'Nikosh' }]}>
+                                                {element?.week4}
+                                            </Text>
                                         </View>
                                         <View style={styles.tableCellBorder}>
                                             <Text style={[styles.withdrawalAmount, { fontFamily: 'Nikosh' }]}>
@@ -503,14 +515,15 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
                             .fill()
                             .map((_, index) => {
                                 const matchingData = data1?.result.find((item) => item.sl === index + 1);
-                                const matchingInstallment = data2?.result.find((item) => item.sl === index + 1);
+                                // const matchingInstallment = data2?.result.find((item) => item.sl === index + 1);
                                 return (
                                     <View style={styles.tableRow} key={index}>
                                         <View style={styles.tableCellBorder1}>
                                             <Text style={[styles.serialNumber]}>{index + 1}</Text>
                                         </View>
                                         <View style={styles.tableCellBorder3}>
-                                            <Text style={[styles.name]}>{matchingData?.member_name}</Text>
+                                            {isFontRegistered && <Text style={[styles.name,
+                                    { fontFamily: 'Nikosh' }]}>{matchingData?.member_name}</Text>}
                                         </View>
                                         <View style={[styles.tableCellBorder3, styles.tableCell]}>
                                             <Text style={[styles.guardianName]}>{matchingData?.guardian_name}</Text>
@@ -612,11 +625,11 @@ const MemberSavingsTable: React.FC<IMemberSavingsTable> = ({ teamId, teamName, b
                 </Table>
             </TableContainer>
 
-            <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
+           {isFontRegistered && <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
                 <PDFDownloadLink document={blankpdf} fileName="topsheet_blank.pdf">
                     {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Blank Pdf')}
                 </PDFDownloadLink>
-            </button>
+            </button>}
             <button className="float-right mr-5 mt-4 rounded bg-[#579A56] p-2">
                 <PDFDownloadLink document={mycontent} fileName="topsheet.pdf">
                     {({ blob, url, loading, error }) => (loading ? 'Loading...' : 'Download Pdf')}
@@ -632,12 +645,13 @@ const TrasectionTD = ({ amount, weekNo }: { amount: number; weekNo: number }) =>
 
     return (
         <Td
-            className={`${status === 'MISS_DATE'
-                ? 'font-semibold text-red-500'
-                : status === 'DONE'
+            className={`${
+                status === 'MISS_DATE'
+                    ? 'font-semibold text-red-500'
+                    : status === 'DONE'
                     ? 'text-brand-500'
                     : 'text-warning-400'
-                }`}
+            }`}
         >
             {' '}
             {status === 'DONE' ? amount : status === 'MISS_DATE' ? 'DUE' : 'PENDING'}{' '}

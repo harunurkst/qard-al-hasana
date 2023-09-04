@@ -42,13 +42,13 @@ const DashboardNavbar = () => {
     };
 
     return (
-        <header className="flex h-16 items-center border-b bg-white">
-            <div className="container mx-auto flex items-center justify-between">
-                <div className="flex gap-12">
+        <header className="flex  items-center border-b bg-white">
+            <div className="container mx-auto py-2 px-[32px] flex items-center justify-between gap-2">
+                <div className="flex items-center gap-12">
                     <Link className="no-underline!" href={'/dashboard'}>
                         <h1 className="text-3xl font-bold text-brand-600 no-underline">Qard al-Hasan</h1>
                     </Link>
-                    <div className="flex">
+                    <div className="flex items-center">
                         {navItems.map((item) => {
                             return (
                                 <Link key={item.href} href={item.href}>

@@ -20,10 +20,11 @@ import Swal from 'sweetalert2';
 
 interface IExpensseModal {
     isOpen: boolean;
+    categories: [];
     onClose: () => void;
 }
 
-const ExpenseModal: React.FC<IExpensseModal> = ({ isOpen, onClose }) => {
+const ExpenseModal: React.FC<IExpensseModal> = ({ isOpen, onClose,  categories=[] }) => {
     const [date, setDate] = useState<string>('');
 
     const {
@@ -102,7 +103,7 @@ const ExpenseModal: React.FC<IExpensseModal> = ({ isOpen, onClose }) => {
                             className="mt-2.5"
                             label={'Category'}
                             {...register('category')}
-                            options={categoryOptions}
+                            options={categories}
                         />
                         <CustomTextInput
                             className="mt-2.5"

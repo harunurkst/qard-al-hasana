@@ -1,9 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 
 import { Button, ButtonGroup, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
-import { ReactNode, useState } from 'react';
-// Modals are imported here
-
+import { ReactNode, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import CommonBreadCrumb, { SingleBreadCrumbItemType } from '@/components/CommonBreadCrumb';
 import { PlusIcon, SearchIcon } from '@/icons';
 import AccountsExpenseList from '@/modules/accounts/components/AccountExpenseList';
@@ -11,12 +10,15 @@ import AccountIncomeList from '@/modules/accounts/components/AccountIncomeList';
 import ExpenseModal from '@/modules/accounts/components/ExpenseModal';
 import IncomeModal from '@/modules/accounts/components/IncomeModal';
 import { useRouter } from 'next/router';
+import zodSafeQuery from '@/utils/zodSafeQuery';
 
 const AccountsPage = () => {
     const router = useRouter();
-    const { teamId } = router.query;
-    const [tab, setTab] = useState<'INCOME' | 'EXPENSE'>('INCOME');
-
+    const [tab, setTab] = useState<'income' | 'expense'>('income');
+    const [categories, setCategories] = useState([]);
+    const { data } = useQuery(['transactionCategory', tab], async () =>
+    zodSafeQuery(`/api/v1/transaction/transaction-category-list?category_type=${tab}`)()
+);
     const [isOpenIncomeModal, setIsOpenIncomeModal] = useState(false);
     const [isOpenExpenseModal, setIsOpenExpenseModal] = useState(false);
     const breadcrumbItems: SingleBreadCrumbItemType[] = [
@@ -34,12 +36,19 @@ const AccountsPage = () => {
         },
     ];
 
+    useEffect(()=>{
+        
+        if(data){
+            console.log('vvv',data?.result)
+            setCategories(data?.result)
+        }
+    },[data])
     return (
         <>
-            <section className="container mx-auto pb-8 pt-4">
+            <section className="container mx-auto px-8 pb-8 pt-4">
                 <CommonBreadCrumb items={breadcrumbItems} />
-                <ExpenseModal isOpen={isOpenExpenseModal} onClose={() => setIsOpenExpenseModal(false)} />
-                <IncomeModal isOpen={isOpenIncomeModal} onClose={() => setIsOpenIncomeModal(false)} />
+                <ExpenseModal isOpen={isOpenExpenseModal} categories={categories.map(item=>{return {label:item?.name,value:item.id}})} onClose={() => setIsOpenExpenseModal(false)} />
+                <IncomeModal isOpen={isOpenIncomeModal} categories={categories.map(item=>{return {label:item?.name,value:item.id}})} onClose={() => setIsOpenIncomeModal(false)} />
 
                 <div
                     className="mt-5 rounded-xl border border-gray-200 bg-white"
@@ -102,14 +111,14 @@ const AccountsPage = () => {
                     <div className="flex flex-col gap-4 border-b border-gray-200 px-5 py-4 lg:flex-row lg:justify-between">
                         <ButtonGroup isAttached variant={'outline'}>
                             <Button
-                                onClick={() => setTab('INCOME')}
-                                backgroundColor={tab === 'INCOME' ? 'gray.100' : 'white'}
+                                onClick={() => setTab('income')}
+                                backgroundColor={tab === 'income' ? 'gray.100' : 'white'}
                             >
                                 Income - (25)
                             </Button>
                             <Button
-                                onClick={() => setTab('EXPENSE')}
-                                backgroundColor={tab === 'EXPENSE' ? 'gray.100' : 'white'}
+                                onClick={() => setTab('expense')}
+                                backgroundColor={tab === 'expense' ? 'gray.100' : 'white'}
                             >
                                 Expense - (10)
                             </Button>
@@ -144,7 +153,7 @@ const AccountsPage = () => {
                             >
                                 Filters
                             </Button>
-                            {tab == 'EXPENSE' ? (
+                            {tab == 'expense' ? (
                                 <Button
                                     onClick={() => setIsOpenExpenseModal(true)}
                                     leftIcon={<PlusIcon />}
@@ -164,7 +173,7 @@ const AccountsPage = () => {
                         </div>
                     </div>
 
-                    {tab == 'EXPENSE' ? <AccountsExpenseList /> : <AccountIncomeList />}
+                    {tab == 'expense' ? <AccountsExpenseList /> : <AccountIncomeList />}
                 </div>
             </section>
         </>

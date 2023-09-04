@@ -14,11 +14,12 @@ import {
     ModalOverlay,
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 
 interface IIncomdModal {
+    categories: [];
     isOpen: boolean;
     onClose: () => void;
 }
@@ -27,9 +28,13 @@ const categoryOptions = [
     { label: 'Option 2', value: '1' },
     { label: 'Option 3', value: '1' },
 ];
-const IncomeModal: React.FC<IIncomdModal> = ({ isOpen, onClose }) => {
+const IncomeModal: React.FC<IIncomdModal> = ({ isOpen, onClose,  categories=[] }) => {
     const [date, setDate] = useState<string>('');
-
+    useEffect(()=>{
+        if(categories){
+            console.log('categories',categories)
+        }
+    },[categories])
     const {
         register,
         handleSubmit,
@@ -81,7 +86,7 @@ const IncomeModal: React.FC<IIncomdModal> = ({ isOpen, onClose }) => {
                     borderBottom={1}
                     borderBottomColor="red.100"
                 >
-                    Add Expense
+                    Add Income
                 </ModalHeader>
                 <ModalCloseButton />
 
@@ -99,7 +104,7 @@ const IncomeModal: React.FC<IIncomdModal> = ({ isOpen, onClose }) => {
                             className="mt-2.5"
                             label={'Category'}
                             {...register('category')}
-                            options={categoryOptions}
+                            options={categories}
                         />
 
                         <CustomTextInput

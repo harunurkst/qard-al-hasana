@@ -17,9 +17,8 @@ import {
     Tr,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount: number) {
     if (amount) return 'DONE';
@@ -35,27 +34,21 @@ function getStatusBasedOnWeek(baseWeekNo: number, currentWeekNo: number, amount:
     return 'PENDING';
 }
 interface IMemberTableOfBranch {
-    teamId: string | string[] | undefined;
+    searchKeyword: string | string[] | undefined;
 }
 
 //pdf styling
 
-const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId, total_members }) => {
+const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ searchKeyword }) => {
     // const pdfRef = useRef();
     const router = useRouter();
     const [isOpenDepositModal, setOpenDepositModal] = useState(false);
 
-    const { data: session, status } = useSession();
-
-    // use the hook to fetch member savings
-    // const memberTransactions = useMemberSavingsStore((state) => state.memberTransactions);
     const { setTransactions, setSelectedMember } = useMemberSavingsStore((state) => state.actions);
-    const { data } = useQuery(['memberSaving'], async () => zodSafeQuery(`/api/v1/peoples/members/`)());
-
+    const { data } = useQuery(['memberSaving', searchKeyword], async () =>
+        zodSafeQuery(`/api/v1/peoples/members?search=${searchKeyword}`)()
+    );
     setTransactions(data?.result);
-    //get total members of a branch
-    const totalMembers = data?.result.count;
-    total_members(totalMembers);
 
     if (!data) {
         return <div className="flex h-[200px] items-center justify-center">Loading...</div>;
@@ -80,7 +73,7 @@ const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId, total_me
                     </Thead>
                     <Tbody className="text-gray-600">
                         {data &&
-                            data.result?.results.map((singleData: MemberSavingsType, index) => {
+                            data.result?.results?.map((singleData: MemberSavingsType, index) => {
                                 return (
                                     <Tr key={singleData?.id} className="hover:bg-gray-50">
                                         <Td>{index + 1}</Td>
@@ -93,6 +86,7 @@ const IMemberTableOfBranch: React.FC<IMemberTableOfBranch> = ({ teamId, total_me
                                         <Td>{singleData?.guardian_name}</Td>
                                         <Td>{singleData?.mobile_number}</Td>
                                         <Td>{singleData?.team}</Td>
+                                        <Td isNumeric> {singleData.balance}</Td>
                                         <Td isNumeric> {singleData.balance}</Td>
                                         <Td isNumeric>
                                             <Menu>
