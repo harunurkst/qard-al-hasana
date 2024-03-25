@@ -88,16 +88,16 @@ WSGI_APPLICATION = "korjo_soft.wsgi.application"
 # Database
 
 DATABASES = {
-    # "default": dj_database_url.config(default="sqlite:////backend/db/db.sqlite3"),
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": "/data/db/db.sqlite3",
-    # }
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 # Update database configuration from $DATABASE_URL.
 
