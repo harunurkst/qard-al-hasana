@@ -171,36 +171,14 @@ class BranchDetailView(APIView):
             branch = Branch.objects.select_related("organization").get(pk=pk)
 
             # Sum of members current balance
-            deposit_sum = Sum("amount", filter=Q(transaction_type="deposit"))
-            withdraw_sum = Sum("amount", filter=Q(transaction_type="withdraw"))
-            total_deposit = Savings.objects.filter(branch=branch).aggregate(
-                total_deposit=deposit_sum - withdraw_sum
-            )["total_deposit"]
 
-            # Due loan
-            due_loan = Loan.objects.filter(branch=branch, is_paid=False).aggregate(
-                due_loan=Sum("total_due")
-            )["due_loan"]
-
-            # Income
-            total_income = GeneralTransaction.objects.filter(
-                branch=branch, transaction_type="income"
-            ).aggregate(total_income=Sum("amount"))["total_income"]
-            total_expense = GeneralTransaction.objects.filter(
-                branch=branch, transaction_type="expense"
-            ).aggregate(total_expense=Sum("amount"))["total_expense"]
-
-            # Cache in hand
-            cash_in_hand = (
-                CIHCalculation.objects.filter(branch=branch).latest("date").cash_in_hand
-            )
 
             transaction_data = {
-                "total_deposit": total_deposit,
-                "total_due_loan": due_loan,
-                "total_expense": total_expense,
-                "total_income": total_income,
-                "cash_in_hand": cash_in_hand,
+                "total_deposit": "total_deposit",
+                "total_due_loan": "due_loan",
+                "total_expense": "total_expense",
+                "total_income": "total_income",
+                "cash_in_hand": "cash_in_hand",
             }
             serializer = BranchSerializer(branch)
             data = {**serializer.data, **transaction_data}

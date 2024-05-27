@@ -20,7 +20,7 @@ class LoanAdmin(admin.ModelAdmin):
         'total_installment', 'installment_paid', 'total_paid', 'total_due'
     ]
     list_display_links = ['id']
-    list_editable = ['is_paid']
+    #list_editable = ['is_paid']
     ordering = ['id']
 
 

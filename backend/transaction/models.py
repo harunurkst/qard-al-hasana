@@ -119,9 +119,6 @@ class Loan(BaseModel):
             self.is_paid = True
         self.save()
         # Cash in hand calculation
-        CIHCalculation.objects.add_cash_in_hand(
-            branch=self.branch, date=self.date, amount=amount
-        )
 
     def save(self, *args, **kwargs):
         if not self.pk:

@@ -47,7 +47,8 @@ LOCAL_APPS = [
     "accounts.apps.AccountsConfig",
     "transaction.apps.TransactionConfig",
     "api.apps.ApiConfig",
-    "report"
+    "report",
+    "journal"
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -168,7 +169,7 @@ REST_FRAMEWORK = {
 # simple jwt configs
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,

@@ -14,7 +14,7 @@ import {
     ModalOverlay,
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 
@@ -22,9 +22,35 @@ interface IExpensseModal {
     isOpen: boolean;
     onClose: () => void;
 }
+interface CategoryOption {
+    label: string;
+    value: string;
+}
 
 const ExpenseModal: React.FC<IExpensseModal> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<string>('');
+    const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await http.get(
+                `/api/v1/transaction/transaction-category-list/?category_type=expense`
+            );
+            const options = response.data.map((category) => ({
+                label: category.name,
+                value: category.id.toString(),
+            }));
+            setCategoryOptions(options);
+        } catch (error) {
+            console.log('Error fetching categories:', error);
+        }
+    };
+
+    useEffect(() => {
+
+        fetchCategories();
+    }, []);
+
 
     const {
         register,
@@ -67,11 +93,6 @@ const ExpenseModal: React.FC<IExpensseModal> = ({ isOpen, onClose }) => {
             onSuccess: onSuccessCallback,
         });
     };
-    const categoryOptions = [
-        { label: 'Option 1', value: '1' },
-        { label: 'Option 2', value: '1' },
-        { label: 'Option 3', value: '1' },
-    ];
     return (
         <Modal size={'lg'} isCentered isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -96,7 +117,7 @@ const ExpenseModal: React.FC<IExpensseModal> = ({ isOpen, onClose }) => {
                         />
                         <>{console.log('errors: ', { ...register('category') })}</>
                         <CustomDatePicker label="Date" setDate={setDate} />
-                     
+
 
                         <CustomSelectInput
                             className="mt-2.5"

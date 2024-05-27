@@ -13,12 +13,13 @@ from rest_framework.generics import (
     ListAPIView,
 )
 
+from journal.models import GeneralJournal
 from peoples.models import Member
 from peoples.permissions import IsSameBranch
 from .models import GeneralTransaction, Loan, Savings, TransactionCategory
 from .serializers import (
     GeneralTransactionSerializer,
-    SavingsSerializer,
+    DepositSerializer,
     LoanDisbursementSerializer,
     LoanInstallmentSerializer,
     TransactionCategorySerializer,
@@ -27,55 +28,41 @@ from .utils import format_savings_date, format_loan_data
 from korjo_soft.permissions import IsBranchOwner
 
 
-class DepositView(CreateAPIView):
-    serializer_class = SavingsSerializer
+class DepositView(APIView):
+    serializer_class = DepositSerializer
     permission_classes = [IsAuthenticated, IsSameBranch]
 
-    # def perform_create(self, serializer):
-    #     user = self.request.user
-    #     return serializer.save(
-    #         branch=user.branch,
-    #         organization=user.branch.organization,
-    #         created_by=user,
-    #         transaction_type='deposit'
-    #     )
     def post(self, request):
-        serializer = self.get_serializer(data=request.data)
+        serializer = DepositSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = request.user
         member = serializer.validated_data["member"]
         date = serializer.validated_data["date"]
+        amount = serializer.validated_data["amount"]
         # check member already have deposit
-        already_deposit = Savings.objects.filter(
-            member=member, date=date, transaction_type="deposit"
-        ).exists()
-        if already_deposit:
+        already_deposited = GeneralJournal.objects.is_already_deposited(date, member, amount)
+        if already_deposited:
             return Response(
                 {"detail": "Member already have deposit with this date"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer.save(
-            branch=user.branch,
-            organization=user.branch.organization,
-            created_by=user,
-            transaction_type="deposit",
-        )
+        GeneralJournal.objects.deposit_entry(date, member, amount)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class WithdrawView(CreateAPIView):
-    serializer_class = SavingsSerializer
+class WithdrawView(APIView):
+    serializer_class = DepositSerializer
     permission_classes = [IsAuthenticated, IsSameBranch]
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        return serializer.save(
-            branch=user.branch,
-            organization=user.branch.organization,
-            created_by=user,
-            transaction_type="withdraw",
-        )
+    def post(self, request):
+        serializer = DepositSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        member = serializer.validated_data["member"]
+        date = serializer.validated_data["date"]
+        amount = serializer.validated_data["amount"]
+
+        GeneralJournal.objects.create_withdraw_entry(date, member, amount)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LoanDisbursementView(APIView):
@@ -88,26 +75,28 @@ class LoanDisbursementView(APIView):
 
     def post(self, request):
         serializer = LoanDisbursementSerializer(data=request.data)
-        if serializer.is_valid():
-            # check member already have unpaid loan
-            unpaid_loan = Loan.objects.filter(
-                member_id=serializer.validated_data["member"], is_paid=False
-            ).exists()
-            if unpaid_loan:
-                resp = {
-                    "status": "failed",
-                    "message": "Member already have unpaid loan",
-                }
-                return Response(resp, status=400)
-            member = serializer.validated_data["member"]
-            serializer.save(
-                branch=request.user.branch,
-                team=member.team,
-                organization=request.user.branch.organization,
-                created_by=request.user,
-            )
-            return Response({"status": "success"}, status=201)
-        return Response({"status": "failed", "message": "invalid data"}, status=400)
+        serializer.is_valid(raise_exception=True)
+        date = serializer.validated_data["date"]
+        member = serializer.validated_data["member"]
+        amount = serializer.validated_data["amount"]
+        # check member already have unpaid loan
+        unpaid_loan = Loan.objects.filter(member=member, is_paid=False).exists()
+        if unpaid_loan:
+            resp = {
+                "status": "failed",
+                "message": "Member already have unpaid loan",
+            }
+            return Response(resp, status=400)
+
+        serializer.save(
+            amount=amount,
+            branch=request.user.branch,
+            team=member.team,
+            organization=request.user.branch.organization,
+            created_by=request.user,
+        )
+        GeneralJournal.objects.create_loan_entry(date, member, amount)
+        return Response({"status": "success"}, status=201)
 
 
 class LoanInstallmentView(APIView):
@@ -119,9 +108,12 @@ class LoanInstallmentView(APIView):
         if serializer.is_valid():
             installment = serializer.save()
             loan_object = installment.loan
-            installment_amount = serializer.validated_data["amount"]
+            date = serializer.validated_data["date"]
+            amount = serializer.validated_data["amount"]
             # Update loan status
-            loan_object.pay_installment(installment_amount)
+            loan_object.pay_installment(amount)
+            # Update Journal
+            GeneralJournal.objects.create_installment_entry(date, loan_object.member, amount)
             return Response({"status": "success"}, status=201)
         return Response({"status": "failed", "message": serializer.errors}, status=400)
 
@@ -150,6 +142,8 @@ class MemberSavingsData(APIView):
         # staff_branch = request.user.branch
         # members = Member.objects.filter(branch=staff_branch)
         members = Member.objects.filter(team__id=team_id).order_by("serial_number")
+
+        # TODO: If not needed, remove this if
         if team:
             members = members.filter(team=team)
         for member in members:
@@ -205,6 +199,14 @@ class IncomeTransactionListCreate(ListCreateAPIView):
             branch=user.branch,
             organization=user.branch.organization,
         )
+        data = serializer.validated_data
+        category = data["category"].name
+        GeneralJournal.objects.create_income_entry(
+            date=data["date"],
+            branch=user.branch,
+            amount=data["amount"],
+            remarks=category + ": " + data["summary"]
+        )
 
     def get_queryset(self):
         return GeneralTransaction.objects.filter(
@@ -231,6 +233,14 @@ class ExpenseTransactionListCreate(ListCreateAPIView):
             transaction_type="expense",
             branch=user.branch,
             organization=user.branch.organization,
+        )
+        data = serializer.validated_data
+        category = data["category"].name
+        GeneralJournal.objects.create_expense_entry(
+            date=data["date"],
+            branch=user.branch,
+            amount=data["amount"],
+            remarks=category + ": " + data["summary"]
         )
 
     def get_queryset(self):

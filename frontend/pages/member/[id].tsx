@@ -13,6 +13,8 @@ import DisbursementModal from '@/modules/member/components/DisbursementModal';
 import EditMemberModal from '@/modules/member/components/EditMemberModal';
 import WithdrawModal from '@/modules/member/components/WithdrawModal';
 
+import Transactions from './transactions';
+
 const getPath = (x, y, width, height) =>
     `M${x},${y + height}
      C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3} ${x + width / 2}, ${y}
@@ -192,6 +194,7 @@ const MemberDetailPage = () => {
                         </dt>
                     </div>
                 </div>
+                <Transactions />
                 {/*==================== Total savings/deposit Section ============================*/}
                 <div>
                     <div className="graphs-header">
