@@ -16,7 +16,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 
 from peoples.models import Staff
 from report.models import CIHCalculation
-from transaction.models import Savings, Loan, GeneralTransaction
+from journal.models import GeneralJournal
 
 # from transaction.models import Savings, Loan
 
@@ -168,17 +168,29 @@ class BranchDetailView(APIView):
 
     def get(self, request, pk):
         try:
-            branch = Branch.objects.select_related("organization").get(pk=pk)
+            branch = Branch.objects.get(pk=pk)
+            branch_journal = GeneralJournal.objects.filter(branch=branch)
+            balance = branch_journal.filter(accounts__code='CA') \
+                .aggregate(balance=Sum('debit') - Sum('credit'))['balance']
+
+            total_deposit = branch_journal.filter(accounts__code='DE').aggregate(deposit=Sum('credit'))['deposit']
+            total_withdraw = branch_journal.filter(accounts__code='WI').aggregate(withdraw=Sum('debit'))['withdraw']
+            if not total_deposit: total_deposit = 0
+            if not total_withdraw: total_withdraw = 0
+
+            total_loan = branch_journal.filter(accounts__code='LO').aggregate(loan=Sum('debit'))['loan']
+            total_installment = branch_journal.filter(accounts__code='IN').aggregate(loan=Sum('credit'))['loan']
+            if not total_loan: total_loan = 0
+            if not total_installment: total_installment = 0
 
             # Sum of members current balance
 
-
             transaction_data = {
-                "total_deposit": "total_deposit",
-                "total_due_loan": "due_loan",
+                "total_deposit": total_deposit - total_withdraw,  # সঞ্চয় স্থিতি
+                "total_due_loan": total_loan - total_installment,
                 "total_expense": "total_expense",
                 "total_income": "total_income",
-                "cash_in_hand": "cash_in_hand",
+                "cash_in_hand": balance,
             }
             serializer = BranchSerializer(branch)
             data = {**serializer.data, **transaction_data}

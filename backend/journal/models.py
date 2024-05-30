@@ -47,6 +47,7 @@ class JournalManager(models.Manager):
     def create_loan_entry(self, date, member, amount):
         loan_account_receivable = Ledger.objects.get(code='LO')
         branch = member.branch
+        remarks = f'{member.name} loan {amount}'
 
         # As double entry accounting, Deposit (Account payable) debit
         entry1 = self.get_queryset().create(
@@ -55,14 +56,16 @@ class JournalManager(models.Manager):
             accounts=loan_account_receivable,
             branch=branch,
             debit=amount,
+            remarks=remarks
         )
         # Cash Credit
-        self.cash_credit(date, member, amount, branch)
+        self.cash_credit(date, member, amount, branch, remarks)
         return entry1
 
     def create_installment_entry(self, date, member, amount):
         loan_account_receivable = Ledger.objects.get(code='IN')
         branch = member.branch
+        remarks = f'{member.name} installment {amount}'
 
         # As double entry accounting, Installment (Account receivable) credit
         entry1 = self.get_queryset().create(
@@ -71,14 +74,16 @@ class JournalManager(models.Manager):
             accounts=loan_account_receivable,
             branch=branch,
             credit=amount,
+            remarks=remarks
         )
         # Cash debit
-        self.cash_debit(date, member, amount, branch)
+        self.cash_debit(date, member, amount, branch, remarks)
         return entry1
 
     def deposit_entry(self, date, member, amount):
         deposit_account_payable = Ledger.objects.get(code='DE')
         branch = member.branch
+        remarks = f'{member.name} deposit {amount}'
         # As double entry accounting, Deposit (Account payable) Credit
         entry1 = self.get_queryset().create(
             date=date,
@@ -86,14 +91,16 @@ class JournalManager(models.Manager):
             accounts=deposit_account_payable,
             branch=branch,
             credit=amount,
+            remarks=remarks
         )
         # Cash Debit
-        self.cash_debit(date, member, amount, branch)
+        self.cash_debit(date, member, amount, branch, remarks)
         return entry1
 
     def create_withdraw_entry(self, date, member, amount):
         withdraw_account_payable = Ledger.objects.get(code='WI')
         branch = member.branch
+        remarks = f'{member.name} withdraw {amount}'
 
         # As double entry accounting, withdraw (Account payable) Debit
         entry1 = self.get_queryset().create(
@@ -102,9 +109,10 @@ class JournalManager(models.Manager):
             accounts=withdraw_account_payable,
             branch=branch,
             debit=amount,
+            remarks=remarks
         )
         # Cash Credit
-        self.cash_credit(date, member, amount, branch)
+        self.cash_credit(date, member, amount, branch, remarks)
         return entry1
 
     def is_already_deposited(self, date, member, amount):
