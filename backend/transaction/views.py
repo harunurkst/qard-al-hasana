@@ -178,7 +178,7 @@ class MemberLoanData(APIView):
         staff_branch = request.user.branch
         active_loans = Loan.objects.filter(
             branch=staff_branch, is_paid=False
-        ).select_related("member")
+        ).select_related("member").filter("member__serial_number")
 
         if team:
             active_loans = active_loans.filter(team=team)
