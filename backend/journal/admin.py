@@ -4,6 +4,7 @@ from .models import Ledger, LedgerType, GeneralJournal
 
 class JournalAdmin(admin.ModelAdmin):
     list_display = ('date', 'member', 'accounts', 'debit', 'credit')
+    search_fields = ('member__name', )
 
 
 class LedgerAdmin(admin.ModelAdmin):
