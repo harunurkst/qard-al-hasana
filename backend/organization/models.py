@@ -10,9 +10,6 @@ from .managers import UserManager
 
 class BaseModel(models.Model):
     branch = models.ForeignKey("organization.Branch", on_delete=models.PROTECT)
-    organization = models.ForeignKey(
-        "organization.Organization", on_delete=models.PROTECT
-    )
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         "organization.User", on_delete=models.SET_NULL, blank=True, null=True

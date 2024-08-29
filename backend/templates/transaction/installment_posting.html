@@ -1,0 +1,99 @@
+{% extends 'base/base.html' %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        কর্জ ফেরত
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <form action="" method="get">
+                    {{ member_choice_form }}
+                    <input type="submit" value="Select" class="btn btn-success">
+                </form>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'installment_posting' %}?team={{team_id}}&serial_number={{next_sl}}" class="btn btn-warning">Next</a>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                {% if my_loan %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ installment_form.as_p }}
+                    <input type="submit" value="Submit" class="btn btn-success">
+                </form>
+                {% else %}
+                    <h3>কোন কর্জ নেই</h3>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row">সদস্যের নাম</th>
+                            <td>{{ member.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">অভিভাবকের নাম</th>
+                            <td>{{ member.guardian_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">দলের নাম</th>
+                            <td>{{ member.team }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">সিরিয়াল নম্বর</th>
+                            <td>{{ member.serial_number }}</td>
+                        </tr>
+                        {% if my_loan %}
+                        <tr>
+                            <th scope="row">কর্জের পরিমান</th>
+                            <td>{{ my_loan.amount }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">কর্জের স্থিতি</th>
+                            <td>{{ my_loan.total_due }}</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container mt-5">
+
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#id_date" ).datepicker({
+  dateFormat: "yy-mm-dd"
+});
+  } );
+  </script>
+{% endblock %}

@@ -130,10 +130,13 @@ class JournalManager(models.Manager):
         return False
 
     def get_member_balance(self, member):
+        print("member: ", member)
         members_trans = self.get_queryset().filter(member=member, accounts__ledger_type__code='LP')  # Account Payable
+        print(members_trans)
         total_debit = members_trans.aggregate(total_debit=Sum('debit'))['total_debit']
         total_credit = members_trans.aggregate(total_credit=Sum('credit'))['total_credit']
-        if total_credit is not None and total_debit is not None:
+        print("debit, credit ", total_debit, total_credit)
+        if total_credit:
             return total_credit - total_debit
         return 0
 
@@ -175,3 +178,6 @@ class GeneralJournal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     objects = JournalManager()
+
+    class Meta:
+        unique_together = ('date', 'accounts', 'member')

@@ -1,18 +1,12 @@
 from django.urls import path
-from . import views
-
-app_name = 'transaction'
+from .views import *
 
 urlpatterns =[
-    path('deposit/', views.DepositView.as_view()),
-    path('withdraw/', views.WithdrawView.as_view()),
-    path('loan-disbursment/', views.LoanDisbursementView.as_view()),
-    path('loan-installment/', views.LoanInstallmentView.as_view()),
-    path('member-savings-list', views.MemberSavingsData.as_view()),
-    path('member-installment-list', views.MemberLoanData.as_view()),
-    path('income/', views.IncomeTransactionListCreate.as_view(), name='income_create_list'),
-    path('income/<int:id>/', views.IncomeTransactionDetailUpdateDelete.as_view(), name='income_re_up_del'),
-    path('expense/', views.ExpenseTransactionListCreate.as_view(), name='expense_create_list'),
-    path('expense/<int:id>/', views.ExpenseTransactionDetailUpdateDelete.as_view(), name='expense_re_up_del'),
-    path('transaction-category-list/', views.TransactionCategoryList.as_view(), name='transaction_category_list'),
+    path('', dashboard, name="dashboard"),
+    path('deposits/<int:team_id>', deposit_list, name="deposit_list"),
+    path('loan/list/<int:team_id>', loan_list, name="loan_list"),
+    path('deposit-posting/', DepositPostingView.as_view(), name="deposit_posting"),
+    path('loans/create/<int:member>', LoanDisbursementView.as_view(), name='loan_disbursement'),
+    path('loans/installment/', installment_posting, name='installment_posting'),
+
 ]

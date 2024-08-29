@@ -3,6 +3,7 @@ from datetime import timedelta
 import environ
 import os
 import dj_database_url
+from django.contrib.messages import constants as messages
 
 env = environ.Env(DEBUG=(bool, False))
 
@@ -195,3 +196,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'info',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}

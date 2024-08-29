@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
 
+from journal.models import GeneralJournal
+from transaction.models import Loan
 
 STAFF_ROLES = (("cl", "Collector"), ("bw", "Branch Owner"))
 
@@ -50,3 +52,16 @@ class Member(models.Model):
 
     def __str__(self):
         return self.name
+
+    def balance(self):
+        return GeneralJournal.objects.get_member_balance(self)
+
+    def has_active_loan(self):
+        return Loan.objects.filter(member=self, is_paid=False).exists()
+
+    def get_my_loan(self):
+        try:
+            return Loan.objects.get(member=self, is_paid=False)
+        except:
+            return None
+

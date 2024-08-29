@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        কর্জ প্রদান
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Disburse Loan</button>
+                  </form>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row">সদস্যের নাম</th>
+                            <td>{{ member.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">অভিভাবকের নাম</th>
+                            <td>{{ member.guardian_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">দলের নাম</th>
+                            <td>{{ member.team }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">সিরিয়াল নম্বর</th>
+                            <td>{{ member.serial_number }}</td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row">সঞ্চয় স্থিতি</th>
+                            <td>{{ member.balance }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container mt-5">
+
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#id_date" ).datepicker({
+  dateFormat: "yy-mm-dd"
+});
+  } );
+  </script>
+{% endblock %}
