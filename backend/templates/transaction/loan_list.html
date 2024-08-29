@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        কর্জ শিট
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tr>
+                <th>SL</th>
+                <th>নাম</th>
+                <th>অভিভাবকের নাম</th>
+                <th>কর্জের পরিমান</th>
+                <th>সপ্তাহ ১</th>
+                <th>সপ্তাহ ২</th>
+                <th>সপ্তাহ ৩</th>
+                <th>সপ্তাহ ৪</th>
+                <th>ব্যালেন্স</th>
+            </tr>
+            {% for journal in journals %}
+                <tr>
+                    <td>{{ journal.sl }}</td>
+                    <td>{{ journal.member_name }}</td>
+                    <td>{{ journal.guardian_name }}</td>
+                    <td>{{ journal.loan_amount }}</td>
+                    <td>{{ journal.week1 }}</td>
+                    <td>{{ journal.week2 }}</td>
+                    <td>{{ journal.week3 }}</td>
+                    <td>{{ journal.week4 }}</td>
+                    <td>{{ journal.loan_balance }}</td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

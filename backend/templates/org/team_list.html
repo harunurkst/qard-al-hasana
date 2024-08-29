@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        দলের নাম
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+
+        {% for team in teams %}
+            <tr>
+                <td>
+                    <a href="{% url 'deposit_list' team.id %}">{{ team.name }}</a>
+                </td>
+                <td>
+                    <a class="btn btn-success" href="{% url 'deposit_posting' %}?team={{team.id}}&serial_number=1">সঞ্চয় জমা</a>
+                </td>
+                <td>
+                    <a class="btn btn-warning" href="{% url 'installment_posting' %}?team={{team.id}}&serial_number=1">কর্জ ফেরত</a>
+                </td>
+                <td>
+                    <a class="btn btn-info" href="{% url 'loan_list' team.id %}">কর্জ তালিকা</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

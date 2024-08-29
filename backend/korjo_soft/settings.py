@@ -3,6 +3,7 @@ from datetime import timedelta
 import environ
 import os
 import dj_database_url
+from django.contrib.messages import constants as messages
 
 env = environ.Env(DEBUG=(bool, False))
 
@@ -47,7 +48,8 @@ LOCAL_APPS = [
     "accounts.apps.AccountsConfig",
     "transaction.apps.TransactionConfig",
     "api.apps.ApiConfig",
-    "report"
+    "report",
+    "journal"
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -88,16 +90,16 @@ WSGI_APPLICATION = "korjo_soft.wsgi.application"
 # Database
 
 DATABASES = {
-    # "default": dj_database_url.config(default="sqlite:////backend/db/db.sqlite3"),
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": "/data/db/db.sqlite3",
-    # }
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 # Update database configuration from $DATABASE_URL.
 
@@ -168,7 +170,7 @@ REST_FRAMEWORK = {
 # simple jwt configs
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -194,3 +196,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'info',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}

@@ -14,7 +14,7 @@ import {
     ModalOverlay,
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 
@@ -22,13 +22,42 @@ interface IIncomdModal {
     isOpen: boolean;
     onClose: () => void;
 }
-const categoryOptions = [
-    { label: 'Option 1', value: '1' },
-    { label: 'Option 2', value: '1' },
-    { label: 'Option 3', value: '1' },
-];
+interface CategoryOption {
+    label: string;
+    value: string;
+}
+
+interface Category {
+    id: number;
+    name: string;
+    category_type: string;
+}
+
+
 const IncomeModal: React.FC<IIncomdModal> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<string>('');
+    const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await http.get(
+                `/api/v1/transaction/transaction-category-list/?category_type=income`
+            );
+            const options = response.data.map((category) => ({
+                label: category.name,
+                value: category.id.toString(),
+            }));
+            setCategoryOptions(options);
+        } catch (error) {
+            console.log('Error fetching categories:', error);
+        }
+    };
+
+    useEffect(() => {
+
+        fetchCategories();
+    }, []);
+
 
     const {
         register,
@@ -81,7 +110,7 @@ const IncomeModal: React.FC<IIncomdModal> = ({ isOpen, onClose }) => {
                     borderBottom={1}
                     borderBottomColor="red.100"
                 >
-                    Add Expense
+                    আয়ের বিবরন
                 </ModalHeader>
                 <ModalCloseButton />
 
@@ -113,7 +142,7 @@ const IncomeModal: React.FC<IIncomdModal> = ({ isOpen, onClose }) => {
                     <ModalFooter gap={4}>
                         <Button onClick={onClose}>Close</Button>
                         <Button colorScheme={'brand'} isLoading={isSubmitting} type="submit">
-                            Add Income
+                            নতুন আয় যুক্ত করুন
                         </Button>
                     </ModalFooter>
                 </form>

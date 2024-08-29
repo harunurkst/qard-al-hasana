@@ -1,22 +1,14 @@
 from rest_framework import serializers
 from .models import GeneralTransaction, Savings, Loan, Installment, TransactionCategory
+from journal.models import GeneralJournal, Ledger
 
 
-class SavingsSerializer(serializers.ModelSerializer):
+class DepositSerializer(serializers.ModelSerializer):
+    amount = serializers.IntegerField()
+
     class Meta:
-        model = Savings
+        model = GeneralJournal
         fields = ("member", "amount", "date")
-
-    def create(self, validated_data):
-        transaction_type = validated_data["transaction_type"]
-        member = validated_data["member"]
-        savings = Savings(**validated_data)
-        savings.team = member.team
-        if transaction_type == "deposit":
-            savings.deposit()
-        else:
-            savings.withdraw()
-        return savings
 
 
 class LoanDisbursementSerializer(serializers.ModelSerializer):
@@ -64,4 +56,5 @@ class TransactionCategorySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "category_type"
         )

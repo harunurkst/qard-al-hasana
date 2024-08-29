@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from organization.models import BaseModel
 from report.models import CIHCalculation
 
@@ -106,28 +107,32 @@ class Loan(BaseModel):
     total_paid = models.IntegerField(default=0)
     total_due = models.IntegerField(default=0)
 
-    def pay_installment(self, amount):
+    def __str__(self):
+        return f"Loan of {self.amount} to {self.member.name}"
+
+    # def clean(self):
+    #     # Ensure that total_paid and total_due are consistent
+    #     if self.total_paid + self.total_due != self.amount:
+    #         raise ValidationError("Total paid and total due must sum up to the loan amount.")
+
+    def pay_installment(self, payment_amount):
         """
         Update Loan status after installment submission
         """
-        total_paid = self.total_paid + amount
-        total_due = self.total_due - amount
-        self.total_paid = total_paid
-        self.total_due = total_due
-        self.installment_paid = self.installment_paid + 1
-        if total_paid >= self.amount and total_due <= 0:
+        if self.is_paid:
+            raise ValidationError("This loan is already fully paid.")
+
+        if payment_amount > self.total_due:
+            raise ValidationError("Payment amount cannot exceed the total due.")
+
+        self.total_paid += payment_amount
+        self.total_due -= payment_amount
+        self.installment_paid += 1
+
+        if self.total_paid >= self.amount and self.total_due <= 0:
             self.is_paid = True
         self.save()
         # Cash in hand calculation
-        CIHCalculation.objects.add_cash_in_hand(
-            branch=self.branch, date=self.date, amount=amount
-        )
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            # total_due = Loan amount
-            self.total_due = self.amount
-        super().save(*args, **kwargs)
 
 
 class Installment(models.Model):

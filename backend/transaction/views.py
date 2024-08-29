@@ -1,260 +1,204 @@
 from datetime import datetime
-
-from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework.generics import (
-    CreateAPIView,
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView,
-    ListAPIView,
-)
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.views import View
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.db import IntegrityError
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+from journal.models import GeneralJournal
 from peoples.models import Member
-from peoples.permissions import IsSameBranch
-from .models import GeneralTransaction, Loan, Savings, TransactionCategory
-from .serializers import (
-    GeneralTransactionSerializer,
-    SavingsSerializer,
-    LoanDisbursementSerializer,
-    LoanInstallmentSerializer,
-    TransactionCategorySerializer,
-)
-from .utils import format_savings_date, format_loan_data
-from korjo_soft.permissions import IsBranchOwner
+from transaction.forms import InstallmentForm
+from transaction.utils import format_savings_date, format_loan_data
+from .forms import DepositForm, MemberChoiceForm, LoanDisbursementForm
 
 
-class DepositView(CreateAPIView):
-    serializer_class = SavingsSerializer
-    permission_classes = [IsAuthenticated, IsSameBranch]
-
-    # def perform_create(self, serializer):
-    #     user = self.request.user
-    #     return serializer.save(
-    #         branch=user.branch,
-    #         organization=user.branch.organization,
-    #         created_by=user,
-    #         transaction_type='deposit'
-    #     )
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = request.user
-        member = serializer.validated_data["member"]
-        date = serializer.validated_data["date"]
-        # check member already have deposit
-        already_deposit = Savings.objects.filter(
-            member=member, date=date, transaction_type="deposit"
-        ).exists()
-        if already_deposit:
-            return Response(
-                {"detail": "Member already have deposit with this date"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        serializer.save(
-            branch=user.branch,
-            organization=user.branch.organization,
-            created_by=user,
-            transaction_type="deposit",
-        )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+from .models import Loan
 
 
-class WithdrawView(CreateAPIView):
-    serializer_class = SavingsSerializer
-    permission_classes = [IsAuthenticated, IsSameBranch]
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        return serializer.save(
-            branch=user.branch,
-            organization=user.branch.organization,
-            created_by=user,
-            transaction_type="withdraw",
-        )
+@login_required
+def dashboard(request):
+    return render(request, 'transaction/dashboard.html')
 
 
-class LoanDisbursementView(APIView):
-    """
-    Member Loan Disbursement
-    """
+@login_required
+def deposit_list(request, team_id):
+    data = []
+    now = datetime.now()
+    members = Member.objects.filter(team__id=team_id).order_by("serial_number")
 
-    serializer_class = LoanDisbursementSerializer
-    permission_classes = [IsAuthenticated, IsSameBranch]
-
-    def post(self, request):
-        serializer = LoanDisbursementSerializer(data=request.data)
-        if serializer.is_valid():
-            # check member already have unpaid loan
-            unpaid_loan = Loan.objects.filter(
-                member_id=serializer.validated_data["member"], is_paid=False
-            ).exists()
-            if unpaid_loan:
-                resp = {
-                    "status": "failed",
-                    "message": "Member already have unpaid loan",
-                }
-                return Response(resp, status=400)
-            member = serializer.validated_data["member"]
-            serializer.save(
-                branch=request.user.branch,
-                team=member.team,
-                organization=request.user.branch.organization,
-                created_by=request.user,
-            )
-            return Response({"status": "success"}, status=201)
-        return Response({"status": "failed", "message": "invalid data"}, status=400)
-
-
-class LoanInstallmentView(APIView):
-    serializer_class = LoanInstallmentSerializer
-    permission_classes = [IsAuthenticated, IsSameBranch]
-
-    def post(self, request):
-        serializer = LoanInstallmentSerializer(data=request.data)
-        if serializer.is_valid():
-            installment = serializer.save()
-            loan_object = installment.loan
-            installment_amount = serializer.validated_data["amount"]
-            # Update loan status
-            loan_object.pay_installment(installment_amount)
-            return Response({"status": "success"}, status=201)
-        return Response({"status": "failed", "message": serializer.errors}, status=400)
-
-
-class MemberSavingsData(APIView):
-    """
-    [{
-        "sl": 1,
-        "member_id": 1,
-        "member_name": "Harun",
-        "guardian_name": "Sadrul Islam",
-        "balance": 0,
-        "week1": 0,
-        "week2": 0,
-        "week3": 0,
-        "week4": 0
+    members = members.filter(team=team_id)
+    for member in members:
+        savings_data = format_savings_date(member, now.month)
+        data.append(savings_data)
+    context = {
+        'journals': data
     }
-    ]
-    """
 
-    def get(self, request):
-        team_id = self.request.query_params.get("teamId")
-        data = []
-        month = self.request.query_params.get("month", datetime.today().month)
-        team = self.request.query_params.get("team", None)
-        # staff_branch = request.user.branch
-        # members = Member.objects.filter(branch=staff_branch)
-        members = Member.objects.filter(team__id=team_id).order_by("serial_number")
-        if team:
-            members = members.filter(team=team)
-        for member in members:
-            savings_data = format_savings_date(member, month)
-            data.append(savings_data)
-        return Response(data)
+    return render(request, 'transaction/deposit_list.html', context)
 
 
-class MemberLoanData(APIView):
-    """
-    [
-    {
-        "sl": 1,
-        "member_id": 1,
-        "member_name": "Harun",
-        "guardian_name": "Test",
-        "loan_id": 1,
-        "loan_amount": 5000,
-        "loan_balance": 2000,
-        "week1": 500,
-        "week2": 300,
-        "week3": 0,
-        "week4": 0
+@login_required
+def loan_list(request, team_id=None):
+    data = []
+    month = datetime.now().month
+    staff_branch = request.user.branch
+    active_loans = Loan.objects.filter(
+        branch=staff_branch, is_paid=False
+    ).select_related("member").order_by("member__serial_number")
+
+    if team_id:
+        active_loans = active_loans.filter(team=team_id)
+    for loan in active_loans:
+        installment_data = format_loan_data(loan, month)
+        data.append(installment_data)
+    context = {
+        'journals': data
     }
-    ]
-    """
 
-    def get(self, request):
-        data = []
-        month = self.request.query_params.get("month", datetime.today().month)
-        team = self.request.query_params.get("team", None)
-        staff_branch = request.user.branch
-        active_loans = Loan.objects.filter(
-            branch=staff_branch, is_paid=False
-        ).select_related("member")
-
-        if team:
-            active_loans = active_loans.filter(team=team)
-        for loan in active_loans:
-            installment_data = format_loan_data(loan, month)
-            data.append(installment_data)
-        return Response(data)
+    return render(request, 'transaction/loan_list.html', context)
 
 
-class IncomeTransactionListCreate(ListCreateAPIView):
-    serializer_class = GeneralTransactionSerializer
-    permission_classes = [IsBranchOwner]
+class DepositPostingView(LoginRequiredMixin, View):
+    template_name = 'transaction/deposit_posting.html'
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(
-            transaction_type="income",
-            branch=user.branch,
-            organization=user.branch.organization,
-        )
+    def get(self, request, *args, **kwargs):
+        team_id = request.GET.get('team', None)
+        serial_number = request.GET.get('serial_number', 1)
+        member = self.get_member(team_id, serial_number)
 
-    def get_queryset(self):
-        return GeneralTransaction.objects.filter(
-            transaction_type="income", branch=self.request.user.branch
-        )
+        form = MemberChoiceForm(initial={'team': team_id, 'serial_number': serial_number}, user=request.user)
+        deposit_form = DepositForm()
+
+        context = {
+            "member_choice_form": form,
+            "deposit_form": deposit_form,
+            "member": member,
+            "team_id": team_id,
+            "next_sl": int(serial_number) + 1
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        team_id = request.GET.get('team', None)
+        serial_number = request.GET.get('serial_number', 1)
+        member = self.get_member(team_id, serial_number)
+
+        deposit_form = DepositForm(request.POST)
+        if deposit_form.is_valid():
+            date = deposit_form.cleaned_data['date']
+            amount = deposit_form.cleaned_data['amount']
+            try:
+                GeneralJournal.objects.deposit_entry(date, member, amount)
+                messages.success(request, f'{member.name} {amount} টাকা জমা হয়েছে')
+                return HttpResponseRedirect(reverse('deposit_posting') + f'?team={team_id}&serial_number={serial_number}')
+            except IntegrityError:
+                messages.error(request, f'দুঃখিত, {member.name} ৳{amount} ইতোমধ্যে জমা হয়েছে')
+
+        # If form is not valid or if there's an error, re-render the form with the current context
+        form = MemberChoiceForm(initial={'team': team_id, 'serial_number': serial_number}, user=request.user)
+        context = {
+            "member_choice_form": form,
+            "deposit_form": deposit_form,
+            "member": member,
+            "team_id": team_id,
+            "next_sl": int(serial_number) + 1
+        }
+        return render(request, self.template_name, context)
+
+    def get_member(self, team_id, serial_number):
+        if team_id and serial_number:
+            try:
+                return Member.objects.get(team=team_id, serial_number=serial_number)
+            except Member.DoesNotExist:
+                messages.error(self.request, f'দুঃখিত, এই সিরিয়ালে কোন সদস্য নেই')
+        return None
 
 
-class IncomeTransactionDetailUpdateDelete(RetrieveUpdateDestroyAPIView):
-    serializer_class = GeneralTransactionSerializer
-    permission_classes = [IsBranchOwner]
-    http_method_names = ["get", "patch", "delete"]
+@login_required
+def installment_posting(request):
+    member = None
+    loan = None
+    team_id = request.GET.get('team', None)
+    serial_number = request.GET.get('serial_number', 1)
+    if team_id and serial_number:
+        try:
+            member = Member.objects.get(team=team_id, serial_number=serial_number)
+            loan = member.get_my_loan()
+        except:
+            messages.error(request, f'দুঃখিত, এই সিরিয়ালে কোন সদস্য নেই')
 
-    def get_object(self):
-        return get_object_or_404(GeneralTransaction, id=self.kwargs.get("id"))
+    if request.method == 'POST':
+        installment_form = InstallmentForm(request.POST)
+        if installment_form.is_valid():
+            date = installment_form.cleaned_data['date']
+            amount = installment_form.cleaned_data['amount']
+            try:
+                loan = member.get_my_loan()
+                loan.pay_installment(amount)
+                GeneralJournal.objects.create_installment_entry(date, member, amount)
+                messages.success(request, f'{member.name} {amount} টাকা কর্জ ফেরত জমা হয়েছে')
+                if loan.is_paid:
+                    messages.success(request, f'{member.name} কর্জ পরিশোধ হয়েছে')
+            except IntegrityError as e:
+                messages.error(request, f'দুঃখিত, {member.name} ৳{amount} ইতোমধ্যে জমা হয়েছে')
+
+    form = MemberChoiceForm({'team': team_id, 'serial_number': serial_number}, user=request.user)
+    installment_form = InstallmentForm()
+    context = {
+        "member_choice_form": form,
+        "installment_form": installment_form,
+        "member": member,
+        "team_id": team_id,
+        "my_loan": loan,
+        "next_sl": int(serial_number) + 1
+    }
+    return render(request, 'transaction/installment_posting.html', context)
 
 
-class ExpenseTransactionListCreate(ListCreateAPIView):
-    serializer_class = GeneralTransactionSerializer
-    permission_classes = [IsBranchOwner]
+class LoanDisbursementView(LoginRequiredMixin, CreateView):
+    model = Loan
+    form_class = LoanDisbursementForm
+    template_name = 'transaction/loan_disbursement_form.html'
+    success_url = reverse_lazy('loan_list')  # Change to the appropriate URL
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(
-            transaction_type="expense",
-            branch=user.branch,
-            organization=user.branch.organization,
-        )
+    def get_success_url(self):
+        return reverse_lazy('loan_list', kwargs={'team_id': self.get_member().team_id})
 
-    def get_queryset(self):
-        return GeneralTransaction.objects.filter(
-            transaction_type="expense", branch=self.request.user.branch
-        )
+    def get_member(self):
+        member_id = self.kwargs.get('member')
+        # Fetch and return the Member object, or raise a 404 error if not found
+        return get_object_or_404(Member, id=member_id)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['member'] = self.get_member()
+        return context
 
-class ExpenseTransactionDetailUpdateDelete(RetrieveUpdateDestroyAPIView):
-    serializer_class = GeneralTransactionSerializer
-    permission_classes = [IsBranchOwner]
-    http_method_names = ["get", "patch", "delete"]
+    def form_valid(self, form):
+        date = form.cleaned_data["date"]
+        amount = form.cleaned_data["amount"]
+        member = self.get_member()
 
-    def get_object(self):
-        return get_object_or_404(GeneralTransaction, id=self.kwargs.get("id"))
+        if member.has_active_loan():
+            messages.error(self.request, 'একটি অপরিশোধিত কর্জ আছে')
+            return super().form_invalid(form)
 
+        loan = form.save(commit=False)
+        loan.total_due = loan.amount  # Set total due to the amount
+        loan.member = member
+        loan.branch = member.branch
+        loan.team = member.team
+        loan.save()
 
-class TransactionCategoryList(ListAPIView):
-    serializer_class = TransactionCategorySerializer
-    permission_classes = []
-    authentication_classes = []
-    queryset = TransactionCategory.objects.all()
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
-    filterset_fields = ["category_type"]
-    pagination_class = None
+        GeneralJournal.objects.create_loan_entry(date, member, amount)
+        messages.success(self.request, f'Loan of {loan.amount} has been successfully disbursed to {loan.member.name}.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error in the form. Please correct the issues below.')
+        return super().form_invalid(form)

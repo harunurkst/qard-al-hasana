@@ -1,0 +1,94 @@
+{% extends 'base/base.html' %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card mt-4">
+    <div class="card-header">
+        Deposit Posting
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <form action="" method="get">
+                    {{ member_choice_form }}
+                    <input type="submit" value="Select" class="btn btn-success">
+                </form>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'deposit_posting' %}?team={{team_id}}&serial_number={{next_sl}}" class="btn btn-warning">Next</a>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                {% if member %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ deposit_form.as_p }}
+                    <input type="submit" value="Submit" class="btn btn-success">
+                </form>
+                {% else %}
+                    <h3>কোন সদস্য নেই</h3>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row">সদস্যের নাম</th>
+                            <td>{{ member.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">অভিভাবকের নাম</th>
+                            <td>{{ member.guardian_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">দলের নাম</th>
+                            <td>{{ member.team }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">সিরিয়াল নম্বর</th>
+                            <td>{{ member.serial_number }}</td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row">সঞ্চয় স্থিতি</th>
+                            <td>{{ member.balance }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container mt-5">
+
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#id_date" ).datepicker({
+  dateFormat: "yy-mm-dd"
+});
+  } );
+  </script>
+{% endblock %}
